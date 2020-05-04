@@ -1,0 +1,72 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}eRegQual Birth Outcomes Analysis
+       {txt}log:  {res}/Users/cjr/Repos/fhi.eregtrial-health-outcomes.2020/products/log.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res} 4 May 2020, 13:39:21
+{txt}
+{com}. 
+. // Set up Stata.
+. do setup/setup
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. // Set up Stata's path to use the "packages" directory for add-on packages.
+. net set ado "./packages"
+{txt}
+{com}. sysdir set PERSONAL "./packages"
+{txt}
+{com}. 
+. // Specify formats.
+. set cformat %9.2f
+{txt}
+{com}. set pformat %5.2f
+{txt}
+{com}. set sformat %8.2f
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. 
+. // Set up globals.
+. do globals/globals
+{txt}
+{com}. version 16
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. 
+. // Import data.
+. do data/data
+{txt}
+{com}. version 16
+{txt}
+{com}. 
+. // TODO: Add an automated check that the correct verion of the data is being used.
+. 
+{txt}end of do-file
+
+{com}. 
+. // Obtain the git revision hash, which is used in the reports.
+. tempfile git_revision_filename
+{txt}
+{com}. tempname revision_file
+{txt}
+{com}. shell git rev-parse --short HEAD > "`git_revision_filename'"
+{txt}
+
+{com}. file open `revision_file' using `git_revision_filename', read text
+{txt}
+{com}. file read `revision_file' line
+{txt}
+{com}. global git_revision = "`macval(line)'"
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. 
