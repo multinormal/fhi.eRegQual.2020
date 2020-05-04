@@ -1,9 +1,9 @@
 {smcl}
 {com}{sf}{ul off}{txt}{.-}
       name:  {res}eRegQual Birth Outcomes Analysis
-       {txt}log:  {res}/Users/cjr/Repos/fhi.eregtrial-health-outcomes.2020/products/log.smcl
+       {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 4 May 2020, 13:39:21
+ {txt}opened on:  {res} 4 May 2020, 14:14:12
 {txt}
 {com}. 
 . // Set up Stata.
@@ -46,27 +46,25 @@
 {com}. version 16
 {txt}
 {com}. 
-. // TODO: Add an automated check that the correct verion of the data is being used.
-. 
-{txt}end of do-file
-
-{com}. 
-. // Obtain the git revision hash, which is used in the reports.
-. tempfile git_revision_filename
+. local fname "data/raw/04May2020_eRegQual birth outcomes.dta"
 {txt}
-{com}. tempname revision_file
-{txt}
-{com}. shell git rev-parse --short HEAD > "`git_revision_filename'"
-{txt}
-
-{com}. file open `revision_file' using `git_revision_filename', read text
-{txt}
-{com}. file read `revision_file' line
-{txt}
-{com}. global git_revision = "`macval(line)'"
+{com}. local signature "6367:756(27238):862839612:1580475191-"
 {txt}
 {com}. 
-. 
-{txt}end of do-file
+. use "`fname'", replace
+{txt}
+{com}. datasignature
+  {res}6367:756(27238):862839612:1580475191
+{txt}
+{com}. assert r(datasignature) == "`signature'"
+{err}assertion is false
+{txt}{search r(9), local:r(9);}
+
+end of do-file
+{search r(9), local:r(9);}
+
+end of do-file
+
+{search r(9), local:r(9);}
 
 {com}. 
