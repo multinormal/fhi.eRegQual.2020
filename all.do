@@ -14,6 +14,9 @@ do globals/globals
 // Import data.
 do data/data
 
+// Do estimation.
+do estimation/estimation
+
 // Obtain the git revision hash, which is used in the reports.
 tempfile git_revision_filename
 tempname revision_file

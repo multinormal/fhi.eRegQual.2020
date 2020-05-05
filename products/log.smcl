@@ -1,9 +1,9 @@
 {smcl}
 {com}{sf}{ul off}{txt}{.-}
       name:  {res}eRegQual Birth Outcomes Analysis
-       {txt}log:  {res}/Users/cjr/Repos/fhi.eregtrial-health-outcomes.2020/products/log.smcl
+       {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 4 May 2020, 13:39:21
+ {txt}opened on:  {res} 5 May 2020, 12:11:34
 {txt}
 {com}. 
 . // Set up Stata.
@@ -33,7 +33,7 @@
 . // Set up globals.
 . do globals/globals
 {txt}
-{com}. version 16
+{com}. version 16.1
 {txt}
 {com}. 
 . 
@@ -43,10 +43,201 @@
 . // Import data.
 . do data/data
 {txt}
-{com}. version 16
+{com}. version 16.1
 {txt}
 {com}. 
-. // TODO: Add an automated check that the correct verion of the data is being used.
+. // Define the path to the data and the signature we expect it to have.
+. local fname "data/raw/04May2020_eRegQual birth outcomes.dta"
+{txt}
+{com}. local signature "6367:756(27238):862839612:1580475191"
+{txt}
+{com}. 
+. // Load the data and check its signature is as expected.
+. use "`fname'", replace
+{txt}
+{com}. datasignature
+  {res}6367:756(27238):862839612:1580475191
+{txt}
+{com}. assert r(datasignature) == "`signature'"
+{txt}
+{com}. 
+. // Convert the arm variable from string to integer.
+. encode prettyExposure, generate(arm) label(Arm)
+{txt}
+{com}. drop prettyExposure
+{txt}
+{com}. 
+. // Convert the stratification variable from string to integer.
+. encode bookorgdistricthashed, generate(strat_var) label(District)
+{txt}
+{com}. drop bookorgdistricthashed
+{txt}
+{com}. 
+. // Rename and label the cluster identifier variable.
+. rename str_TRIAL_1_Cluster clusterid
+{res}{txt}
+{com}. label variable clusterid Cluster
+{txt}
+{com}. 
+. // The following is temporary. We re-compute the composite outcome and verify
+. // that we have done so correctly.
+. 
+. // The composite outcome is defined as follows. If:
+. // * All of the outcomes are false -> composite outcome is false;
+. // * At least one of the outcomes is true -> composite outcome is true;
+. // * One or more of the outcomes are missing and all others are false
+. //   -> composite outcome is missing.
+. 
+. local y1 anemia_at_birth             
+{txt}
+{com}. local y2 severehypertension_at_birth 
+{txt}
+{com}. local y3 sga_undetected_at_birth              
+{txt}
+{com}. local y4 malpres_undetected          
+{txt}
+{com}. local y5 lga
+{txt}
+{com}. 
+. tempvar all_false
+{txt}
+{com}. generate `all_false' = (`y1'==0) & (`y2'==0) & (`y3'==0) & (`y4'==0) & (`y5'==0)
+{txt}
+{com}. 
+. tempvar one_true
+{txt}
+{com}. generate `one_true'  = (`y1'==1) | (`y2'==1) | (`y3'==1) | (`y4'==1) | (`y5'==1)
+{txt}
+{com}. 
+. generate y = .
+{txt}(6,367 missing values generated)
+
+{com}. replace  y = 0 if `all_false'
+{txt}(2,818 real changes made)
+
+{com}. replace  y = 1 if `one_true'
+{txt}(1,396 real changes made)
+
+{com}. 
+. // Verify that we can correctly recompute the composite outcome.
+. count if y == TrialOne_adverse_pregoutc
+  {res}6,367
+{txt}
+{com}. assert r(N) == _N
+{txt}
+{com}. 
+. 
+. // NOTE: The above correctly defines the outcome, but it is called
+. // TrialOne_adverse_pregoutc, not the name specified in the Excel file. Mahima
+. // sent a new version of that file.
+. 
+{txt}end of do-file
+
+{com}. 
+. // Do estimation.
+. do estimation/estimation
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. // Do a very basic analysis that ignores all issue such as missing data.
+. melogit y arm i.strat_var || clusterid:, or
+{res}{txt}
+Fitting fixed-effects model:
+
+Iteration 0:{space 3}log likelihood = {res:-2676.5877}  
+Iteration 1:{space 3}log likelihood = {res:-2670.4155}  
+Iteration 2:{space 3}log likelihood = {res:-2670.4123}  
+Iteration 3:{space 3}log likelihood = {res:-2670.4123}  
+
+Refining starting values:
+
+Grid node 0:{space 3}log likelihood = {res:-2743.7375}
+
+Fitting full model:
+{res}
+{txt}Iteration 0:{space 3}log likelihood = {res:-2743.7375}  (not concave)
+Iteration 1:{space 3}log likelihood = {res:-2706.4441}  (not concave)
+Iteration 2:{space 3}log likelihood = {res: -2671.852}  
+Iteration 3:{space 3}log likelihood = {res:-2670.5103}  
+Iteration 4:{space 3}log likelihood = {res:-2670.4234}  
+Iteration 5:{space 3}log likelihood = {res:-2670.4157}  (backed up)
+Iteration 6:{space 3}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 7:{space 3}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 8:{space 3}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 9:{space 3}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 10:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 11:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 12:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 13:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 14:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 15:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 16:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 17:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 18:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 19:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 20:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 21:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 22:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 23:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 24:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 25:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 26:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 27:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 28:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 29:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 30:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 31:{space 2}log likelihood = {res:-2670.4138}  (backed up)
+Iteration 32:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 33:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 34:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 35:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 36:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 37:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 38:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 39:{space 2}log likelihood = {res:-2670.4138}  (not concave)
+Iteration 40:{space 2}log likelihood = {res:-2670.4138}  
+Iteration 41:{space 2}log likelihood = {res:-2670.4127}  (not concave)
+Iteration 42:{space 2}log likelihood = {res:-2670.4127}  (not concave)
+Iteration 43:{space 2}log likelihood = {res:-2670.4126}  
+Iteration 44:{space 2}log likelihood = {res:-2670.4123}  
+Iteration 45:{space 2}log likelihood = {res:-2670.4123}  
+{res}
+{txt}Mixed-effects logistic regression{col 49}{txt}Number of obs{col 67}={res}{col 69}     4,214
+{txt}Group variable: {col 23}{res}clusterid{col 49}{txt}Number of groups{col 67}={res}{col 69}       119
+
+{col 49}{txt}Obs per group:
+{col 63}{txt}min{col 67}={res}{col 69}         6
+{col 63}{txt}avg{col 67}={res}{col 69}      35.4
+{col 63}{txt}max{col 67}={res}{col 69}       139
+
+{txt}Integration method: {col 21}{res}mvaghermite{col 49}{txt}Integration pts.{col 67}={col 78}{res}7
+
+{col 49}{txt}Wald chi2({res}5{txt}){col 67}={res}{col 70}    11.43
+{txt}Log likelihood = {res}-2670.4123{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0435
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y{col 14}{c |} Odds Ratio{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}arm {c |}{col 14}{res}{space 2}     0.99{col 26}{space 2}     0.07{col 37}{space 1}   -0.16{col 46}{space 3} 0.88{col 54}{space 4}     0.87{col 67}{space 3}     1.13
+{txt}{space 12} {c |}
+{space 3}strat_var {c |}
+{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.15{col 26}{space 2}     0.13{col 37}{space 1}    1.31{col 46}{space 3} 0.19{col 54}{space 4}     0.93{col 67}{space 3}     1.43
+{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.85{col 26}{space 2}     0.13{col 37}{space 1}   -1.11{col 46}{space 3} 0.27{col 54}{space 4}     0.63{col 67}{space 3}     1.14
+{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.07{col 26}{space 2}     0.12{col 37}{space 1}    0.62{col 46}{space 3} 0.53{col 54}{space 4}     0.86{col 67}{space 3}     1.35
+{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.26{col 26}{space 2}     0.14{col 37}{space 1}    2.10{col 46}{space 3} 0.04{col 54}{space 4}     1.02{col 67}{space 3}     1.57
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.45{col 26}{space 2}     0.06{col 37}{space 1}   -5.91{col 46}{space 3} 0.00{col 54}{space 4}     0.35{col 67}{space 3}     0.59
+{txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}{res}clusterid   {col 14}{txt}{c |}
+{space 3}var(_cons){c |}{col 14}{res}{space 2}     0.00{col 26}{space 2}     0.00{col 54}{space 4}        .{col 67}{space 3}        .
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
+{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
+{txt}LR test vs. logistic model: {txt}chi2({res}0{txt}) ={res} 0.00{col 59}{txt}Prob > chi2 ={res}{col 73}     .
+
+{txt}{p 0 6 4 79}Note: {help j_mixedlr##|_new:LR test is conservative} and provided only for reference.{p_end}
+
+{com}. 
 . 
 {txt}end of do-file
 
