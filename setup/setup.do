@@ -1,5 +1,8 @@
 version 16.1
 
+// Set the random number generator seed.
+set seed 1234
+
 // Set up Stata's path to use the "packages" directory for add-on packages.
 net set ado "./packages"
 sysdir set PERSONAL "./packages"

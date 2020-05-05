@@ -3,13 +3,17 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 5 May 2020, 12:11:34
+ {txt}opened on:  {res} 5 May 2020, 13:51:51
 {txt}
 {com}. 
 . // Set up Stata.
 . do setup/setup
 {txt}
 {com}. version 16.1
+{txt}
+{com}. 
+. // Set the random number generator seed.
+. set seed 1234
 {txt}
 {com}. 
 . // Set up Stata's path to use the "packages" directory for add-on packages.
@@ -62,15 +66,19 @@
 {txt}
 {com}. 
 . // Convert the arm variable from string to integer.
-. encode prettyExposure, generate(arm) label(Arm)
+. encode prettyExposure, generate(arm)
 {txt}
-{com}. drop prettyExposure
+{com}. label variable arm Arm
+{txt}
+{com}. local variables `variables' arm
 {txt}
 {com}. 
 . // Convert the stratification variable from string to integer.
-. encode bookorgdistricthashed, generate(strat_var) label(District)
+. encode bookorgdistricthashed, generate(strat_var)
 {txt}
-{com}. drop bookorgdistricthashed
+{com}. label variable strat_var District
+{txt}
+{com}. local variables `variables' strat_var
 {txt}
 {com}. 
 . // Rename and label the cluster identifier variable.
@@ -78,35 +86,44 @@
 {res}{txt}
 {com}. label variable clusterid Cluster
 {txt}
+{com}. local variables `variables' clusterid
+{txt}
 {com}. 
-. // The following is temporary. We re-compute the composite outcome and verify
-. // that we have done so correctly.
-. 
+. // Rename the components of the composite outcome.
+. rename anemia_at_birth              y1
+{res}{txt}
+{com}. label variable                      y1 "Anemia at birth"
+{txt}
+{com}. rename severehypertension_at_birth  y2
+{res}{txt}
+{com}. label variable                      y2 "Severe hypertension at birth"
+{txt}
+{com}. rename sga_undetected_at_birth      y3
+{res}{txt}
+{com}. label variable                      y3 "SGA undetected at birth"
+{txt}
+{com}. rename malpres_undetected           y4
+{res}{txt}
+{com}. label variable                      y4 "Malpresentation undetected at birth"
+{txt}
+{com}. rename lga                          y5
+{res}{txt}
+{com}. label variable                      y5 "Large for gestational age"
+{txt}
+{com}. 
 . // The composite outcome is defined as follows. If:
 . // * All of the outcomes are false -> composite outcome is false;
 . // * At least one of the outcomes is true -> composite outcome is true;
 . // * One or more of the outcomes are missing and all others are false
 . //   -> composite outcome is missing.
-. 
-. local y1 anemia_at_birth             
-{txt}
-{com}. local y2 severehypertension_at_birth 
-{txt}
-{com}. local y3 sga_undetected_at_birth              
-{txt}
-{com}. local y4 malpres_undetected          
-{txt}
-{com}. local y5 lga
-{txt}
-{com}. 
 . tempvar all_false
 {txt}
-{com}. generate `all_false' = (`y1'==0) & (`y2'==0) & (`y3'==0) & (`y4'==0) & (`y5'==0)
+{com}. generate `all_false' = (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
 {txt}
 {com}. 
 . tempvar one_true
 {txt}
-{com}. generate `one_true'  = (`y1'==1) | (`y2'==1) | (`y3'==1) | (`y4'==1) | (`y5'==1)
+{com}. generate `one_true'  = (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
 {txt}
 {com}. 
 . generate y = .
@@ -118,6 +135,11 @@
 {com}. replace  y = 1 if `one_true'
 {txt}(1,396 real changes made)
 
+{com}. label variable y "Adverse pregnancy outcome"
+{txt}
+{com}. 
+. local variables `variables' y*
+{txt}
 {com}. 
 . // Verify that we can correctly recompute the composite outcome.
 . count if y == TrialOne_adverse_pregoutc
@@ -126,10 +148,9 @@
 {com}. assert r(N) == _N
 {txt}
 {com}. 
-. 
-. // NOTE: The above correctly defines the outcome, but it is called
-. // TrialOne_adverse_pregoutc, not the name specified in the Excel file. Mahima
-. // sent a new version of that file.
+. keep `variables'
+{txt}
+{com}. 
 . 
 {txt}end of do-file
 
@@ -140,6 +161,8 @@
 {com}. version 16.1
 {txt}
 {com}. 
+. //mi set mlong
+. 
 . // Do a very basic analysis that ignores all issue such as missing data.
 . melogit y arm i.strat_var || clusterid:, or
 {res}{txt}
@@ -238,6 +261,15 @@ Iteration 45:{space 2}log likelihood = {res:-2670.4123}
 {txt}{p 0 6 4 79}Note: {help j_mixedlr##|_new:LR test is conservative} and provided only for reference.{p_end}
 
 {com}. 
+. // TODO: Note that if we replace arm with i.arm, the model does not fit but gives
+. // identical or very similar estimates. I.e., there is a problem that gets
+. // introduced when we convert arm into an indicator. The estimates for the two
+. // approaches are identical except for the constant term, whose CI is slightly
+. // wider under the arm (rather than i.arm) approach. The interpretation of the
+. // arm coefficient is that it is the OR for a unit increase in "arm", i.e.,
+. // it corresponds to the arm=2 (the D condition). So, perhaps rename the
+. // variable to be something like "treat_D".
+. 
 . 
 {txt}end of do-file
 
@@ -259,5 +291,137 @@ Iteration 45:{space 2}log likelihood = {res:-2670.4123}
 {com}. 
 . 
 {txt}end of do-file
+
+{com}. codebook
+
+{txt}{hline}
+{res}clusterid{right:Cluster}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}int{txt})
+
+{col 18}range:  [{res}1{txt},{res}120{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}119{col 51}{txt}missing .:  {res}0{txt}/{res}6,367
+
+{txt}{col 19}mean:{res}{col 26} 76.6535
+{txt}{col 15}std. dev:{res}{col 26} 34.2427
+
+{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
+{res}{col 27}      22{col 37}      52{col 47}      84{col 57}     108{col 67}     117
+
+{txt}{hline}
+{res}y1{right:Anemia at birth}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}byte{txt})
+
+{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}1,743{txt}/{res}6,367
+
+{txt}{col 13}tabulation:  Freq.  Value
+{col 21}{res}     4,543{col 33}0
+{col 21}        81{col 33}1
+{col 21}     1,743{col 33}.
+
+{txt}{hline}
+{res}y2{right:Severe hypertension at birth}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}byte{txt})
+
+{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}2,258{txt}/{res}6,367
+
+{txt}{col 13}tabulation:  Freq.  Value
+{col 21}{res}     4,083{col 33}0
+{col 21}        26{col 33}1
+{col 21}     2,258{col 33}.
+
+{txt}{hline}
+{res}y3{right:SGA undetected at birth}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}byte{txt})
+
+{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}752{txt}/{res}6,367
+
+{txt}{col 13}tabulation:  Freq.  Value
+{col 21}{res}     5,164{col 33}0
+{col 21}       451{col 33}1
+{col 21}       752{col 33}.
+
+{txt}{hline}
+{res}y4{right:Malpresentation undetected at birth}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}float{txt})
+
+{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}875{txt}/{res}6,367
+
+{txt}{col 13}tabulation:  Freq.  Value
+{col 21}{res}     5,318{col 33}0
+{col 21}       174{col 33}1
+{col 21}       875{col 33}.
+
+{txt}{hline}
+{res}y5{right:Large for gestational age}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}byte{txt})
+
+{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}752{txt}/{res}6,367
+
+{txt}{col 13}tabulation:  Freq.  Value
+{col 21}{res}     4,885{col 33}0
+{col 21}       730{col 33}1
+{col 21}       752{col 33}.
+
+{txt}{hline}
+{res}arm{right:Arm}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}long{txt})
+{ralign 22:label}:  {res:arm}
+
+{col 18}range:  [{res}1{txt},{res}2{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}0{txt}/{res}6,367
+
+{txt}{col 13}tabulation:  Freq.   Numeric  Label
+{col 21}{res}     3,220{col 33}       1{col 43}{txt}C
+{col 21}{res}     3,147{col 33}       2{col 43}{txt}D
+
+{txt}{hline}
+{res}strat_var{right:District}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}long{txt})
+{ralign 22:label}:  {res:strat_var}
+
+{col 18}range:  [{res}1{txt},{res}5{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}5{col 51}{txt}missing .:  {res}0{txt}/{res}6,367
+
+{txt}{col 13}tabulation:  Freq.   Numeric  Label
+{col 21}{res}       862{col 33}       1{col 43}{txt}5dbc98
+{col 21}{res}     1,777{col 33}       2{col 43}{txt}8d9c30
+{col 21}{res}       541{col 33}       3{col 43}{txt}9d5ed6
+{col 21}{res}     1,424{col 33}       4{col 43}{txt}e1e1d3
+{col 21}{res}     1,763{col 33}       5{col 43}{txt}ff4457
+
+{txt}{hline}
+{res}y{right:Adverse pregnancy outcome}
+{txt}{hline}
+
+{col 19}type:  numeric ({res}float{txt})
+
+{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
+{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}2,153{txt}/{res}6,367
+
+{txt}{col 13}tabulation:  Freq.  Value
+{col 21}{res}     2,818{col 33}0
+{col 21}     1,396{col 33}1
+{col 21}     2,153{col 33}.
 
 {com}. 
