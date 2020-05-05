@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 5 May 2020, 13:51:51
+ {txt}opened on:  {res} 5 May 2020, 14:36:46
 {txt}
 {com}. 
 . // Set up Stata.
@@ -65,12 +65,20 @@
 {com}. assert r(datasignature) == "`signature'"
 {txt}
 {com}. 
+. // Globals that specify the passive, imputed, and regular variables.
+. global passives
+{txt}
+{com}. global imputeds
+{txt}
+{com}. global regulars
+{txt}
+{com}. 
 . // Convert the arm variable from string to integer.
 . encode prettyExposure, generate(arm)
 {txt}
 {com}. label variable arm Arm
 {txt}
-{com}. local variables `variables' arm
+{com}. global regulars $regulars arm
 {txt}
 {com}. 
 . // Convert the stratification variable from string to integer.
@@ -78,7 +86,7 @@
 {txt}
 {com}. label variable strat_var District
 {txt}
-{com}. local variables `variables' strat_var
+{com}. global regulars $regulars strat_var
 {txt}
 {com}. 
 . // Rename and label the cluster identifier variable.
@@ -86,7 +94,7 @@
 {res}{txt}
 {com}. label variable clusterid Cluster
 {txt}
-{com}. local variables `variables' clusterid
+{com}. global regulars $regulars clusterid
 {txt}
 {com}. 
 . // Rename the components of the composite outcome.
@@ -109,6 +117,8 @@
 {com}. rename lga                          y5
 {res}{txt}
 {com}. label variable                      y5 "Large for gestational age"
+{txt}
+{com}. global imputeds $imputeds y1-y5
 {txt}
 {com}. 
 . // The composite outcome is defined as follows. If:
@@ -137,8 +147,7 @@
 
 {com}. label variable y "Adverse pregnancy outcome"
 {txt}
-{com}. 
-. local variables `variables' y*
+{com}. global passives $passives y
 {txt}
 {com}. 
 . // Verify that we can correctly recompute the composite outcome.
@@ -148,7 +157,56 @@
 {com}. assert r(N) == _N
 {txt}
 {com}. 
-. keep `variables'
+. // Verify that all of the regular variables are complete, and that each of the
+. // variables to be imputed contain missing values.
+. misstable summarize $regulars
+{txt}(variables nonmissing or string)
+
+{com}. assert r(N_eq_dot) + r(N_gt_dot) == .
+{txt}
+{com}. foreach x of varlist $imputeds {c -(}
+{txt}  2{com}.   misstable summarize `x'
+{txt}  3{com}.   assert r(N_eq_dot) + r(N_gt_dot) != .
+{txt}  4{com}. {c )-}
+{txt}{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y1 {c |}{res}     1,743{txt}{space 10}{res}     4,624{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y2 {c |}{res}     2,258{txt}{space 10}{res}     4,109{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y3 {c |}{res}       752{txt}{space 10}{res}     5,615{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y4 {c |}{res}       875{txt}{space 10}{res}     5,492{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y5 {c |}{res}       752{txt}{space 10}{res}     5,615{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+
+{com}. 
+. // Keep only the variables of interest.
+. keep $passives $imputeds $regulars
 {txt}
 {com}. 
 . 
@@ -161,106 +219,22 @@
 {com}. version 16.1
 {txt}
 {com}. 
-. //mi set mlong
-. 
-. // Do a very basic analysis that ignores all issue such as missing data.
-. melogit y arm i.strat_var || clusterid:, or
+. // Set up the imputation and the roles of the variables.
+. mi set mlong
+{txt}
+{com}. mi register passive $passives
 {res}{txt}
-Fitting fixed-effects model:
+{com}. mi register imputed $imputeds
+{res}{txt}{p}
+(2623 {it:m}=0 obs. now marked as incomplete)
+{p_end}
 
-Iteration 0:{space 3}log likelihood = {res:-2676.5877}  
-Iteration 1:{space 3}log likelihood = {res:-2670.4155}  
-Iteration 2:{space 3}log likelihood = {res:-2670.4123}  
-Iteration 3:{space 3}log likelihood = {res:-2670.4123}  
-
-Refining starting values:
-
-Grid node 0:{space 3}log likelihood = {res:-2743.7375}
-
-Fitting full model:
-{res}
-{txt}Iteration 0:{space 3}log likelihood = {res:-2743.7375}  (not concave)
-Iteration 1:{space 3}log likelihood = {res:-2706.4441}  (not concave)
-Iteration 2:{space 3}log likelihood = {res: -2671.852}  
-Iteration 3:{space 3}log likelihood = {res:-2670.5103}  
-Iteration 4:{space 3}log likelihood = {res:-2670.4234}  
-Iteration 5:{space 3}log likelihood = {res:-2670.4157}  (backed up)
-Iteration 6:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 7:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 8:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 9:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 10:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 11:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 12:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 13:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 14:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 15:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 16:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 17:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 18:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 19:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 20:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 21:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 22:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 23:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 24:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 25:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 26:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 27:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 28:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 29:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 30:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 31:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 32:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 33:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 34:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 35:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 36:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 37:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 38:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 39:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 40:{space 2}log likelihood = {res:-2670.4138}  
-Iteration 41:{space 2}log likelihood = {res:-2670.4127}  (not concave)
-Iteration 42:{space 2}log likelihood = {res:-2670.4127}  (not concave)
-Iteration 43:{space 2}log likelihood = {res:-2670.4126}  
-Iteration 44:{space 2}log likelihood = {res:-2670.4123}  
-Iteration 45:{space 2}log likelihood = {res:-2670.4123}  
-{res}
-{txt}Mixed-effects logistic regression{col 49}{txt}Number of obs{col 67}={res}{col 69}     4,214
-{txt}Group variable: {col 23}{res}clusterid{col 49}{txt}Number of groups{col 67}={res}{col 69}       119
-
-{col 49}{txt}Obs per group:
-{col 63}{txt}min{col 67}={res}{col 69}         6
-{col 63}{txt}avg{col 67}={res}{col 69}      35.4
-{col 63}{txt}max{col 67}={res}{col 69}       139
-
-{txt}Integration method: {col 21}{res}mvaghermite{col 49}{txt}Integration pts.{col 67}={col 78}{res}7
-
-{col 49}{txt}Wald chi2({res}5{txt}){col 67}={res}{col 70}    11.43
-{txt}Log likelihood = {res}-2670.4123{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0435
-{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}           y{col 14}{c |} Odds Ratio{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
-{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 9}arm {c |}{col 14}{res}{space 2}     0.99{col 26}{space 2}     0.07{col 37}{space 1}   -0.16{col 46}{space 3} 0.88{col 54}{space 4}     0.87{col 67}{space 3}     1.13
-{txt}{space 12} {c |}
-{space 3}strat_var {c |}
-{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.15{col 26}{space 2}     0.13{col 37}{space 1}    1.31{col 46}{space 3} 0.19{col 54}{space 4}     0.93{col 67}{space 3}     1.43
-{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.85{col 26}{space 2}     0.13{col 37}{space 1}   -1.11{col 46}{space 3} 0.27{col 54}{space 4}     0.63{col 67}{space 3}     1.14
-{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.07{col 26}{space 2}     0.12{col 37}{space 1}    0.62{col 46}{space 3} 0.53{col 54}{space 4}     0.86{col 67}{space 3}     1.35
-{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.26{col 26}{space 2}     0.14{col 37}{space 1}    2.10{col 46}{space 3} 0.04{col 54}{space 4}     1.02{col 67}{space 3}     1.57
-{txt}{space 12} {c |}
-{space 7}_cons {c |}{col 14}{res}{space 2}     0.45{col 26}{space 2}     0.06{col 37}{space 1}   -5.91{col 46}{space 3} 0.00{col 54}{space 4}     0.35{col 67}{space 3}     0.59
-{txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}{res}clusterid   {col 14}{txt}{c |}
-{space 3}var(_cons){c |}{col 14}{res}{space 2}     0.00{col 26}{space 2}     0.00{col 54}{space 4}        .{col 67}{space 3}        .
-{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test vs. logistic model: {txt}chi2({res}0{txt}) ={res} 0.00{col 59}{txt}Prob > chi2 ={res}{col 73}     .
-
-{txt}{p 0 6 4 79}Note: {help j_mixedlr##|_new:LR test is conservative} and provided only for reference.{p_end}
-
+{com}. mi register regular $regulars
+{txt}
 {com}. 
+. // Do a very basic analysis that ignores all issue such as missing data.
+. //melogit y arm i.strat_var || clusterid:, or
+. 
 . // TODO: Note that if we replace arm with i.arm, the model does not fit but gives
 . // identical or very similar estimates. I.e., there is a problem that gets
 . // introduced when we convert arm into an indicator. The estimates for the two
@@ -291,137 +265,5 @@ Iteration 45:{space 2}log likelihood = {res:-2670.4123}
 {com}. 
 . 
 {txt}end of do-file
-
-{com}. codebook
-
-{txt}{hline}
-{res}clusterid{right:Cluster}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}int{txt})
-
-{col 18}range:  [{res}1{txt},{res}120{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}119{col 51}{txt}missing .:  {res}0{txt}/{res}6,367
-
-{txt}{col 19}mean:{res}{col 26} 76.6535
-{txt}{col 15}std. dev:{res}{col 26} 34.2427
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27}      22{col 37}      52{col 47}      84{col 57}     108{col 67}     117
-
-{txt}{hline}
-{res}y1{right:Anemia at birth}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}byte{txt})
-
-{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}1,743{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}     4,543{col 33}0
-{col 21}        81{col 33}1
-{col 21}     1,743{col 33}.
-
-{txt}{hline}
-{res}y2{right:Severe hypertension at birth}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}byte{txt})
-
-{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}2,258{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}     4,083{col 33}0
-{col 21}        26{col 33}1
-{col 21}     2,258{col 33}.
-
-{txt}{hline}
-{res}y3{right:SGA undetected at birth}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}byte{txt})
-
-{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}752{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}     5,164{col 33}0
-{col 21}       451{col 33}1
-{col 21}       752{col 33}.
-
-{txt}{hline}
-{res}y4{right:Malpresentation undetected at birth}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}float{txt})
-
-{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}875{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}     5,318{col 33}0
-{col 21}       174{col 33}1
-{col 21}       875{col 33}.
-
-{txt}{hline}
-{res}y5{right:Large for gestational age}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}byte{txt})
-
-{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}752{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}     4,885{col 33}0
-{col 21}       730{col 33}1
-{col 21}       752{col 33}.
-
-{txt}{hline}
-{res}arm{right:Arm}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}long{txt})
-{ralign 22:label}:  {res:arm}
-
-{col 18}range:  [{res}1{txt},{res}2{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}0{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.   Numeric  Label
-{col 21}{res}     3,220{col 33}       1{col 43}{txt}C
-{col 21}{res}     3,147{col 33}       2{col 43}{txt}D
-
-{txt}{hline}
-{res}strat_var{right:District}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}long{txt})
-{ralign 22:label}:  {res:strat_var}
-
-{col 18}range:  [{res}1{txt},{res}5{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}5{col 51}{txt}missing .:  {res}0{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.   Numeric  Label
-{col 21}{res}       862{col 33}       1{col 43}{txt}5dbc98
-{col 21}{res}     1,777{col 33}       2{col 43}{txt}8d9c30
-{col 21}{res}       541{col 33}       3{col 43}{txt}9d5ed6
-{col 21}{res}     1,424{col 33}       4{col 43}{txt}e1e1d3
-{col 21}{res}     1,763{col 33}       5{col 43}{txt}ff4457
-
-{txt}{hline}
-{res}y{right:Adverse pregnancy outcome}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}float{txt})
-
-{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}2,153{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}     2,818{col 33}0
-{col 21}     1,396{col 33}1
-{col 21}     2,153{col 33}.
 
 {com}. 

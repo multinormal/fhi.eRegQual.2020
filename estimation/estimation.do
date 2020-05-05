@@ -1,9 +1,13 @@
 version 16.1
 
-//mi set mlong
+// Set up the imputation and the roles of the variables.
+mi set mlong
+mi register passive $passives
+mi register imputed $imputeds
+mi register regular $regulars
 
 // Do a very basic analysis that ignores all issue such as missing data.
-melogit y arm i.strat_var || clusterid:, or
+//melogit y arm i.strat_var || clusterid:, or
 
 // TODO: Note that if we replace arm with i.arm, the model does not fit but gives
 // identical or very similar estimates. I.e., there is a problem that gets

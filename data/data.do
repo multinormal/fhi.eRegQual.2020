@@ -9,20 +9,25 @@ use "`fname'", replace
 datasignature
 assert r(datasignature) == "`signature'"
 
+// Globals that specify the passive, imputed, and regular variables.
+global passives
+global imputeds
+global regulars
+
 // Convert the arm variable from string to integer.
 encode prettyExposure, generate(arm)
 label variable arm Arm
-local variables `variables' arm
+global regulars $regulars arm
 
 // Convert the stratification variable from string to integer.
 encode bookorgdistricthashed, generate(strat_var)
 label variable strat_var District
-local variables `variables' strat_var
+global regulars $regulars strat_var
 
 // Rename and label the cluster identifier variable.
 rename str_TRIAL_1_Cluster clusterid
 label variable clusterid Cluster
-local variables `variables' clusterid
+global regulars $regulars clusterid
 
 // Rename the components of the composite outcome.
 rename anemia_at_birth              y1
@@ -35,6 +40,7 @@ rename malpres_undetected           y4
 label variable                      y4 "Malpresentation undetected at birth"
 rename lga                          y5
 label variable                      y5 "Large for gestational age"
+global imputeds $imputeds y1-y5
 
 // The composite outcome is defined as follows. If:
 // * All of the outcomes are false -> composite outcome is false;
@@ -51,12 +57,21 @@ generate y = .
 replace  y = 0 if `all_false'
 replace  y = 1 if `one_true'
 label variable y "Adverse pregnancy outcome"
-
-local variables `variables' y*
+global passives $passives y
 
 // Verify that we can correctly recompute the composite outcome.
 count if y == TrialOne_adverse_pregoutc
 assert r(N) == _N
 
-keep `variables'
+// Verify that all of the regular variables are complete, and that each of the
+// variables to be imputed contain missing values.
+misstable summarize $regulars
+assert r(N_eq_dot) + r(N_gt_dot) == .
+foreach x of varlist $imputeds {
+  misstable summarize `x'
+  assert r(N_eq_dot) + r(N_gt_dot) != .
+}
+
+// Keep only the variables of interest.
+keep $passives $imputeds $regulars
 
