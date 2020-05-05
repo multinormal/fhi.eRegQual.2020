@@ -13,7 +13,9 @@ assert r(datasignature) == "`signature'"
 
 // Globals that specify the passive, imputed, and regular variables.
 global passives
-global imputeds
+global imputed_conts // Continuous variables.
+global imputed_dichs // Two-level factor variables.
+global imputed_mults // Multi-level factor variables.
 global regulars
 
 // Convert the arm variable from string to integer.
@@ -42,7 +44,7 @@ rename malpres_undetected           y4
 label variable                      y4 "Malpresentation undetected at birth"
 rename lga                          y5
 label variable                      y5 "Large for gestational age"
-global imputeds $imputeds y1-y5
+global imputed_dichs $imputed_dichs y1-y5
 
 // The composite outcome is defined as follows. If:
 // * All of the outcomes are false -> composite outcome is false;
@@ -68,31 +70,31 @@ assert r(N) == _N
 // Age.
 replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
 label variable age "Age (years)"
-global imputeds $imputeds age
+global imputed_conts $imputed_conts age
 
 // BMI.
 rename bookbmi bmi
 label variable bmi "Body mass index"
-global imputeds $imputeds bmi
+global imputed_conts $imputed_conts bmi
 
 // Education.
 label variable education "Education (years)"
-global imputeds $imputeds education
+global imputed_conts $imputed_conts education
 
 // Income.
 generate log_income = log(avgincome) // Log to approximately normalize.
 label variable log_income "Monthly household income (ILS; log scale)"
-global imputeds $imputeds log_income
+global imputed_conts $imputed_conts log_income
 
 // History of pre-eclampsia.
 rename bookhistpreecl pre_ecl
 label variable pre_ecl "History of pre-eclampsia"
-global imputeds $imputeds pre_ecl
+global imputed_dichs $imputed_dichs pre_ecl
 
 // Previous gestational diabetes mellitus.
 rename bookhistgdm gdm
 label variable gdm "History of GDM"
-global imputeds $imputeds gdm
+global imputed_dichs $imputed_dichs gdm
 
 // Lab availability.
 label variable lab_available "Lab available"
@@ -107,17 +109,17 @@ recode sourcedata_birthoutc (1 = 0 "public hospital-electronic match") ///
                             (2 = 1 "public hospital-manual match")     ///
                             (3 = 2 "private hospital"), generate(delivery_place)
 replace delivery_place = . if delivery_place == 0
-global imputeds $imputeds delivery_place
+global imputed_mults $imputed_mults delivery_place
 
 // Verify that all of the regular variables are complete, and that each of the
 // variables to be imputed contain missing values.
 misstable summarize $regulars
 assert r(N_eq_dot) + r(N_gt_dot) == .
-foreach x of varlist $imputeds {
+foreach x of varlist $imputed_conts $imputed_dichs $imputed_mults {
   misstable summarize `x'
   assert r(N_eq_dot) + r(N_gt_dot) != .
 }
 
 // Keep only the variables of interest.
-keep $passives $imputeds $regulars
+keep $passives $imputed_conts $imputed_dichs $imputed_mults $regulars
 

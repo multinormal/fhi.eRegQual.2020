@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 5 May 2020, 17:08:37
+ {txt}opened on:  {res} 5 May 2020, 17:32:51
 {txt}
 {com}. 
 . // Set up Stata.
@@ -50,6 +50,8 @@
 {com}. version 16.1
 {txt}
 {com}. 
+. // TODO: Ensure that each woman appears exactly once!
+. 
 . // Define the path to the data and the signature we expect it to have.
 . local fname "data/raw/04May2020_eRegQual birth outcomes.dta"
 {txt}
@@ -68,7 +70,11 @@
 . // Globals that specify the passive, imputed, and regular variables.
 . global passives
 {txt}
-{com}. global imputeds
+{com}. global imputed_conts // Continuous variables.
+{txt}
+{com}. global imputed_dichs // Two-level factor variables.
+{txt}
+{com}. global imputed_mults // Multi-level factor variables.
 {txt}
 {com}. global regulars
 {txt}
@@ -118,7 +124,7 @@
 {res}{txt}
 {com}. label variable                      y5 "Large for gestational age"
 {txt}
-{com}. global imputeds $imputeds y1-y5
+{com}. global imputed_dichs $imputed_dichs y1-y5
 {txt}
 {com}. 
 . // The composite outcome is defined as follows. If:
@@ -163,7 +169,7 @@
 
 {com}. label variable age "Age (years)"
 {txt}
-{com}. global imputeds $imputeds age
+{com}. global imputed_conts $imputed_conts age
 {txt}
 {com}. 
 . // BMI.
@@ -171,13 +177,13 @@
 {res}{txt}
 {com}. label variable bmi "Body mass index"
 {txt}
-{com}. global imputeds $imputeds bmi
+{com}. global imputed_conts $imputed_conts bmi
 {txt}
 {com}. 
 . // Education.
 . label variable education "Education (years)"
 {txt}
-{com}. global imputeds $imputeds education
+{com}. global imputed_conts $imputed_conts education
 {txt}
 {com}. 
 . // Income.
@@ -186,7 +192,7 @@
 
 {com}. label variable log_income "Monthly household income (ILS; log scale)"
 {txt}
-{com}. global imputeds $imputeds log_income
+{com}. global imputed_conts $imputed_conts log_income
 {txt}
 {com}. 
 . // History of pre-eclampsia.
@@ -194,7 +200,7 @@
 {res}{txt}
 {com}. label variable pre_ecl "History of pre-eclampsia"
 {txt}
-{com}. global imputeds $imputeds pre_ecl
+{com}. global imputed_dichs $imputed_dichs pre_ecl
 {txt}
 {com}. 
 . // Previous gestational diabetes mellitus.
@@ -202,7 +208,7 @@
 {res}{txt}
 {com}. label variable gdm "History of GDM"
 {txt}
-{com}. global imputeds $imputeds gdm
+{com}. global imputed_dichs $imputed_dichs gdm
 {txt}
 {com}. 
 . // Lab availability.
@@ -226,7 +232,7 @@
 {com}. replace delivery_place = . if delivery_place == 0
 {txt}(2,969 real changes made, 2,969 to missing)
 
-{com}. global imputeds $imputeds delivery_place
+{com}. global imputed_mults $imputed_mults delivery_place
 {txt}
 {com}. 
 . // Verify that all of the regular variables are complete, and that each of the
@@ -236,11 +242,39 @@
 
 {com}. assert r(N_eq_dot) + r(N_gt_dot) == .
 {txt}
-{com}. foreach x of varlist $imputeds {c -(}
+{com}. foreach x of varlist $imputed_conts $imputed_dichs $imputed_mults {c -(}
 {txt}  2{com}.   misstable summarize `x'
 {txt}  3{com}.   assert r(N_eq_dot) + r(N_gt_dot) != .
 {txt}  4{com}. {c )-}
 {txt}{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+           age {c |}{res}        69{txt}{space 10}{res}     6,298{txt}  {c |}     32         14          45
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+           bmi {c |}{res}       884{txt}{space 10}{res}     5,483{txt}  {c |}   >500   1.792822      207500
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+     education {c |}{res}       203{txt}{space 10}{res}     6,164{txt}  {c |}     25          1          24
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+    log_income {c |}{res}       404{txt}{space 10}{res}     5,963{txt}  {c |}    222  -5.926926    8.922658
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
 {col 49}{c TLC}{hline 30}
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
@@ -280,34 +314,6 @@
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-           age {c |}{res}        69{txt}{space 10}{res}     6,298{txt}  {c |}     32         14          45
-  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
-{col 64}Obs<.
-{col 49}{c TLC}{hline 30}
-{col 16}{c |}{col 49}{c |} Unique
-{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
-  {hline 13}{c +}{hline 32}{c +}{hline 30}
-           bmi {c |}{res}       884{txt}{space 10}{res}     5,483{txt}  {c |}   >500   1.792822      207500
-  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
-{col 64}Obs<.
-{col 49}{c TLC}{hline 30}
-{col 16}{c |}{col 49}{c |} Unique
-{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
-  {hline 13}{c +}{hline 32}{c +}{hline 30}
-     education {c |}{res}       203{txt}{space 10}{res}     6,164{txt}  {c |}     25          1          24
-  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
-{col 64}Obs<.
-{col 49}{c TLC}{hline 30}
-{col 16}{c |}{col 49}{c |} Unique
-{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
-  {hline 13}{c +}{hline 32}{c +}{hline 30}
-    log_income {c |}{res}       404{txt}{space 10}{res}     5,963{txt}  {c |}    222  -5.926926    8.922658
-  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
-{col 64}Obs<.
-{col 49}{c TLC}{hline 30}
-{col 16}{c |}{col 49}{c |} Unique
-{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
-  {hline 13}{c +}{hline 32}{c +}{hline 30}
        pre_ecl {c |}{res}       856{txt}{space 10}{res}     5,511{txt}  {c |}      2          0           1
   {hline 13}{c BT}{hline 32}{c BT}{hline 30}
 {col 64}Obs<.
@@ -327,7 +333,7 @@
 
 {com}. 
 . // Keep only the variables of interest.
-. keep $passives $imputeds $regulars
+. keep $passives $imputed_conts $imputed_dichs $imputed_mults $regulars
 {txt}
 {com}. 
 . 
@@ -345,7 +351,7 @@
 {txt}
 {com}. mi register passive $passives
 {res}{txt}
-{com}. mi register imputed $imputeds
+{com}. mi register imputed $imputed_conts $imputed_dichs $imputed_mults
 {res}{txt}{p}
 (4865 {it:m}=0 obs. now marked as incomplete)
 {p_end}
@@ -354,9 +360,95 @@
 {txt}
 {com}. 
 . 
-. // mi impute chained (logit) $imputeds, add(5)
-. 
-. 
+. mi impute chained (regress) $imputed_conts  ///
+>                   (logit)   $imputed_dichs  ///
+>                   (mlogit)  $imputed_mults, ///
+>                   add(5) augment
+{res}
+{txt}Conditional models:
+{p 15 21 2}
+{bf:age}: regress age education log_income i.y3 i.y5 i.gdm i.pre_ecl i.y4 bmi i.y1 i.y2 i.delivery_place
+{p_end}
+{p 9 21 2}
+{bf:education}: regress education age log_income i.y3 i.y5 i.gdm i.pre_ecl i.y4 bmi i.y1 i.y2 i.delivery_place
+{p_end}
+{p 8 21 2}
+{bf:log_income}: regress log_income age education i.y3 i.y5 i.gdm i.pre_ecl i.y4 bmi i.y1 i.y2 i.delivery_place
+{p_end}
+{p 16 21 2}
+{bf:y3}: logit y3 age education log_income i.y5 i.gdm i.pre_ecl i.y4 bmi i.y1 i.y2 i.delivery_place , augment
+{p_end}
+{p 16 21 2}
+{bf:y5}: logit y5 age education log_income i.y3 i.gdm i.pre_ecl i.y4 bmi i.y1 i.y2 i.delivery_place , augment
+{p_end}
+{p 15 21 2}
+{bf:gdm}: logit gdm age education log_income i.y3 i.y5 i.pre_ecl i.y4 bmi i.y1 i.y2 i.delivery_place , augment
+{p_end}
+{p 11 21 2}
+{bf:pre_ecl}: logit pre_ecl age education log_income i.y3 i.y5 i.gdm i.y4 bmi i.y1 i.y2 i.delivery_place , augment
+{p_end}
+{p 16 21 2}
+{bf:y4}: logit y4 age education log_income i.y3 i.y5 i.gdm i.pre_ecl bmi i.y1 i.y2 i.delivery_place , augment
+{p_end}
+{p 15 21 2}
+{bf:bmi}: regress bmi age education log_income i.y3 i.y5 i.gdm i.pre_ecl i.y4 i.y1 i.y2 i.delivery_place
+{p_end}
+{p 16 21 2}
+{bf:y1}: logit y1 age education log_income i.y3 i.y5 i.gdm i.pre_ecl i.y4 bmi i.y2 i.delivery_place , augment
+{p_end}
+{p 16 21 2}
+{bf:y2}: logit y2 age education log_income i.y3 i.y5 i.gdm i.pre_ecl i.y4 bmi i.y1 i.delivery_place , augment
+{p_end}
+{p 4 21 2}
+{bf:delivery_place}: mlogit delivery_place age education log_income i.y3 i.y5 i.gdm i.pre_ecl i.y4 bmi i.y1 i.y2 , augment
+{p_end}
+
+{res}{txt}Performing chained iterations ...
+{res}{txt}
+Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
+{txt}Chained equations{txt}{col 45}{ralign 12:added }= {res}       5
+{txt}Imputed: {it:m}=1 through {it:m}=5{txt}{col 45}{ralign 12:updated }= {res}       0
+
+{txt}Initialization: {res}monotone{txt}{col 45}{ralign 12:Iterations }= {res}      50
+{txt}{col 45}{ralign 12:burn-in }= {res}      10
+
+{txt}{p 15 15 2}{bf:age}: linear regression{p_end}
+{txt}{p 15 15 2}{bf:bmi}: linear regression{p_end}
+{txt}{p 9 15 2}{bf:education}: linear regression{p_end}
+{txt}{p 8 15 2}{bf:log_income}: linear regression{p_end}
+{txt}{p 16 15 2}{bf:y1}: augmented logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y2}: augmented logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y3}: augmented logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y4}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y5}: augmented logistic regression{p_end}
+{txt}{p 11 15 2}{bf:pre_ecl}: augmented logistic regression{p_end}
+{txt}{p 15 15 2}{bf:gdm}: logistic regression{p_end}
+{txt}{p 4 15 2}{bf:delivery_place}: multinomial logistic regression{p_end}
+
+{txt}{hline 19}{c TT}{hline 35}{hline 11}
+{txt}{col 20}{c |}{center 46:  Observations per {it:m}}
+{txt}{col 20}{c LT}{hline 35}{c TT}{hline 10}
+{txt}{col 11}Variable {c |}{ralign 12:Complete }{ralign 13:Incomplete }{ralign 10:Imputed }{c |}{ralign 10:Total}
+{hline 19}{c +}{hline 35}{c +}{hline 10}
+{txt}{ralign 19:age }{c |}{res}       6298           69        69 {txt}{c |}{res}      6367
+{txt}{ralign 19:bmi }{c |}{res}       5483          884       884 {txt}{c |}{res}      6367
+{txt}{ralign 19:education }{c |}{res}       6164          203       203 {txt}{c |}{res}      6367
+{txt}{ralign 19:log_income }{c |}{res}       5963          404       404 {txt}{c |}{res}      6367
+{txt}{ralign 19:y1 }{c |}{res}       4624         1743      1743 {txt}{c |}{res}      6367
+{txt}{ralign 19:y2 }{c |}{res}       4109         2258      2258 {txt}{c |}{res}      6367
+{txt}{ralign 19:y3 }{c |}{res}       5615          752       752 {txt}{c |}{res}      6367
+{txt}{ralign 19:y4 }{c |}{res}       5492          875       875 {txt}{c |}{res}      6367
+{txt}{ralign 19:y5 }{c |}{res}       5615          752       752 {txt}{c |}{res}      6367
+{txt}{ralign 19:pre_ecl }{c |}{res}       5511          856       856 {txt}{c |}{res}      6367
+{txt}{ralign 19:gdm }{c |}{res}       5515          852       852 {txt}{c |}{res}      6367
+{txt}{ralign 19:delivery_place }{c |}{res}       3398         2969      2969 {txt}{c |}{res}      6367
+{txt}{hline 19}{c BT}{hline 35}{c BT}{hline 10}
+{p 0 1 1 66}(complete + incomplete = total; imputed is the minimum across {it:m}
+ of the number of filled-in observations.){p_end}
+{txt}
+{p 0 9 9 77}Warning: the sets of predictors of the imputation model {help mi_omit_note:vary across imputations or iterations}{p_end}
+
+{com}. 
 . // Do a very basic analysis that ignores all issue such as missing data.
 . //melogit y arm i.strat_var || clusterid:, or
 . 

@@ -3,11 +3,18 @@ version 16.1
 // Set up the imputation and the roles of the variables.
 mi set mlong
 mi register passive $passives
-mi register imputed $imputeds
+mi register imputed $imputed_conts $imputed_dichs $imputed_mults
 mi register regular $regulars
 
 
-// mi impute chained (logit) $imputeds, add(5)
+mi impute chained (regress) $imputed_conts  ///
+                  (logit)   $imputed_dichs  ///
+                  (mlogit)  $imputed_mults, ///
+                  add(5) augment
+
+// TODO: The above runs, but the predictors used in each imputation are not the
+// same, possibly due to collinearity. Run "help mi_omit_note" to learn what to
+// do.
 
 
 // Do a very basic analysis that ignores all issue such as missing data.
