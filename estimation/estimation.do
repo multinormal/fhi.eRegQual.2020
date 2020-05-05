@@ -6,6 +6,10 @@ mi register passive $passives
 mi register imputed $imputeds
 mi register regular $regulars
 
+
+// mi impute chained (logit) $imputeds, add(5)
+
+
 // Do a very basic analysis that ignores all issue such as missing data.
 //melogit y arm i.strat_var || clusterid:, or
 

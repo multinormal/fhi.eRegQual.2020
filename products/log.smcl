@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 5 May 2020, 14:36:46
+ {txt}opened on:  {res} 5 May 2020, 17:08:37
 {txt}
 {com}. 
 . // Set up Stata.
@@ -157,6 +157,78 @@
 {com}. assert r(N) == _N
 {txt}
 {com}. 
+. // Age.
+. replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
+{txt}(35 real changes made, 35 to missing)
+
+{com}. label variable age "Age (years)"
+{txt}
+{com}. global imputeds $imputeds age
+{txt}
+{com}. 
+. // BMI.
+. rename bookbmi bmi
+{res}{txt}
+{com}. label variable bmi "Body mass index"
+{txt}
+{com}. global imputeds $imputeds bmi
+{txt}
+{com}. 
+. // Education.
+. label variable education "Education (years)"
+{txt}
+{com}. global imputeds $imputeds education
+{txt}
+{com}. 
+. // Income.
+. generate log_income = log(avgincome) // Log to approximately normalize.
+{txt}(404 missing values generated)
+
+{com}. label variable log_income "Monthly household income (ILS; log scale)"
+{txt}
+{com}. global imputeds $imputeds log_income
+{txt}
+{com}. 
+. // History of pre-eclampsia.
+. rename bookhistpreecl pre_ecl
+{res}{txt}
+{com}. label variable pre_ecl "History of pre-eclampsia"
+{txt}
+{com}. global imputeds $imputeds pre_ecl
+{txt}
+{com}. 
+. // Previous gestational diabetes mellitus.
+. rename bookhistgdm gdm
+{res}{txt}
+{com}. label variable gdm "History of GDM"
+{txt}
+{com}. global imputeds $imputeds gdm
+{txt}
+{com}. 
+. // Lab availability.
+. label variable lab_available "Lab available"
+{txt}
+{com}. global regulars $regulars lab_available
+{txt}
+{com}. 
+. // Ultrasound available.
+. label variable us_available "US available"
+{txt}
+{com}. global regulars $regulars us_available
+{txt}
+{com}. 
+. // Place of delivery.
+. recode sourcedata_birthoutc (1 = 0 "public hospital-electronic match") ///
+>                             (2 = 1 "public hospital-manual match")     ///
+>                             (3 = 2 "private hospital"), generate(delivery_place)
+{txt}(6149 differences between sourcedata_birthoutc and delivery_place)
+
+{com}. replace delivery_place = . if delivery_place == 0
+{txt}(2,969 real changes made, 2,969 to missing)
+
+{com}. global imputeds $imputeds delivery_place
+{txt}
+{com}. 
 . // Verify that all of the regular variables are complete, and that each of the
 . // variables to be imputed contain missing values.
 . misstable summarize $regulars
@@ -203,6 +275,55 @@
   {hline 13}{c +}{hline 32}{c +}{hline 30}
             y5 {c |}{res}       752{txt}{space 10}{res}     5,615{txt}  {c |}      2          0           1
   {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+           age {c |}{res}        69{txt}{space 10}{res}     6,298{txt}  {c |}     32         14          45
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+           bmi {c |}{res}       884{txt}{space 10}{res}     5,483{txt}  {c |}   >500   1.792822      207500
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+     education {c |}{res}       203{txt}{space 10}{res}     6,164{txt}  {c |}     25          1          24
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+    log_income {c |}{res}       404{txt}{space 10}{res}     5,963{txt}  {c |}    222  -5.926926    8.922658
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+       pre_ecl {c |}{res}       856{txt}{space 10}{res}     5,511{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+           gdm {c |}{res}       852{txt}{space 10}{res}     5,515{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+  delivery_p~e {c |}{res}     2,969{txt}{space 10}{res}     3,398{txt}  {c |}      2          1           2
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
 
 {com}. 
 . // Keep only the variables of interest.
@@ -226,12 +347,16 @@
 {res}{txt}
 {com}. mi register imputed $imputeds
 {res}{txt}{p}
-(2623 {it:m}=0 obs. now marked as incomplete)
+(4865 {it:m}=0 obs. now marked as incomplete)
 {p_end}
 
 {com}. mi register regular $regulars
 {txt}
 {com}. 
+. 
+. // mi impute chained (logit) $imputeds, add(5)
+. 
+. 
 . // Do a very basic analysis that ignores all issue such as missing data.
 . //melogit y arm i.strat_var || clusterid:, or
 . 

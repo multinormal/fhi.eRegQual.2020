@@ -1,5 +1,7 @@
 version 16.1
 
+// TODO: Ensure that each woman appears exactly once!
+
 // Define the path to the data and the signature we expect it to have.
 local fname "data/raw/04May2020_eRegQual birth outcomes.dta"
 local signature "6367:756(27238):862839612:1580475191"
@@ -62,6 +64,50 @@ global passives $passives y
 // Verify that we can correctly recompute the composite outcome.
 count if y == TrialOne_adverse_pregoutc
 assert r(N) == _N
+
+// Age.
+replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
+label variable age "Age (years)"
+global imputeds $imputeds age
+
+// BMI.
+rename bookbmi bmi
+label variable bmi "Body mass index"
+global imputeds $imputeds bmi
+
+// Education.
+label variable education "Education (years)"
+global imputeds $imputeds education
+
+// Income.
+generate log_income = log(avgincome) // Log to approximately normalize.
+label variable log_income "Monthly household income (ILS; log scale)"
+global imputeds $imputeds log_income
+
+// History of pre-eclampsia.
+rename bookhistpreecl pre_ecl
+label variable pre_ecl "History of pre-eclampsia"
+global imputeds $imputeds pre_ecl
+
+// Previous gestational diabetes mellitus.
+rename bookhistgdm gdm
+label variable gdm "History of GDM"
+global imputeds $imputeds gdm
+
+// Lab availability.
+label variable lab_available "Lab available"
+global regulars $regulars lab_available
+
+// Ultrasound available.
+label variable us_available "US available"
+global regulars $regulars us_available
+
+// Place of delivery.
+recode sourcedata_birthoutc (1 = 0 "public hospital-electronic match") ///
+                            (2 = 1 "public hospital-manual match")     ///
+                            (3 = 2 "private hospital"), generate(delivery_place)
+replace delivery_place = . if delivery_place == 0
+global imputeds $imputeds delivery_place
 
 // Verify that all of the regular variables are complete, and that each of the
 // variables to be imputed contain missing values.
