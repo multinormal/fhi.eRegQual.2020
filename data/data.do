@@ -11,8 +11,7 @@ use "`fname'", replace
 datasignature
 assert r(datasignature) == "`signature'"
 
-// Globals that specify the passive, imputed, and regular variables.
-global passives
+// Globals that specify the imputed and regular variables.
 global imputeds
 global regulars
 
@@ -43,27 +42,6 @@ rename malpres_undetected           y4
 label variable                      y4 "Malpresentation undetected at birth"
 rename lga                          y5
 label variable                      y5 "Large for gestational age"
-
-// The composite outcome is defined as follows. If:
-// * All of the outcomes are false -> composite outcome is false;
-// * At least one of the outcomes is true -> composite outcome is true;
-// * One or more of the outcomes are missing and all others are false
-//   -> composite outcome is missing.
-tempvar all_false
-generate `all_false' = (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
-
-tempvar one_true
-generate `one_true'  = (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
-
-generate y = .
-replace  y = 0 if `all_false'
-replace  y = 1 if `one_true'
-label variable y "Adverse pregnancy outcome"
-global passives $passives y
-
-// Verify that we can correctly recompute the composite outcome.
-count if y == TrialOne_adverse_pregoutc
-assert r(N) == _N
 
 // Apply labels to the outcomes.
 label define yes_no 0 "No" 1 "Yes"
@@ -106,5 +84,5 @@ foreach x of varlist y1-y5 $imputeds {
 }
 
 // Keep only the variables of interest.
-keep y* $passives $imputeds $regulars
+keep y* $imputeds $regulars TrialOne_adverse_pregoutc
 
