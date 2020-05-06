@@ -13,7 +13,7 @@ assert r(datasignature) == "`signature'"
 
 // Globals that specify the passive, imputed, and regular variables.
 global passives
-global imputed
+global imputeds
 global regulars
 
 // Convert the arm variable from string to integer.
@@ -72,21 +72,21 @@ label values y* yes_no
 // Age.
 replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
 label variable age "Age (years)"
-global imputed $imputed age
+global imputeds $imputeds age
 
 // BMI.
 rename bookbmi bmi
 label variable bmi "Body mass index"
-global imputed $imputed bmi
+global imputeds $imputeds bmi
 
 // Education.
 label variable education "Education (years)"
-global imputed $imputed education
+global imputeds $imputeds education
 
 // Income.
 generate log_income = log(avgincome) // Log to approximately normalize.
 label variable log_income "Monthly household income (ILS; log scale)"
-global imputed $imputed log_income
+global imputeds $imputeds log_income
 
 // Lab availability.
 label variable lab_available "Lab available"
@@ -100,11 +100,11 @@ global regulars $regulars us_available
 // variables to be imputed contain missing values.
 misstable summarize $regulars
 assert r(N_eq_dot) + r(N_gt_dot) == .
-foreach x of varlist y1-y5 $imputed {
+foreach x of varlist y1-y5 $imputeds {
   misstable summarize `x'
   assert r(N_eq_dot) + r(N_gt_dot) != .
 }
 
 // Keep only the variables of interest.
-keep y* $passives $imputed $regulars
+keep y* $passives $imputeds $regulars
 

@@ -4,7 +4,7 @@ version 16.1
 mi set mlong
 
 mi register passive $passives
-mi register imputed $imputed_conts y1-y5
+mi register imputed $imputeds y1-y5
 mi register regular $regulars
 
 // Perform imputation. Due to collinearity between the constituent outcome
@@ -14,9 +14,9 @@ mi register regular $regulars
 // imputation model. Specifying the omit option did not work as expected. It was
 // not possible to include other variables in the model for the constituent
 // outcome variables, also due to collinearity.
-mi impute chained (regress)                                  $imputed_conts ///
-                  (logit, noimputed include($imputed_conts)) y1-y5          ///
-                  = i.arm i.lab_available i.us_available,                   ///
+mi impute chained (regress)                               $imputeds ///
+                  (logit, noimputed include($imputeds))   y1-y5     ///
+                  = i.arm i.lab_available i.us_available,           ///
                   add(2)
 
 // Do a very basic analysis that ignores all issue such as missing data.
