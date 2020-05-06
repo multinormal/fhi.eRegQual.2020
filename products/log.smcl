@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 6 May 2020, 15:09:41
+ {txt}opened on:  {res} 6 May 2020, 15:22:14
 {txt}
 {com}. 
 . // Set up Stata.
@@ -356,7 +356,7 @@
 {com}. 
 . mi register passive $passives
 {res}{txt}
-{com}. mi register imputed y1-y5 age bmi education log_income
+{com}. mi register imputed $imputed_conts y1-y5
 {res}{txt}{p}
 (3365 {it:m}=0 obs. now marked as incomplete)
 {p_end}
@@ -364,25 +364,15 @@
 {com}. mi register regular $regulars
 {txt}
 {com}. 
-. // mi register passive $passives
-. // mi register imputed y1 y2 age bmi education log_income // pre_ecl // $imputed_conts $imputed_dichs $imputed_mults
-. // mi register regular $regulars
-. 
-. 
-. // TODO: The dochotomous variables seem to cause collinearity problems, so we
-. // should probably simply not use them in the imputation.
-. 
-. // NOTE: The noimputed option was necessary to ensure that the predictors
-. // included in the imputation models did not vary across imputations due to
-. // collinearity between them. However, this removes all the interesting
-. // variables!
-. 
+. // Perform imputation. Due to collinearity between the constituent outcome
+. // variables y1-y5, these variables are exluded as predictors for one another.
+. // This is achieved by specifying the noimputed option, followed by the include
+. // option that explicityly lists the imputed variables to include in the
+. // imputation model. Specifying the omit option did not work as expected. It was
+. // not possible to include other variables in the model for the constituent
+. // outcome variables, also due to collinearity.
 . mi impute chained (regress) $imputed_conts ///
->                   (logit, noimputed include(age bmi education log_income)) y1-y5 ///
->                   /// (logit, omit(i.y1)) y2 ///
->                   /// (logit) pre_ecl ///
->                   /// (logit) $imputed_dichs    ///
->                   /// (mlogit)  $imputed_mults = ///
+>                   (logit, noimputed include($imputed_conts)) y1-y5 ///
 >                   = i.arm i.lab_available i.us_available, ///  // strat_var clusterid lab_available us_available, /// $regulars, ///
 >                   add(2) augment noisily `dryrun'
 {res}
@@ -7861,11 +7851,6 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       2
  of the number of filled-in observations.){p_end}
 
 {com}. 
-. // TODO: The above runs, but the predictors used in each imputation are not the
-. // same, possibly due to collinearity. Run "help mi_omit_note" to learn what to
-. // do.
-. 
-. 
 . // Do a very basic analysis that ignores all issue such as missing data.
 . //melogit y arm i.strat_var || clusterid:, or
 . 

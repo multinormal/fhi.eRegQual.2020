@@ -4,25 +4,18 @@ version 16.1
 mi set mlong
 
 mi register passive $passives
-mi register imputed y1-y5 age bmi education log_income
+mi register imputed $imputed_conts y1-y5
 mi register regular $regulars
-
-// mi register passive $passives
-// mi register imputed y1 y2 age bmi education log_income // pre_ecl // $imputed_conts $imputed_dichs $imputed_mults
-// mi register regular $regulars
-
 
 // Perform imputation. Due to collinearity between the constituent outcome
 // variables y1-y5, these variables are exluded as predictors for one another.
 // This is achieved by specifying the noimputed option, followed by the include
 // option that explicityly lists the imputed variables to include in the
-// imputation model. Specifying the omit option did not work as expected.
+// imputation model. Specifying the omit option did not work as expected. It was
+// not possible to include other variables in the model for the constituent
+// outcome variables, also due to collinearity.
 mi impute chained (regress) $imputed_conts ///
-                  (logit, noimputed include(age bmi education log_income)) y1-y5 ///
-                  /// (logit, omit(i.y1)) y2 ///
-                  /// (logit) pre_ecl ///
-                  /// (logit) $imputed_dichs    ///
-                  /// (mlogit)  $imputed_mults = ///
+                  (logit, noimputed include($imputed_conts)) y1-y5 ///
                   = i.arm i.lab_available i.us_available, ///  // strat_var clusterid lab_available us_available, /// $regulars, ///
                   add(2) augment noisily `dryrun'
 
