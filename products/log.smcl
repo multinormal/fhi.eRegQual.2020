@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 6 May 2020, 15:23:54
+ {txt}opened on:  {res} 6 May 2020, 15:47:52
 {txt}
 {com}. 
 . // Set up Stata.
@@ -70,11 +70,7 @@
 . // Globals that specify the passive, imputed, and regular variables.
 . global passives
 {txt}
-{com}. global imputed_conts // Continuous variables.
-{txt}
-{com}. global imputed_dichs // Two-level factor variables.
-{txt}
-{com}. global imputed_mults // Multi-level factor variables.
+{com}. global imputed
 {txt}
 {com}. global regulars
 {txt}
@@ -126,8 +122,6 @@
 {res}{txt}
 {com}. label variable                      y5 "Large for gestational age"
 {txt}
-{com}. global imputed_dichs $imputed_dichs
-{txt}
 {com}. 
 . // The composite outcome is defined as follows. If:
 . // * All of the outcomes are false -> composite outcome is false;
@@ -177,7 +171,7 @@
 
 {com}. label variable age "Age (years)"
 {txt}
-{com}. global imputed_conts $imputed_conts age
+{com}. global imputed $imputed age
 {txt}
 {com}. 
 . // BMI.
@@ -185,13 +179,13 @@
 {res}{txt}
 {com}. label variable bmi "Body mass index"
 {txt}
-{com}. global imputed_conts $imputed_conts bmi
+{com}. global imputed $imputed bmi
 {txt}
 {com}. 
 . // Education.
 . label variable education "Education (years)"
 {txt}
-{com}. global imputed_conts $imputed_conts education
+{com}. global imputed $imputed education
 {txt}
 {com}. 
 . // Income.
@@ -200,23 +194,7 @@
 
 {com}. label variable log_income "Monthly household income (ILS; log scale)"
 {txt}
-{com}. global imputed_conts $imputed_conts log_income
-{txt}
-{com}. 
-. // History of pre-eclampsia.
-. rename bookhistpreecl pre_ecl
-{res}{txt}
-{com}. label variable pre_ecl "History of pre-eclampsia"
-{txt}
-{com}. global imputed_dichs $imputed_dichs pre_ecl
-{txt}
-{com}. 
-. // Previous gestational diabetes mellitus.
-. rename bookhistgdm gdm
-{res}{txt}
-{com}. label variable gdm "History of GDM"
-{txt}
-{com}. global imputed_dichs $imputed_dichs gdm
+{com}. global imputed $imputed log_income
 {txt}
 {com}. 
 . // Lab availability.
@@ -231,21 +209,11 @@
 {com}. global regulars $regulars us_available
 {txt}
 {com}. 
-. // Place of delivery.
-. rename sourcedata_birthoutc delivery_place
-{res}{txt}
-{com}. replace delivery_place = . if delivery_place == 0
-{txt}(218 real changes made, 218 to missing)
-
-{com}. // TODO: REMOVED DUE TO COLLINEARITY IN IMPUTATION: global imputed_mults $imputed_mults delivery_place
-. 
-. // Set the base values.
-. fvset base 0 $imputed_dichs lab_available us_available pre_ecl gdm
-{txt}
-{com}. // TODO: REMOVED DUE TO COLLINEARITY IN IMPUTATION: fvset base 0 $imputed_mults
-. fvset base 0 y*            
-{txt}
-{com}. 
+. //// // Set the base values.
+> //// fvset base 0 $imputed_dichs lab_available us_available pre_ecl gdm
+> //// // TODO: REMOVED DUE TO COLLINEARITY IN IMPUTATION: fvset base 0 $imputed_mults
+> //// fvset base 0 y*            
+> 
 . // Verify that all of the regular variables are complete, and that each of the
 . // variables to be imputed contain missing values.
 . misstable summarize $regulars
@@ -253,7 +221,7 @@
 
 {com}. assert r(N_eq_dot) + r(N_gt_dot) == .
 {txt}
-{com}. foreach x of varlist y1-y5 $imputed_conts $imputed_dichs $imputed_mults {c -(}
+{com}. foreach x of varlist y1-y5 $imputed {c -(}
 {txt}  2{com}.   misstable summarize `x'
 {txt}  3{com}.   assert r(N_eq_dot) + r(N_gt_dot) != .
 {txt}  4{com}. {c )-}
@@ -320,24 +288,10 @@
   {hline 13}{c +}{hline 32}{c +}{hline 30}
     log_income {c |}{res}       404{txt}{space 10}{res}     5,963{txt}  {c |}    222  -5.926926    8.922658
   {hline 13}{c BT}{hline 32}{c BT}{hline 30}
-{col 64}Obs<.
-{col 49}{c TLC}{hline 30}
-{col 16}{c |}{col 49}{c |} Unique
-{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
-  {hline 13}{c +}{hline 32}{c +}{hline 30}
-       pre_ecl {c |}{res}       856{txt}{space 10}{res}     5,511{txt}  {c |}      2          0           1
-  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
-{col 64}Obs<.
-{col 49}{c TLC}{hline 30}
-{col 16}{c |}{col 49}{c |} Unique
-{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
-  {hline 13}{c +}{hline 32}{c +}{hline 30}
-           gdm {c |}{res}       852{txt}{space 10}{res}     5,515{txt}  {c |}      2          0           1
-  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
 
 {com}. 
 . // Keep only the variables of interest.
-. keep y* $passives $imputed_conts $imputed_dichs $imputed_mults $regulars
+. keep y* $passives $imputed $regulars
 {txt}
 {com}. 
 . 
@@ -371,38 +325,38 @@
 . // imputation model. Specifying the omit option did not work as expected. It was
 . // not possible to include other variables in the model for the constituent
 . // outcome variables, also due to collinearity.
-. mi impute chained (regress) $imputed_conts                         ///
->                   (logit, noimputed include($imputed_conts)) y1-y5 ///
->                   = i.arm i.lab_available i.us_available,          ///
->                   add(2) `augment'
+. mi impute chained (regress)                                  $imputed_conts ///
+>                   (logit, noimputed include($imputed_conts)) y1-y5          ///
+>                   = i.arm i.lab_available i.us_available,                   ///
+>                   add(2)
 {res}
 {txt}Conditional models:
 {p 15 21 2}
-{bf:age}: regress age education log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm ib0.lab_available ib0.us_available
+{bf:age}: regress age education log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
 {p_end}
 {p 9 21 2}
-{bf:education}: regress education age log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm ib0.lab_available ib0.us_available
+{bf:education}: regress education age log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
 {p_end}
 {p 8 21 2}
-{bf:log_income}: regress log_income age education i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm ib0.lab_available ib0.us_available
+{bf:log_income}: regress log_income age education i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
 {p_end}
 {p 16 21 2}
-{bf:y3}: logit y3 age bmi education log_income ib1.arm ib0.lab_available ib0.us_available
+{bf:y3}: logit y3 age bmi education log_income ib1.arm i.lab_available i.us_available
 {p_end}
 {p 16 21 2}
-{bf:y5}: logit y5 age bmi education log_income ib1.arm ib0.lab_available ib0.us_available
+{bf:y5}: logit y5 age bmi education log_income ib1.arm i.lab_available i.us_available
 {p_end}
 {p 16 21 2}
-{bf:y4}: logit y4 age bmi education log_income ib1.arm ib0.lab_available ib0.us_available
+{bf:y4}: logit y4 age bmi education log_income ib1.arm i.lab_available i.us_available
 {p_end}
 {p 15 21 2}
-{bf:bmi}: regress bmi age education log_income i.y3 i.y5 i.y4 i.y1 i.y2 ib1.arm ib0.lab_available ib0.us_available
+{bf:bmi}: regress bmi age education log_income i.y3 i.y5 i.y4 i.y1 i.y2 ib1.arm i.lab_available i.us_available
 {p_end}
 {p 16 21 2}
-{bf:y1}: logit y1 age bmi education log_income ib1.arm ib0.lab_available ib0.us_available
+{bf:y1}: logit y1 age bmi education log_income ib1.arm i.lab_available i.us_available
 {p_end}
 {p 16 21 2}
-{bf:y2}: logit y2 age bmi education log_income ib1.arm ib0.lab_available ib0.us_available
+{bf:y2}: logit y2 age bmi education log_income ib1.arm i.lab_available i.us_available
 {p_end}
 
 {res}{txt}Performing chained iterations ...

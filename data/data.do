@@ -13,9 +13,7 @@ assert r(datasignature) == "`signature'"
 
 // Globals that specify the passive, imputed, and regular variables.
 global passives
-global imputed_conts // Continuous variables.
-global imputed_dichs // Two-level factor variables.
-global imputed_mults // Multi-level factor variables.
+global imputed
 global regulars
 
 // Convert the arm variable from string to integer.
@@ -45,7 +43,6 @@ rename malpres_undetected           y4
 label variable                      y4 "Malpresentation undetected at birth"
 rename lga                          y5
 label variable                      y5 "Large for gestational age"
-global imputed_dichs $imputed_dichs
 
 // The composite outcome is defined as follows. If:
 // * All of the outcomes are false -> composite outcome is false;
@@ -75,31 +72,21 @@ label values y* yes_no
 // Age.
 replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
 label variable age "Age (years)"
-global imputed_conts $imputed_conts age
+global imputed $imputed age
 
 // BMI.
 rename bookbmi bmi
 label variable bmi "Body mass index"
-global imputed_conts $imputed_conts bmi
+global imputed $imputed bmi
 
 // Education.
 label variable education "Education (years)"
-global imputed_conts $imputed_conts education
+global imputed $imputed education
 
 // Income.
 generate log_income = log(avgincome) // Log to approximately normalize.
 label variable log_income "Monthly household income (ILS; log scale)"
-global imputed_conts $imputed_conts log_income
-
-// History of pre-eclampsia.
-rename bookhistpreecl pre_ecl
-label variable pre_ecl "History of pre-eclampsia"
-global imputed_dichs $imputed_dichs pre_ecl
-
-// Previous gestational diabetes mellitus.
-rename bookhistgdm gdm
-label variable gdm "History of GDM"
-global imputed_dichs $imputed_dichs gdm
+global imputed $imputed log_income
 
 // Lab availability.
 label variable lab_available "Lab available"
@@ -109,25 +96,15 @@ global regulars $regulars lab_available
 label variable us_available "US available"
 global regulars $regulars us_available
 
-// Place of delivery.
-rename sourcedata_birthoutc delivery_place
-replace delivery_place = . if delivery_place == 0
-// TODO: REMOVED DUE TO COLLINEARITY IN IMPUTATION: global imputed_mults $imputed_mults delivery_place
-
-// Set the base values.
-fvset base 0 $imputed_dichs lab_available us_available pre_ecl gdm
-// TODO: REMOVED DUE TO COLLINEARITY IN IMPUTATION: fvset base 0 $imputed_mults
-fvset base 0 y*            
-
 // Verify that all of the regular variables are complete, and that each of the
 // variables to be imputed contain missing values.
 misstable summarize $regulars
 assert r(N_eq_dot) + r(N_gt_dot) == .
-foreach x of varlist y1-y5 $imputed_conts $imputed_dichs $imputed_mults {
+foreach x of varlist y1-y5 $imputed {
   misstable summarize `x'
   assert r(N_eq_dot) + r(N_gt_dot) != .
 }
 
 // Keep only the variables of interest.
-keep y* $passives $imputed_conts $imputed_dichs $imputed_mults $regulars
+keep y* $passives $imputed $regulars
 
