@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 6 May 2020, 16:52:48
+ {txt}opened on:  {res} 6 May 2020, 16:59:28
 {txt}
 {com}. 
 . // Set up Stata.
@@ -288,7 +288,7 @@
 . mi impute chained (regress)                               $imputeds ///
 >                   (logit, noimputed include($imputeds))   y1-y5     ///
 >                   = i.arm i.lab_available i.us_available,           ///
->                   add(5) 
+>                   add(20) 
 {res}
 {txt}Conditional models:
 {p 15 21 2}
@@ -321,11 +321,11 @@
 
 {res}{txt}Performing chained iterations ...
 {res}{txt}
-Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
-{txt}Chained equations{txt}{col 45}{ralign 12:added }= {res}       5
-{txt}Imputed: {it:m}=1 through {it:m}=5{txt}{col 45}{ralign 12:updated }= {res}       0
+Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}      20
+{txt}Chained equations{txt}{col 45}{ralign 12:added }= {res}      20
+{txt}Imputed: {it:m}=1 through {it:m}=20{txt}{col 45}{ralign 12:updated }= {res}       0
 
-{txt}Initialization: {res}monotone{txt}{col 45}{ralign 12:Iterations }= {res}      50
+{txt}Initialization: {res}monotone{txt}{col 45}{ralign 12:Iterations }= {res}     200
 {txt}{col 45}{ralign 12:burn-in }= {res}      10
 
 {txt}{p 15 15 2}{bf:age}: linear regression{p_end}
@@ -373,13 +373,13 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 {txt}
 {com}. 
 . generate y = .
-{txt}(23,192 missing values generated)
+{txt}(73,667 missing values generated)
 
 {com}. replace  y = 0 if `all_false'
-{txt}(15,293 real changes made)
+{txt}(52,710 real changes made)
 
 {com}. replace  y = 1 if `one_true'
-{txt}(5,746 real changes made)
+{txt}(18,804 real changes made)
 
 {com}. label variable y "Adverse pregnancy outcome"
 {txt}
@@ -401,30 +401,30 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 . // correct. See https://www.statalist.org/forums/forum/general-stata-discussion/general/1349542-mi-estimate-melogit-is-it-legit
 . mi estimate, or cmdok: melogit y arm i.strat_var || clusterid:
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        20
 {txt}Mixed-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
-{txt}{col 49}Average RVI{col 67}= {res}    0.2044
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2904
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     56.62
-{txt}{col 49}        avg{col 67}= {res}    295.61
-{txt}{col 49}        max{col 67}= {res}    791.63
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res}  498.2{txt}){col 67}= {res}      1.59
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.1621
+{txt}{col 49}Average RVI{col 67}= {res}    0.1357
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1653
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    715.47
+{txt}{col 49}        avg{col 67}= {res}  1,759.37
+{txt}{col 49}        max{col 67}= {res}  4,867.42
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 5790.4{txt}){col 67}= {res}      1.37
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.2309
 
 {txt}{hline 22}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}                    y{col 23}{c |} Odds Ratio{col 35}   Std. Err.{col 47}      t{col 55}   P>|t|{col 63}     [95% Con{col 76}f. Interval]
 {hline 22}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 18}arm {c |}{col 23}{res}{space 2}     1.01{col 35}{space 2}     0.06{col 46}{space 1}    0.21{col 55}{space 3} 0.84{col 63}{space 4}     0.89{col 76}{space 3}     1.15
+{space 18}arm {c |}{col 23}{res}{space 2}     1.01{col 35}{space 2}     0.06{col 46}{space 1}    0.20{col 55}{space 3} 0.84{col 63}{space 4}     0.90{col 76}{space 3}     1.14
 {txt}{space 21} {c |}
 {space 12}strat_var {c |}
-{space 14}8d9c30  {c |}{col 23}{res}{space 2}     1.14{col 35}{space 2}     0.12{col 46}{space 1}    1.23{col 55}{space 3} 0.22{col 63}{space 4}     0.93{col 76}{space 3}     1.39
-{txt}{space 14}9d5ed6  {c |}{col 23}{res}{space 2}     0.86{col 35}{space 2}     0.13{col 46}{space 1}   -1.02{col 55}{space 3} 0.31{col 63}{space 4}     0.64{col 76}{space 3}     1.15
-{txt}{space 14}e1e1d3  {c |}{col 23}{res}{space 2}     1.08{col 35}{space 2}     0.13{col 46}{space 1}    0.69{col 55}{space 3} 0.49{col 63}{space 4}     0.86{col 76}{space 3}     1.37
-{txt}{space 14}ff4457  {c |}{col 23}{res}{space 2}     1.20{col 35}{space 2}     0.14{col 46}{space 1}    1.60{col 55}{space 3} 0.12{col 63}{space 4}     0.95{col 76}{space 3}     1.51
+{space 14}8d9c30  {c |}{col 23}{res}{space 2}     1.13{col 35}{space 2}     0.12{col 46}{space 1}    1.16{col 55}{space 3} 0.25{col 63}{space 4}     0.92{col 76}{space 3}     1.38
+{txt}{space 14}9d5ed6  {c |}{col 23}{res}{space 2}     0.87{col 35}{space 2}     0.12{col 46}{space 1}   -0.94{col 55}{space 3} 0.35{col 63}{space 4}     0.66{col 76}{space 3}     1.16
+{txt}{space 14}e1e1d3  {c |}{col 23}{res}{space 2}     1.08{col 35}{space 2}     0.12{col 46}{space 1}    0.74{col 55}{space 3} 0.46{col 63}{space 4}     0.88{col 76}{space 3}     1.34
+{txt}{space 14}ff4457  {c |}{col 23}{res}{space 2}     1.18{col 35}{space 2}     0.13{col 46}{space 1}    1.52{col 55}{space 3} 0.13{col 63}{space 4}     0.95{col 76}{space 3}     1.45
 {txt}{space 21} {c |}
-{space 16}_cons {c |}{col 23}{res}{space 2}     0.30{col 35}{space 2}     0.04{col 46}{space 1}   -8.59{col 55}{space 3} 0.00{col 63}{space 4}     0.23{col 76}{space 3}     0.40
+{space 16}_cons {c |}{col 23}{res}{space 2}     0.30{col 35}{space 2}     0.04{col 46}{space 1}   -9.13{col 55}{space 3} 0.00{col 63}{space 4}     0.24{col 76}{space 3}     0.39
 {txt}{hline 22}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 1}var(_cons[clusterid]){c |}{col 23}{res}{space 2}     0.00{col 35}{space 2}     0.01{col 63}{space 4}     0.00{col 76}{space 3}     1.91
+{space 1}var(_cons[clusterid]){c |}{col 23}{res}{space 2}     0.00{col 35}{space 2}     0.01{col 63}{space 4}     0.00{col 76}{space 3}    40.87
 {txt}{hline 22}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
@@ -461,123 +461,35 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 . 
 {txt}end of do-file
 
-{com}. melogit y arm i.strat_var if _mi_m == 0 || clusterid:, or
-{res}{err}no; data are {bf:mi set}
-{p 4 4 2}
-Use {bf:mi fvset} to set or query these data;
-{bf:mi fvset} has the same syntax as {bf:fvset}.
-
-{p 4 4 2}
-Perhaps you did not type {bf:fvset}.
-Some commands call {bf:fvset} to obtain information
-about the settings.  In that case, that command is
-not appropriate for running directly on {bf:mi} data.
-Use {bf:mi extract}
-to select the data on which you want to run the command, which
-is probably {it:m}=0.
-{p_end}
-{txt}{search r(119), local:r(119);}
-
-{com}. mi extract 0
-{err}no; dataset in memory has changed since last saved
-{txt}{search r(4), local:r(4);}
-
-{com}. mi extract 0, clear
-
-. melogit y arm i.strat_var || clusterid:, or
-{res}{txt}
-Fitting fixed-effects model:
-
-Iteration 0:{space 3}log likelihood = {res:-2676.5877}  
-Iteration 1:{space 3}log likelihood = {res:-2670.4155}  
-Iteration 2:{space 3}log likelihood = {res:-2670.4123}  
-Iteration 3:{space 3}log likelihood = {res:-2670.4123}  
-
-Refining starting values:
-
-Grid node 0:{space 3}log likelihood = {res:-2743.7375}
-
-Fitting full model:
+{com}. mi estimate, or cmdok: melogit y i.arm i.strat_var || clusterid:
 {res}
-{txt}Iteration 0:{space 3}log likelihood = {res:-2743.7375}  (not concave)
-Iteration 1:{space 3}log likelihood = {res:-2706.4441}  (not concave)
-Iteration 2:{space 3}log likelihood = {res: -2671.852}  
-Iteration 3:{space 3}log likelihood = {res:-2670.5103}  
-Iteration 4:{space 3}log likelihood = {res:-2670.4234}  
-Iteration 5:{space 3}log likelihood = {res:-2670.4157}  (backed up)
-Iteration 6:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 7:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 8:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 9:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 10:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 11:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 12:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 13:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 14:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 15:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 16:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 17:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 18:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 19:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 20:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 21:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 22:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 23:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 24:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 25:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 26:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 27:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 28:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 29:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 30:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 31:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 32:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 33:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 34:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 35:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 36:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 37:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 38:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 39:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 40:{space 2}log likelihood = {res:-2670.4138}  
-Iteration 41:{space 2}log likelihood = {res:-2670.4127}  (not concave)
-Iteration 42:{space 2}log likelihood = {res:-2670.4127}  (not concave)
-Iteration 43:{space 2}log likelihood = {res:-2670.4126}  
-Iteration 44:{space 2}log likelihood = {res:-2670.4123}  
-Iteration 45:{space 2}log likelihood = {res:-2670.4123}  
-{res}
-{txt}Mixed-effects logistic regression{col 49}{txt}Number of obs{col 67}={res}{col 69}     4,214
-{txt}Group variable: {col 23}{res}clusterid{col 49}{txt}Number of groups{col 67}={res}{col 69}       119
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        20
+{txt}Mixed-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
+{txt}{col 49}Average RVI{col 67}= {res}    0.1358
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1653
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    715.72
+{txt}{col 49}        avg{col 67}= {res}  1,760.73
+{txt}{col 49}        max{col 67}= {res}  4,867.63
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 5788.6{txt}){col 67}= {res}      1.37
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.2309
 
-{col 49}{txt}Obs per group:
-{col 63}{txt}min{col 67}={res}{col 69}         6
-{col 63}{txt}avg{col 67}={res}{col 69}      35.4
-{col 63}{txt}max{col 67}={res}{col 69}       139
-
-{txt}Integration method: {col 21}{res}mvaghermite{col 49}{txt}Integration pts.{col 67}={col 78}{res}7
-
-{col 49}{txt}Wald chi2({res}5{txt}){col 67}={res}{col 70}    11.43
-{txt}Log likelihood = {res}-2670.4123{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0435
-{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}           y{col 14}{c |} Odds Ratio{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
-{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 9}arm {c |}{col 14}{res}{space 2}     0.99{col 26}{space 2}     0.07{col 37}{space 1}   -0.16{col 46}{space 3} 0.88{col 54}{space 4}     0.87{col 67}{space 3}     1.13
-{txt}{space 12} {c |}
-{space 3}strat_var {c |}
-{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.15{col 26}{space 2}     0.13{col 37}{space 1}    1.31{col 46}{space 3} 0.19{col 54}{space 4}     0.93{col 67}{space 3}     1.43
-{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.85{col 26}{space 2}     0.13{col 37}{space 1}   -1.11{col 46}{space 3} 0.27{col 54}{space 4}     0.63{col 67}{space 3}     1.14
-{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.07{col 26}{space 2}     0.12{col 37}{space 1}    0.62{col 46}{space 3} 0.53{col 54}{space 4}     0.86{col 67}{space 3}     1.35
-{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.26{col 26}{space 2}     0.14{col 37}{space 1}    2.10{col 46}{space 3} 0.04{col 54}{space 4}     1.02{col 67}{space 3}     1.57
-{txt}{space 12} {c |}
-{space 7}_cons {c |}{col 14}{res}{space 2}     0.45{col 26}{space 2}     0.06{col 37}{space 1}   -5.91{col 46}{space 3} 0.00{col 54}{space 4}     0.35{col 67}{space 3}     0.59
-{txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}{res}clusterid   {col 14}{txt}{c |}
-{space 3}var(_cons){c |}{col 14}{res}{space 2}     0.00{col 26}{space 2}     0.00{col 54}{space 4}        .{col 67}{space 3}        .
-{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{hline 22}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}                    y{col 23}{c |} Odds Ratio{col 35}   Std. Err.{col 47}      t{col 55}   P>|t|{col 63}     [95% Con{col 76}f. Interval]
+{hline 22}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 18}arm {c |}
+{space 19}D  {c |}{col 23}{res}{space 2}     1.01{col 35}{space 2}     0.06{col 46}{space 1}    0.20{col 55}{space 3} 0.84{col 63}{space 4}     0.90{col 76}{space 3}     1.14
+{txt}{space 21} {c |}
+{space 12}strat_var {c |}
+{space 14}8d9c30  {c |}{col 23}{res}{space 2}     1.13{col 35}{space 2}     0.12{col 46}{space 1}    1.16{col 55}{space 3} 0.25{col 63}{space 4}     0.92{col 76}{space 3}     1.38
+{txt}{space 14}9d5ed6  {c |}{col 23}{res}{space 2}     0.87{col 35}{space 2}     0.12{col 46}{space 1}   -0.94{col 55}{space 3} 0.35{col 63}{space 4}     0.66{col 76}{space 3}     1.16
+{txt}{space 14}e1e1d3  {c |}{col 23}{res}{space 2}     1.08{col 35}{space 2}     0.12{col 46}{space 1}    0.74{col 55}{space 3} 0.46{col 63}{space 4}     0.88{col 76}{space 3}     1.34
+{txt}{space 14}ff4457  {c |}{col 23}{res}{space 2}     1.18{col 35}{space 2}     0.13{col 46}{space 1}    1.52{col 55}{space 3} 0.13{col 63}{space 4}     0.95{col 76}{space 3}     1.45
+{txt}{space 21} {c |}
+{space 16}_cons {c |}{col 23}{res}{space 2}     0.31{col 35}{space 2}     0.03{col 46}{space 1}  -12.54{col 55}{space 3} 0.00{col 63}{space 4}     0.26{col 76}{space 3}     0.37
+{txt}{hline 22}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 1}var(_cons[clusterid]){c |}{col 23}{res}{space 2}     0.00{col 35}{space 2}     0.01{col 63}{space 4}     0.00{col 76}{space 3}    40.87
+{txt}{hline 22}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test vs. logistic model: {txt}chi2({res}0{txt}) ={res} 0.00{col 59}{txt}Prob > chi2 ={res}{col 73}     .
-
-{txt}{p 0 6 4 79}Note: {help j_mixedlr##|_new:LR test is conservative} and provided only for reference.{p_end}
-
+{res}
 {com}. 

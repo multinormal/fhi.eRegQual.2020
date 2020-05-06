@@ -20,7 +20,7 @@ mi register regular $regulars
 mi impute chained (regress)                               $imputeds ///
                   (logit, noimputed include($imputeds))   y1-y5     ///
                   = i.arm i.lab_available i.us_available,           ///
-                  add(5) 
+                  add(20) 
 
 // The composite outcome is defined as follows. If:
 // * All of the outcomes are false -> composite outcome is false;
@@ -49,7 +49,10 @@ assert r(N) == `sample_size'
 // the coefficients, constant, and their CIs, and the variance components will be
 // appropriately estimated, but the CIs for the variance components may not be
 // correct. See https://www.statalist.org/forums/forum/general-stata-discussion/general/1349542-mi-estimate-melogit-is-it-legit
-mi estimate, or cmdok: melogit y arm i.strat_var || clusterid:
+mi estimate, or cmdok: melogit y i.arm i.strat_var || clusterid:
+
+// TODO: The protocol says that a GEE will be used. See if we can do this within
+// MI.
 
 // TODO: Note that if we replace arm with i.arm, the model does not fit but gives
 // identical or very similar estimates. I.e., there is a problem that gets
