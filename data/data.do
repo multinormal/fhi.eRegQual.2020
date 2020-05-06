@@ -21,6 +21,7 @@ global regulars
 // Convert the arm variable from string to integer.
 encode prettyExposure, generate(arm)
 label variable arm Arm
+fvset base 1 arm
 global regulars $regulars arm
 
 // Convert the stratification variable from string to integer.
@@ -44,7 +45,7 @@ rename malpres_undetected           y4
 label variable                      y4 "Malpresentation undetected at birth"
 rename lga                          y5
 label variable                      y5 "Large for gestational age"
-global imputed_dichs $imputed_dichs y1-y5
+global imputed_dichs $imputed_dichs
 
 // The composite outcome is defined as follows. If:
 // * All of the outcomes are false -> composite outcome is false;
@@ -66,6 +67,10 @@ global passives $passives y
 // Verify that we can correctly recompute the composite outcome.
 count if y == TrialOne_adverse_pregoutc
 assert r(N) == _N
+
+// Apply labels to the outcomes.
+label define yes_no 0 "No" 1 "Yes"
+label values y* yes_no
 
 // Age.
 replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
@@ -105,21 +110,24 @@ label variable us_available "US available"
 global regulars $regulars us_available
 
 // Place of delivery.
-recode sourcedata_birthoutc (1 = 0 "public hospital-electronic match") ///
-                            (2 = 1 "public hospital-manual match")     ///
-                            (3 = 2 "private hospital"), generate(delivery_place)
+rename sourcedata_birthoutc delivery_place
 replace delivery_place = . if delivery_place == 0
-global imputed_mults $imputed_mults delivery_place
+// TODO: REMOVED DUE TO COLLINEARITY IN IMPUTATION: global imputed_mults $imputed_mults delivery_place
+
+// Set the base values.
+fvset base 0 $imputed_dichs lab_available us_available pre_ecl gdm
+// TODO: REMOVED DUE TO COLLINEARITY IN IMPUTATION: fvset base 0 $imputed_mults
+fvset base 0 y*            
 
 // Verify that all of the regular variables are complete, and that each of the
 // variables to be imputed contain missing values.
 misstable summarize $regulars
 assert r(N_eq_dot) + r(N_gt_dot) == .
-foreach x of varlist $imputed_conts $imputed_dichs $imputed_mults {
+foreach x of varlist y1-y5 $imputed_conts $imputed_dichs $imputed_mults {
   misstable summarize `x'
   assert r(N_eq_dot) + r(N_gt_dot) != .
 }
 
 // Keep only the variables of interest.
-keep $passives $imputed_conts $imputed_dichs $imputed_mults $regulars
+keep y* $passives $imputed_conts $imputed_dichs $imputed_mults $regulars
 

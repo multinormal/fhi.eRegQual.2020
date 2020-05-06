@@ -2,15 +2,32 @@ version 16.1
 
 // Set up the imputation and the roles of the variables.
 mi set mlong
+
 mi register passive $passives
-mi register imputed $imputed_conts $imputed_dichs $imputed_mults
+mi register imputed y1-y5 age bmi education log_income
 mi register regular $regulars
 
+// mi register passive $passives
+// mi register imputed y1 y2 age bmi education log_income // pre_ecl // $imputed_conts $imputed_dichs $imputed_mults
+// mi register regular $regulars
 
-mi impute chained (regress) $imputed_conts  ///
-                  (logit)   $imputed_dichs  ///
-                  (mlogit)  $imputed_mults, ///
-                  add(5) augment
+
+// TODO: The dochotomous variables seem to cause collinearity problems, so we
+// should probably simply not use them in the imputation.
+
+// NOTE: The noimputed option was necessary to ensure that the predictors
+// included in the imputation models did not vary across imputations due to
+// collinearity between them. However, this removes all the interesting
+// variables!
+
+mi impute chained (regress) $imputed_conts ///
+                  (logit, noimputed) y1-y5 ///
+                  /// (logit, omit(i.y1)) y2 ///
+                  /// (logit) pre_ecl ///
+                  /// (logit) $imputed_dichs    ///
+                  /// (mlogit)  $imputed_mults = ///
+                  = i.arm, ///  // strat_var clusterid lab_available us_available, /// $regulars, ///
+                  add(2) augment noisily `dryrun'
 
 // TODO: The above runs, but the predictors used in each imputation are not the
 // same, possibly due to collinearity. Run "help mi_omit_note" to learn what to
