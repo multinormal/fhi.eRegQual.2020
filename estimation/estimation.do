@@ -14,10 +14,10 @@ mi register regular $regulars
 // imputation model. Specifying the omit option did not work as expected. It was
 // not possible to include other variables in the model for the constituent
 // outcome variables, also due to collinearity.
-mi impute chained (regress) $imputed_conts ///
+mi impute chained (regress) $imputed_conts                         ///
                   (logit, noimputed include($imputed_conts)) y1-y5 ///
-                  = i.arm i.lab_available i.us_available, ///  // strat_var clusterid lab_available us_available, /// $regulars, ///
-                  add(2) augment noisily `dryrun'
+                  = i.arm i.lab_available i.us_available,          ///
+                  add(2)
 
 // Do a very basic analysis that ignores all issue such as missing data.
 //melogit y arm i.strat_var || clusterid:, or
