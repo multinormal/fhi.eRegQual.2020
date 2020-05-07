@@ -12,8 +12,8 @@ do setup/setup
 do globals/globals
 
 // Import data and perform imputation.
-do data/data
-do data/imputation
+do data/import
+do data/impute
 
 // Do estimation.
 do estimation/estimation
