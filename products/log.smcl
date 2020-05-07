@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 7 May 2020, 09:40:24
+ {txt}opened on:  {res} 7 May 2020, 10:29:41
 {txt}
 {com}. 
 . // Set up Stata.
@@ -48,7 +48,7 @@
 {txt}end of do-file
 
 {com}. 
-. // Import data.
+. // Import data and perform imputation.
 . do data/data
 {txt}
 {com}. version 16.1
@@ -62,130 +62,89 @@
 {com}. local signature "6367:756(27238):862839612:1580475191"
 {txt}
 {com}. 
-. // Load the data and check its signature is as expected.
-. use "`fname'", replace
+. frame create original
 {txt}
-{com}. datasignature
+{com}. frame original {c -(}
+.   // Load the data and check its signature is as expected.
+.   use "`fname'", replace
+.   datasignature
   {res}6367:756(27238):862839612:1580475191
-{txt}
-{com}. assert r(datasignature) == "`signature'"
-{txt}
-{com}. 
-. // Globals that specify the imputed and regular variables.
-. global imputeds
-{txt}
-{com}. global regulars
-{txt}
-{com}. 
-. // Convert the arm variable from string to integer.
-. encode prettyExposure, generate(arm)
-{txt}
-{com}. label variable arm Arm
-{txt}
-{com}. fvset base 1 arm
-{txt}
-{com}. global regulars $regulars arm
-{txt}
-{com}. 
-. // Convert the stratification variable from string to integer.
-. encode bookorgdistricthashed, generate(strat_var)
-{txt}
-{com}. label variable strat_var District
-{txt}
-{com}. global regulars $regulars strat_var
-{txt}
-{com}. 
-. // Rename and label the cluster identifier variable.
-. rename str_TRIAL_1_Cluster clusterid
-{res}{txt}
-{com}. label variable clusterid Cluster
-{txt}
-{com}. global regulars $regulars clusterid
-{txt}
-{com}. 
-. // Rename the components of the composite outcome.
-. rename anemia_at_birth              y1
-{res}{txt}
-{com}. label variable                      y1 "Anemia at birth"
-{txt}
-{com}. rename severehypertension_at_birth  y2
-{res}{txt}
-{com}. label variable                      y2 "Severe hypertension at birth"
-{txt}
-{com}. rename sga_undetected_at_birth      y3
-{res}{txt}
-{com}. label variable                      y3 "SGA undetected at birth"
-{txt}
-{com}. rename malpres_undetected           y4
-{res}{txt}
-{com}. label variable                      y4 "Malpresentation undetected at birth"
-{txt}
-{com}. rename lga                          y5
-{res}{txt}
-{com}. label variable                      y5 "Large for gestational age"
-{txt}
-{com}. 
-. // Apply labels to the outcomes.
-. label define yes_no 0 "No" 1 "Yes"
-{txt}
-{com}. label values y* yes_no
-{txt}
-{com}. 
-. // Age.
-. replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
+{com}.   assert r(datasignature) == "`signature'"
+. 
+.   // Globals that specify the imputed and regular variables.
+.   global imputeds
+.   global regulars
+. 
+.   // Convert the arm variable from string to integer.
+.   encode prettyExposure, generate(arm)
+.   label variable arm Arm
+.   fvset base 1 arm
+.   global regulars $regulars arm
+. 
+.   // Convert the stratification variable from string to integer.
+.   encode bookorgdistricthashed, generate(strat_var)
+.   label variable strat_var District
+.   global regulars $regulars strat_var
+. 
+.   // Rename and label the cluster identifier variable.
+.   rename str_TRIAL_1_Cluster clusterid
+{res}{com}.   label variable clusterid Cluster
+.   global regulars $regulars clusterid
+. 
+.   // Rename the components of the composite outcome.
+.   rename anemia_at_birth              y1
+{res}{com}.   label variable                      y1 "Anemia at birth"
+.   rename severehypertension_at_birth  y2
+{res}{com}.   label variable                      y2 "Severe hypertension at birth"
+.   rename sga_undetected_at_birth      y3
+{res}{com}.   label variable                      y3 "SGA undetected at birth"
+.   rename malpres_undetected           y4
+{res}{com}.   label variable                      y4 "Malpresentation undetected at birth"
+.   rename lga                          y5
+{res}{com}.   label variable                      y5 "Large for gestational age"
+. 
+.   // Apply labels to the outcomes.
+.   label define yes_no 0 "No" 1 "Yes"
+.   label values y* yes_no
+. 
+.   // Age.
+.   replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
 {txt}(35 real changes made, 35 to missing)
-
-{com}. label variable age "Age (years)"
-{txt}
-{com}. global imputeds $imputeds age
-{txt}
-{com}. 
-. // BMI.
-. rename bookbmi bmi
-{res}{txt}
-{com}. label variable bmi "Body mass index"
-{txt}
-{com}. global imputeds $imputeds bmi
-{txt}
-{com}. 
-. // Education.
-. label variable education "Education (years)"
-{txt}
-{com}. global imputeds $imputeds education
-{txt}
-{com}. 
-. // Income.
-. generate log_income = log(avgincome) // Log to approximately normalize.
+{com}.   label variable age "Age (years)"
+.   global imputeds $imputeds age
+. 
+.   // BMI.
+.   rename bookbmi bmi
+{res}{com}.   label variable bmi "Body mass index"
+.   global imputeds $imputeds bmi
+. 
+.   // Education.
+.   label variable education "Education (years)"
+.   global imputeds $imputeds education
+. 
+.   // Income.
+.   generate log_income = log(avgincome) // Log to approximately normalize.
 {txt}(404 missing values generated)
-
-{com}. label variable log_income "Monthly household income (ILS; log scale)"
-{txt}
-{com}. global imputeds $imputeds log_income
-{txt}
-{com}. 
-. // Lab availability.
-. label variable lab_available "Lab available"
-{txt}
-{com}. global regulars $regulars lab_available
-{txt}
-{com}. 
-. // Ultrasound available.
-. label variable us_available "US available"
-{txt}
-{com}. global regulars $regulars us_available
-{txt}
-{com}. 
-. // Verify that all of the regular variables are complete, and that each of the
-. // variables to be imputed contain missing values.
-. misstable summarize $regulars
+{com}.   label variable log_income "Monthly household income (ILS; log scale)"
+.   global imputeds $imputeds log_income
+. 
+.   // Lab availability.
+.   label variable lab_available "Lab available"
+.   global regulars $regulars lab_available
+. 
+.   // Ultrasound available.
+.   label variable us_available "US available"
+.   global regulars $regulars us_available
+. 
+.   // Verify that all of the regular variables are complete, and that each of the
+.   // variables to be imputed contain missing values.
+.   misstable summarize $regulars
 {txt}(variables nonmissing or string)
-
-{com}. assert r(N_eq_dot) + r(N_gt_dot) == .
-{txt}
-{com}. foreach x of varlist y1-y5 $imputeds {c -(}
-{txt}  2{com}.   misstable summarize `x'
-{txt}  3{com}.   assert r(N_eq_dot) + r(N_gt_dot) != .
-{txt}  4{com}. {c )-}
+{com}.   assert r(N_eq_dot) + r(N_gt_dot) == .
+.   foreach x of varlist y1-y5 $imputeds {c -(}
+{txt}  2{com}.     misstable summarize `x'
+{txt}  3{com}.     assert r(N_eq_dot) + r(N_gt_dot) != .
+{txt}  4{com}.   {c )-}
 {txt}{col 64}Obs<.
 {col 49}{c TLC}{hline 30}
 {col 16}{c |}{col 49}{c |} Unique
@@ -249,48 +208,45 @@
   {hline 13}{c +}{hline 32}{c +}{hline 30}
     log_income {c |}{res}       404{txt}{space 10}{res}     5,963{txt}  {c |}    222  -5.926926    8.922658
   {hline 13}{c BT}{hline 32}{c BT}{hline 30}
-
 {com}. 
-. // Keep only the variables of interest.
-. keep y* $imputeds $regulars TrialOne_adverse_pregoutc
+.   // Keep only the variables of interest.
+.   keep y* $imputeds $regulars TrialOne_adverse_pregoutc
+. {c )-}
 {txt}
 {com}. 
 . 
 {txt}end of do-file
 
-{com}. 
-. // Do estimation.
-. do estimation/estimation
+{com}. do data/imputation
 {txt}
 {com}. version 16.1
 {txt}
 {com}. 
-. // Obtain the sample size (before imputation).
-. local sample_size = _N
+. frame copy original imputed
 {txt}
-{com}. 
-. // Set up the imputation and the roles of the variables.
-. mi set mlong
-{txt}
-{com}. mi register imputed $imputeds y1-y5
+{com}. frame imputed {c -(}
+.   // Obtain the sample size (before imputation).
+.   local sample_size = _N
+. 
+.   // Set up the imputation and the roles of the variables.
+.   mi set mlong
+.   mi register imputed $imputeds y1-y5
 {res}{txt}{p}
 (3365 {it:m}=0 obs. now marked as incomplete)
 {p_end}
-
-{com}. mi register regular $regulars
-{txt}
-{com}. 
-. // Perform imputation. Due to collinearity between the constituent outcome
-. // variables y1-y5, these variables are exluded as predictors for one another.
-. // This is achieved by specifying the noimputed option, followed by the include
-. // option that explicityly lists the imputed variables to include in the
-. // imputation model. Specifying the omit option did not work as expected. It was
-. // not possible to include other variables in the model for the constituent
-. // outcome variables, also due to collinearity.
-. mi impute chained (regress)                               $imputeds ///
->                   (logit, noimputed include($imputeds))   y1-y5     ///
->                   = i.arm i.lab_available i.us_available,           ///
->                   add($m_imputations) 
+{com}.   mi register regular $regulars
+. 
+.   // Perform imputation. Due to collinearity between the constituent outcome
+.   // variables y1-y5, these variables are exluded as predictors for one another.
+.   // This is achieved by specifying the noimputed option, followed by the include
+.   // option that explicityly lists the imputed variables to include in the
+.   // imputation model. Specifying the omit option did not work as expected. It was
+.   // not possible to include other variables in the model for the constituent
+.   // outcome variables, also due to collinearity.
+.   mi impute chained (regress)                               $imputeds ///
+>                     (logit, noimputed include($imputeds))   y1-y5     ///
+>                     = i.arm i.lab_available i.us_available,           ///
+>                     add($m_imputations) 
 {res}
 {txt}Conditional models:
 {p 15 21 2}
@@ -357,48 +313,49 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}      20
 {txt}{hline 19}{c BT}{hline 35}{c BT}{hline 10}
 {p 0 1 1 66}(complete + incomplete = total; imputed is the minimum across {it:m}
  of the number of filled-in observations.){p_end}
-
 {com}. 
-. // The composite outcome is defined as follows. If:
-. // * All of the outcomes are false -> composite outcome is false;
-. // * At least one of the outcomes is true -> composite outcome is true;
-. // * One or more of the outcomes are missing and all others are false
-. //   -> composite outcome is missing.
-. tempvar all_false
-{txt}
-{com}. generate `all_false' = (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
-{txt}
-{com}. tempvar one_true
-{txt}
-{com}. generate `one_true'  = (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
-{txt}
-{com}. 
-. generate y = .
+.   // The composite outcome is defined as follows. If:
+.   // * All of the outcomes are false -> composite outcome is false;
+.   // * At least one of the outcomes is true -> composite outcome is true;
+.   // * One or more of the outcomes are missing and all others are false
+.   //   -> composite outcome is missing.
+.   tempvar all_false
+.   generate `all_false' = (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
+.   tempvar one_true
+.   generate `one_true'  = (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
+. 
+.   generate y = .
 {txt}(73,667 missing values generated)
-
-{com}. replace  y = 0 if `all_false'
+{com}.   replace  y = 0 if `all_false'
 {txt}(52,710 real changes made)
-
-{com}. replace  y = 1 if `one_true'
+{com}.   replace  y = 1 if `one_true'
 {txt}(18,804 real changes made)
-
-{com}. label variable y "Adverse pregnancy outcome"
-{txt}
-{com}. 
-. // Verify that we can correctly recompute the composite outcome using the
-. // original (non-imputed) data.
-. count if y == TrialOne_adverse_pregoutc & _mi_m == 0
+{com}.   label variable y "Adverse pregnancy outcome"
+. 
+.   // Verify that we can correctly recompute the composite outcome using the
+.   // original (non-imputed) data.
+.   count if y == TrialOne_adverse_pregoutc & _mi_m == 0
   {res}6,367
-{txt}
-{com}. assert r(N) == `sample_size'
+{com}.   assert r(N) == `sample_size'
+. {c )-}
 {txt}
 {com}. 
-. // Estimate population averaged effects using a GEE. This is the planned
-. // analysis.
-. mi xtset clusterid
-{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
+. 
+{txt}end of do-file
+
+{com}. 
+. // Do estimation.
+. do estimation/estimation
 {txt}
-{com}. mi estimate, eform: xtgee y i.arm, family(binomial) link(logit)
+{com}. version 16.1
+{txt}
+{com}. 
+. frame imputed {c -(}
+.   // Estimate population averaged effects using a GEE. This is the planned
+.   // analysis.
+.   mi xtset clusterid
+{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
+{com}.   mi estimate, eform: xtgee y i.arm, family(binomial) link(logit)
 {res}
 {txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        20
 {txt}GEE population-averaged model{col 49}Number of obs{col 67}= {res}     6,367
@@ -424,19 +381,22 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 {space 10}D  {c |}{col 14}{res}{space 2}     1.02{col 26}{space 2}     0.07{col 37}{space 1}    0.29{col 46}{space 3} 0.77{col 54}{space 4}     0.90{col 67}{space 3}     1.16
 {txt}{space 7}_cons {c |}{col 14}{res}{space 2}     0.34{col 26}{space 2}     0.02{col 37}{space 1}  -23.50{col 46}{space 3} 0.00{col 54}{space 4}     0.31{col 67}{space 3}     0.37
 {txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{res}{txt}
+{res}{com}. 
+.   // We cannot obtain the ICC from the GEE model, so fit a mixed-effects logistic
+.   // mode. Note that we have to use the option cmdok to force Stata to fit the
+.   // model. As documented at the following, the coefficients, constant, and their
+.   // CIs, and the variance components will be appropriately estimated, but the CIs
+.   // for the variance components may not be correct. See
+.   // https://www.statalist.org/forums/forum/general-stata-discussion/general/1349542-mi-estimate-melogit-is-it-legit
+.   //
+.   // mi estimate, or cmdok: melogit y i.arm i.strat_var || clusterid:
+.   // estat icc // TODO: Command not valid after imputation it seems, so estimate
+.   // this from complete cases.
+.   // TODO: Following the note above, the ICC may not be reliable...
+. {c )-}
+{txt}
 {com}. 
-. // We cannot obtain the ICC from the GEE model, so fit a mixed-effects logistic
-. // mode. Note that we have to use the option cmdok to force Stata to fit the
-. // model. As documented at the following, the coefficients, constant, and their
-. // CIs, and the variance components will be appropriately estimated, but the CIs
-. // for the variance components may not be correct. See
-. // https://www.statalist.org/forums/forum/general-stata-discussion/general/1349542-mi-estimate-melogit-is-it-legit
-. //
-. // mi estimate, or cmdok: melogit y i.arm i.strat_var || clusterid:
-. // estat icc // TODO: Command not valid after imputation it seems, so estimate
-. // this from complete cases.
-. // TODO: Following the note above, the ICC may not be reliable...
+. 
 . 
 {txt}end of do-file
 
@@ -459,4 +419,38 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 . 
 {txt}end of do-file
 
+{com}. frame imputed: mi estimate, eform: xtgee y i.arm i.strat_var, family(binomial) link(logit)
+{res}
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        20
+{txt}GEE population-averaged model{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable:{ralign 27:{res:clusterid}}{col 49}Number of groups{col 67}= {res}       119
+{txt}Link:{ralign 37:{res:logit}}{col 49}Obs per group:
+Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}         9
+{txt}Correlation:{ralign 30:{res:exchangeable}}{col 49}              avg{col 67}= {res}      53.5
+{txt}Scale parameter:{ralign 26:{res:1}}{col 49}              max{col 67}= {res}       217
+
+{txt}{col 49}Average RVI{col 67}= {res}    0.1515
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1669
+{txt}DF adjustment:{ralign 28: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    702.13
+{txt}{col 49}        avg{col 67}= {res}  1,195.85
+{txt}{col 49}        max{col 67}= {res}  1,768.81
+{txt}Model F test:{ralign 29: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 5604.8{txt}){col 67}= {res}      1.40
+{txt}Within VCE type: {ralign 25:{res:Conventional}}{col 49}Prob > F{col 67}= {res}    0.2204
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y{col 14}{c |}     exp(b){col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}arm {c |}
+{space 10}D  {c |}{col 14}{res}{space 2}     1.01{col 26}{space 2}     0.06{col 37}{space 1}    0.19{col 46}{space 3} 0.85{col 54}{space 4}     0.90{col 67}{space 3}     1.14
+{txt}{space 12} {c |}
+{space 3}strat_var {c |}
+{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.13{col 26}{space 2}     0.12{col 37}{space 1}    1.17{col 46}{space 3} 0.24{col 54}{space 4}     0.92{col 67}{space 3}     1.38
+{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.87{col 26}{space 2}     0.12{col 37}{space 1}   -0.95{col 46}{space 3} 0.34{col 54}{space 4}     0.66{col 67}{space 3}     1.15
+{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.08{col 26}{space 2}     0.12{col 37}{space 1}    0.75{col 46}{space 3} 0.45{col 54}{space 4}     0.88{col 67}{space 3}     1.34
+{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.18{col 26}{space 2}     0.12{col 37}{space 1}    1.53{col 46}{space 3} 0.13{col 54}{space 4}     0.96{col 67}{space 3}     1.45
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.31{col 26}{space 2}     0.03{col 37}{space 1}  -12.64{col 46}{space 3} 0.00{col 54}{space 4}     0.26{col 67}{space 3}     0.37
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
 {com}. 
