@@ -33,12 +33,16 @@ frame `this_frame' {
   codebook imputation
   // Plot the density of each of the continuous imputed variables.
   foreach var of global imputeds {
+    quietly misstable patterns `var'_orig if imputation == 0
+    local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
+    local pc_miss = string(`pc_miss', "%8.2f") + "% missing"
+
     local var_label : variable label `var'
-    twoway (kdensity `var'_orig)    ///
-           (kdensity `var'),        ///
-           by(imputation, note("")) ///
-           xtitle(`var_label')      ///
-           ylabel(none)             ///
+    twoway (kdensity `var'_orig)           ///
+           (kdensity `var'),               ///
+           by(imputation, note(`pc_miss')) ///
+           xtitle(`var_label')             ///
+           ylabel(none)                    ///
            legend(label(1 "Original") label(2 "Imputed"))
     graph export "products/Imputations - `var_label'.pdf", replace
   }
