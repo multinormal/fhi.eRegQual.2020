@@ -56,6 +56,7 @@ frame original {
 
   // BMI.
   rename bookbmi bmi
+  replace bmi = . if bmi < 15 | bmi > 45 // Same policy as for categorical version.
   label variable bmi "Body mass index"
   global imputeds $imputeds bmi
 
