@@ -15,8 +15,7 @@ frame `this_frame' {
   // Generate a variable for each imputed variable that contains the original
   // values (with the missing data), repeated for each imputed data set.
   mi convert wide, clear
-  local the_vars log_income
-  foreach var of local the_vars {
+  foreach var of global imputeds {
     generate `var'_orig = `var'
   }
   mi convert flong, clear
@@ -33,11 +32,13 @@ frame `this_frame' {
 
   codebook imputation
   // Plot the density of each of the continuous imputed variables.
-  foreach var of local the_vars {
+  foreach var of global imputeds {
     local var_label : variable label `var'
-    twoway (kdensity `var'_orig) ///
-           (kdensity `var'),     ///
-           by(imputation, note(""))        ///
+    twoway (kdensity `var'_orig)    ///
+           (kdensity `var'),        ///
+           by(imputation, note("")) ///
+           xtitle(`var_label')      ///
+           ylabel(none)             ///
            legend(label(1 "Original") label(2 "Imputed"))
     graph export "products/Imputations - `var_label'.pdf", replace
   }
