@@ -30,7 +30,6 @@ frame `this_frame' {
   local label_var: value label imputation
   label define `label_var' 0 "Original", modify
 
-  codebook imputation
   // Plot the density of each of the continuous imputed variables.
   foreach var of global imputeds {
     quietly misstable patterns `var'_orig if imputation == 0
