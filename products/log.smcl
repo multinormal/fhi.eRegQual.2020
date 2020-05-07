@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 7 May 2020, 10:39:59
+ {txt}opened on:  {res} 7 May 2020, 17:37:32
 {txt}
 {com}. 
 . // Set up Stata.
@@ -115,7 +115,9 @@
 . 
 .   // BMI.
 .   rename bookbmi bmi
-{res}{com}.   label variable bmi "Body mass index"
+{res}{com}.   replace bmi = . if bmi < 15 | bmi > 48 // Same policy as for categorical version.
+{txt}(54 real changes made, 54 to missing)
+{com}.   label variable bmi "Body mass index"
 .   global imputeds $imputeds bmi
 . 
 .   // Education.
@@ -192,7 +194,7 @@
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-           bmi {c |}{res}       884{txt}{space 10}{res}     5,483{txt}  {c |}   >500   1.792822      207500
+           bmi {c |}{res}       938{txt}{space 10}{res}     5,429{txt}  {c |}   >500   15.42969    47.98243
   {hline 13}{c BT}{hline 32}{c BT}{hline 30}
 {col 64}Obs<.
 {col 49}{c TLC}{hline 30}
@@ -232,7 +234,7 @@
 .   mi set mlong
 .   mi register imputed $imputeds y1-y5
 {res}{txt}{p}
-(3365 {it:m}=0 obs. now marked as incomplete)
+(3396 {it:m}=0 obs. now marked as incomplete)
 {p_end}
 {com}.   mi register regular $regulars
 . 
@@ -302,7 +304,7 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 {txt}{col 11}Variable {c |}{ralign 12:Complete }{ralign 13:Incomplete }{ralign 10:Imputed }{c |}{ralign 10:Total}
 {hline 19}{c +}{hline 35}{c +}{hline 10}
 {txt}{ralign 19:age }{c |}{res}       6298           69        69 {txt}{c |}{res}      6367
-{txt}{ralign 19:bmi }{c |}{res}       5483          884       884 {txt}{c |}{res}      6367
+{txt}{ralign 19:bmi }{c |}{res}       5429          938       938 {txt}{c |}{res}      6367
 {txt}{ralign 19:education }{c |}{res}       6164          203       203 {txt}{c |}{res}      6367
 {txt}{ralign 19:log_income }{c |}{res}       5963          404       404 {txt}{c |}{res}      6367
 {txt}{ralign 19:y1 }{c |}{res}       4624         1743      1743 {txt}{c |}{res}      6367
@@ -325,11 +327,11 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 .   generate `one_true'  = (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
 . 
 .   generate y = .
-{txt}(23,192 missing values generated)
+{txt}(23,347 missing values generated)
 {com}.   replace  y = 0 if `all_false'
-{txt}(15,293 real changes made)
+{txt}(15,387 real changes made)
 {com}.   replace  y = 1 if `one_true'
-{txt}(5,746 real changes made)
+{txt}(5,807 real changes made)
 {com}.   label variable y "Adverse pregnancy outcome"
 . 
 .   // Verify that we can correctly recompute the composite outcome using the
@@ -366,27 +368,27 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 {txt}Correlation:{ralign 30:{res:exchangeable}}{col 49}              avg{col 67}= {res}      53.5
 {txt}Scale parameter:{ralign 26:{res:1}}{col 49}              max{col 67}= {res}       217
 
-{txt}{col 49}Average RVI{col 67}= {res}    0.2351
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2952
-{txt}DF adjustment:{ralign 28: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     54.87
-{txt}{col 49}        avg{col 67}= {res}    174.35
-{txt}{col 49}        max{col 67}= {res}    442.04
-{txt}Model F test:{ralign 29: {res:Equal FMI}}{col 49}F({res}   5{txt},{res}  476.4{txt}){col 67}= {res}      1.63
-{txt}Within VCE type: {ralign 25:{res:Conventional}}{col 49}Prob > F{col 67}= {res}    0.1518
+{txt}{col 49}Average RVI{col 67}= {res}    0.1204
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1680
+{txt}DF adjustment:{ralign 28: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    160.72
+{txt}{col 49}        avg{col 67}= {res}    325.04
+{txt}{col 49}        max{col 67}= {res}    981.73
+{txt}Model F test:{ralign 29: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 1061.1{txt}){col 67}= {res}      1.17
+{txt}Within VCE type: {ralign 25:{res:Conventional}}{col 49}Prob > F{col 67}= {res}    0.3194
 
 {txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y{col 14}{c |}     exp(b){col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
 {hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 9}arm {c |}
-{space 10}D  {c |}{col 14}{res}{space 2}     1.01{col 26}{space 2}     0.06{col 37}{space 1}    0.19{col 46}{space 3} 0.85{col 54}{space 4}     0.89{col 67}{space 3}     1.15
+{space 10}D  {c |}{col 14}{res}{space 2}     0.99{col 26}{space 2}     0.06{col 37}{space 1}   -0.08{col 46}{space 3} 0.93{col 54}{space 4}     0.88{col 67}{space 3}     1.12
 {txt}{space 12} {c |}
 {space 3}strat_var {c |}
-{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.13{col 26}{space 2}     0.12{col 37}{space 1}    1.22{col 46}{space 3} 0.22{col 54}{space 4}     0.93{col 67}{space 3}     1.39
-{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.86{col 26}{space 2}     0.12{col 37}{space 1}   -1.04{col 46}{space 3} 0.30{col 54}{space 4}     0.65{col 67}{space 3}     1.14
-{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.08{col 26}{space 2}     0.12{col 37}{space 1}    0.70{col 46}{space 3} 0.48{col 54}{space 4}     0.86{col 67}{space 3}     1.36
-{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.20{col 26}{space 2}     0.14{col 37}{space 1}    1.61{col 46}{space 3} 0.11{col 54}{space 4}     0.96{col 67}{space 3}     1.51
+{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.14{col 26}{space 2}     0.12{col 37}{space 1}    1.28{col 46}{space 3} 0.20{col 54}{space 4}     0.93{col 67}{space 3}     1.40
+{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.94{col 26}{space 2}     0.12{col 37}{space 1}   -0.48{col 46}{space 3} 0.63{col 54}{space 4}     0.73{col 67}{space 3}     1.21
+{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.11{col 26}{space 2}     0.12{col 37}{space 1}    0.96{col 46}{space 3} 0.34{col 54}{space 4}     0.90{col 67}{space 3}     1.37
+{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.19{col 26}{space 2}     0.12{col 37}{space 1}    1.71{col 46}{space 3} 0.09{col 54}{space 4}     0.97{col 67}{space 3}     1.45
 {txt}{space 12} {c |}
-{space 7}_cons {c |}{col 14}{res}{space 2}     0.31{col 26}{space 2}     0.03{col 37}{space 1}  -11.87{col 46}{space 3} 0.00{col 54}{space 4}     0.25{col 67}{space 3}     0.37
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.31{col 26}{space 2}     0.03{col 37}{space 1}  -12.99{col 46}{space 3} 0.00{col 54}{space 4}     0.26{col 67}{space 3}     0.37
 {txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {res}{com}. 
 .   // We cannot obtain the ICC from the GEE model, so fit a mixed-effects logistic
@@ -404,6 +406,115 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 {txt}
 {com}. 
 . 
+. 
+{txt}end of do-file
+
+{com}. 
+. // Make figures
+. do figures/figures
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. set graphics off
+{txt}
+{com}. 
+. tempname this_frame
+{txt}
+{com}. frame copy imputed `this_frame'
+{txt}
+{com}. 
+. // Define the number of imputations to plot.
+. local imputations_to_plot 5
+{txt}
+{com}. assert `imputations_to_plot' <= $m_imputations
+{txt}
+{com}. 
+. frame `this_frame' {c -(}
+.   mi set M = `imputations_to_plot'
+{txt}(number of imputations {it:M} = 5 unchanged)
+{com}. 
+.   // Generate a variable for each imputed variable that contains the original
+.   // values (with the missing data), repeated for each imputed data set.
+.   mi convert wide, clear
+{res}{com}.   foreach var of varlist $imputeds y1-y5 {c -(}
+{txt}  2{com}.     generate `var'_orig = `var'
+{txt}  3{com}.   {c )-}
+{txt}(69 missing values generated)
+(938 missing values generated)
+(203 missing values generated)
+(404 missing values generated)
+(1,743 missing values generated)
+(2,258 missing values generated)
+(752 missing values generated)
+(875 missing values generated)
+(752 missing values generated)
+{com}.   mi convert flong, clear
+{res}{com}. 
+.   // Create readable value labels for the imputations, and order them so that
+.   // the original data will appear first in the plots.
+.   generate imputation_str = ""
+{txt}(38,202 missing values generated)
+{com}.   replace imputation_str = "Original" if _mi_m == 0
+{txt}variable {bf}imputation_str{sf} was {bf}{res}str1{sf}{txt} now {bf}{res}str8{sf}
+{txt}(6,367 real changes made)
+{com}.   replace imputation_str = "Imputation " + string(_mi_m) if _mi_m != 0
+{txt}variable {bf}imputation_str{sf} was {bf}{res}str8{sf}{txt} now {bf}{res}str12{sf}
+{txt}(31,835 real changes made)
+{com}.   encode imputation_str, generate(imputation)
+.   replace imputation = (`imputations_to_plot' + 1) - imputation
+{txt}(31,835 real changes made)
+{com}.   local label_var: value label imputation
+.   label define `label_var' 0 "Original", modify
+. 
+.   // Plot the density of each of the continuous imputed variables.
+.   foreach var of global imputeds {c -(}
+{txt}  2{com}.     quietly misstable patterns `var'_orig if imputation == 0
+{txt}  3{com}.     local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
+{txt}  4{com}.     local pc_miss = string(`pc_miss', "%8.1f") + "% missing"
+{txt}  5{com}. 
+.     local var_label : variable label `var'
+{txt}  6{com}.     twoway (kdensity `var'_orig)               ///
+>            (kdensity `var'),                   ///
+>            by(imputation arm, note(""))        ///
+>            xtitle("`var_label' (`pc_miss')")   ///
+>            ylabel(none)                        ///
+>            legend(label(1 "Original") label(2 "Imputed"))
+{txt}  7{com}.     graph export "products/Imputations (cont) - `var_label'.pdf", replace
+{txt}  8{com}.   {c )-}
+{res}{txt}(file products/Imputations (cont) - Age (years).pdf written in PDF format)
+{res}{txt}(file products/Imputations (cont) - Body mass index.pdf written in PDF format)
+{res}{txt}(file products/Imputations (cont) - Education (years).pdf written in PDF format)
+{res}{txt}(file products/Imputations (cont) - Monthly household income (ILS; log scale).pdf written in PDF format)
+{com}. 
+.   // Plot the distribution of each of the dichotomous imputed variables.
+.   label values y* yes_no
+.   foreach var of varlist y1-y5 {c -(}
+{txt}  2{com}.     quietly misstable patterns `var'_orig if imputation == 0
+{txt}  3{com}.     local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
+{txt}  4{com}.     local pc_miss = string(`pc_miss', "%8.1f") + "% missing"
+{txt}  5{com}.     local var_label : variable label `var'
+{txt}  6{com}. 
+.     splitvallabels imputation, recode
+{txt}  7{com}.     graph hbar (count),                                             ///
+>       over(`var', label(labsize(small)))                            ///
+>       over(arm, label(labsize(small)))                              ///
+>       over(imputation, label(labsize(small)) relabel(`r(relabel)')) ///
+>       blabel(bar) intensity(25)                                     ///
+>       ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))
+{txt}  8{com}.     graph export "products/Imputations (dich) - `var_label'.pdf", replace
+{txt}  9{com}.   {c )-}
+{res}{txt}(file products/Imputations (dich) - Anemia at birth.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - Severe hypertension at birth.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - SGA undetected at birth.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - Malpresentation undetected at birth.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - Large for gestational age.pdf written in PDF format)
+{com}. {c )-}
+{txt}
+{com}. 
+. set graphics on
+{txt}
+{com}. 
 . 
 {txt}end of do-file
 
