@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 7 May 2020, 09:24:07
+ {txt}opened on:  {res} 7 May 2020, 09:40:24
 {txt}
 {com}. 
 . // Set up Stata.
@@ -432,46 +432,31 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 . // CIs, and the variance components will be appropriately estimated, but the CIs
 . // for the variance components may not be correct. See
 . // https://www.statalist.org/forums/forum/general-stata-discussion/general/1349542-mi-estimate-melogit-is-it-legit
-. mi estimate, or cmdok: melogit y i.arm i.strat_var || clusterid:
-{res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        20
-{txt}Mixed-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
-{txt}{col 49}Average RVI{col 67}= {res}    0.1358
-{txt}{col 49}Largest FMI{col 67}= {res}    0.1653
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    715.72
-{txt}{col 49}        avg{col 67}= {res}  1,760.73
-{txt}{col 49}        max{col 67}= {res}  4,867.63
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 5788.6{txt}){col 67}= {res}      1.37
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.2309
+. //
+. // mi estimate, or cmdok: melogit y i.arm i.strat_var || clusterid:
+. // estat icc // TODO: Command not valid after imputation it seems, so estimate
+. // this from complete cases.
+. // TODO: Following the note above, the ICC may not be reliable...
+. 
+{txt}end of do-file
 
-{txt}{hline 22}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}                    y{col 23}{c |} Odds Ratio{col 35}   Std. Err.{col 47}      t{col 55}   P>|t|{col 63}     [95% Con{col 76}f. Interval]
-{hline 22}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 18}arm {c |}
-{space 19}D  {c |}{col 23}{res}{space 2}     1.01{col 35}{space 2}     0.06{col 46}{space 1}    0.20{col 55}{space 3} 0.84{col 63}{space 4}     0.90{col 76}{space 3}     1.14
-{txt}{space 21} {c |}
-{space 12}strat_var {c |}
-{space 14}8d9c30  {c |}{col 23}{res}{space 2}     1.13{col 35}{space 2}     0.12{col 46}{space 1}    1.16{col 55}{space 3} 0.25{col 63}{space 4}     0.92{col 76}{space 3}     1.38
-{txt}{space 14}9d5ed6  {c |}{col 23}{res}{space 2}     0.87{col 35}{space 2}     0.12{col 46}{space 1}   -0.94{col 55}{space 3} 0.35{col 63}{space 4}     0.66{col 76}{space 3}     1.16
-{txt}{space 14}e1e1d3  {c |}{col 23}{res}{space 2}     1.08{col 35}{space 2}     0.12{col 46}{space 1}    0.74{col 55}{space 3} 0.46{col 63}{space 4}     0.88{col 76}{space 3}     1.34
-{txt}{space 14}ff4457  {c |}{col 23}{res}{space 2}     1.18{col 35}{space 2}     0.13{col 46}{space 1}    1.52{col 55}{space 3} 0.13{col 63}{space 4}     0.95{col 76}{space 3}     1.45
-{txt}{space 21} {c |}
-{space 16}_cons {c |}{col 23}{res}{space 2}     0.31{col 35}{space 2}     0.03{col 46}{space 1}  -12.54{col 55}{space 3} 0.00{col 63}{space 4}     0.26{col 76}{space 3}     0.37
-{txt}{hline 22}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 1}var(_cons[clusterid]){c |}{col 23}{res}{space 2}     0.00{col 35}{space 2}     0.01{col 63}{space 4}     0.00{col 76}{space 3}    40.87
-{txt}{hline 22}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{res}{txt}
-{com}. estat icc
-{err}{bf:estat} {bf:icc} not valid
-{txt}{search r(321), local:r(321);}
+{com}. 
+. // Obtain the git revision hash, which is used in the reports.
+. tempfile git_revision_filename
+{txt}
+{com}. tempname revision_file
+{txt}
+{com}. shell git rev-parse --short HEAD > "`git_revision_filename'"
+{txt}
 
-end of do-file
-{search r(321), local:r(321);}
-
-end of do-file
-
-{search r(321), local:r(321);}
+{com}. file open `revision_file' using `git_revision_filename', read text
+{txt}
+{com}. file read `revision_file' line
+{txt}
+{com}. global git_revision = "`macval(line)'"
+{txt}
+{com}. 
+. 
+{txt}end of do-file
 
 {com}. 
