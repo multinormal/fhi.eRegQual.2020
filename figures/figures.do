@@ -37,15 +37,16 @@ frame `this_frame' {
     local pc_miss = string(`pc_miss', "%8.2f") + "% missing"
 
     local var_label : variable label `var'
-    twoway (kdensity `var'_orig)           ///
-           (kdensity `var'),               ///
-           by(imputation, note(`pc_miss')) ///
-           xtitle(`var_label')             ///
-           ylabel(none)                    ///
+    twoway (kdensity `var'_orig)               ///
+           (kdensity `var'),                   ///
+           by(imputation arm, note(`pc_miss')) ///
+           xtitle(`var_label')                 ///
+           ylabel(none)                        ///
            legend(label(1 "Original") label(2 "Imputed"))
     graph export "products/Imputations (cont) - `var_label'.pdf", replace
   }
 
+  // Plot the distribution of each of the dichotomous imputed variables.
   label values y* yes_no
   foreach var of varlist y1-y5 {
     quietly misstable patterns `var'_orig if imputation == 0
@@ -62,8 +63,6 @@ frame `this_frame' {
       ytitle("`var_label'") yscale(range(0 3500))
     graph export "products/Imputations (dich) - `var_label'.pdf", replace
   }
-
-
 }
 
 set graphics on
