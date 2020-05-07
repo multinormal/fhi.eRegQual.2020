@@ -15,7 +15,7 @@ frame `this_frame' {
   // Generate a variable for each imputed variable that contains the original
   // values (with the missing data), repeated for each imputed data set.
   mi convert wide, clear
-  foreach var of global imputeds {
+  foreach var of varlist $imputeds y1-y5 {
     generate `var'_orig = `var'
   }
   mi convert flong, clear
@@ -30,21 +30,44 @@ frame `this_frame' {
   local label_var: value label imputation
   label define `label_var' 0 "Original", modify
 
-  // Plot the density of each of the continuous imputed variables.
-  foreach var of global imputeds {
+  //// // Plot the density of each of the continuous imputed variables.
+  //// foreach var of global imputeds {
+  ////   quietly misstable patterns `var'_orig if imputation == 0
+  ////   local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
+  ////   local pc_miss = string(`pc_miss', "%8.2f") + "% missing"
+
+  ////   local var_label : variable label `var'
+  ////   twoway (kdensity `var'_orig)           ///
+  ////          (kdensity `var'),               ///
+  ////          by(imputation, note(`pc_miss')) ///
+  ////          xtitle(`var_label')             ///
+  ////          ylabel(none)                    ///
+  ////          legend(label(1 "Original") label(2 "Imputed"))
+  ////   graph export "products/Imputations - `var_label'.pdf", replace
+  //// }
+
+  label values y* yes_no
+  foreach var of varlist y1-y5 {
     quietly misstable patterns `var'_orig if imputation == 0
     local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
     local pc_miss = string(`pc_miss', "%8.2f") + "% missing"
+    local var_label : variable label `var'
+    //// twoway ///(histogram y1_orig, discrete xlabel(0/1, valuelabel noticks) frequency)  ///
+    ////        (histogram `var',      discrete xlabel(0/1, valuelabel noticks) frequency), ///
+    ////        by(imputation, note(`pc_miss'))                                ///
+    ////        xtitle(`var_label')
 
     local var_label : variable label `var'
-    twoway (kdensity `var'_orig)           ///
-           (kdensity `var'),               ///
-           by(imputation, note(`pc_miss')) ///
-           xtitle(`var_label')             ///
-           ylabel(none)                    ///
-           legend(label(1 "Original") label(2 "Imputed"))
+    splitvallabels imputation, recode
+    graph hbar (count), ///
+      over(`var', label(labsize(small))) ///
+      over(imputation, label(labsize(small)) relabel(`r(relabel)')) ///
+      blabel(bar) intensity(25) ///
+      ytitle("`var_label'") yscale(range(0 7000))
     graph export "products/Imputations - `var_label'.pdf", replace
   }
+
+
 }
 
 set graphics on
