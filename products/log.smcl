@@ -3,13 +3,17 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 5 May 2020, 12:11:34
+ {txt}opened on:  {res} 7 May 2020, 09:40:24
 {txt}
 {com}. 
 . // Set up Stata.
 . do setup/setup
 {txt}
 {com}. version 16.1
+{txt}
+{com}. 
+. // Set the random number generator seed.
+. set seed 1234
 {txt}
 {com}. 
 . // Set up Stata's path to use the "packages" directory for add-on packages.
@@ -36,6 +40,10 @@
 {com}. version 16.1
 {txt}
 {com}. 
+. // The number of imputations to perform.
+. global m_imputations 20
+{txt}
+{com}. 
 . 
 {txt}end of do-file
 
@@ -46,6 +54,8 @@
 {com}. version 16.1
 {txt}
 {com}. 
+. // TODO: Ensure that each woman appears exactly once!
+. 
 . // Define the path to the data and the signature we expect it to have.
 . local fname "data/raw/04May2020_eRegQual birth outcomes.dta"
 {txt}
@@ -61,16 +71,28 @@
 {com}. assert r(datasignature) == "`signature'"
 {txt}
 {com}. 
-. // Convert the arm variable from string to integer.
-. encode prettyExposure, generate(arm) label(Arm)
+. // Globals that specify the imputed and regular variables.
+. global imputeds
 {txt}
-{com}. drop prettyExposure
+{com}. global regulars
+{txt}
+{com}. 
+. // Convert the arm variable from string to integer.
+. encode prettyExposure, generate(arm)
+{txt}
+{com}. label variable arm Arm
+{txt}
+{com}. fvset base 1 arm
+{txt}
+{com}. global regulars $regulars arm
 {txt}
 {com}. 
 . // Convert the stratification variable from string to integer.
-. encode bookorgdistricthashed, generate(strat_var) label(District)
+. encode bookorgdistricthashed, generate(strat_var)
 {txt}
-{com}. drop bookorgdistricthashed
+{com}. label variable strat_var District
+{txt}
+{com}. global regulars $regulars strat_var
 {txt}
 {com}. 
 . // Rename and label the cluster identifier variable.
@@ -78,58 +100,161 @@
 {res}{txt}
 {com}. label variable clusterid Cluster
 {txt}
-{com}. 
-. // The following is temporary. We re-compute the composite outcome and verify
-. // that we have done so correctly.
-. 
-. // The composite outcome is defined as follows. If:
-. // * All of the outcomes are false -> composite outcome is false;
-. // * At least one of the outcomes is true -> composite outcome is true;
-. // * One or more of the outcomes are missing and all others are false
-. //   -> composite outcome is missing.
-. 
-. local y1 anemia_at_birth             
-{txt}
-{com}. local y2 severehypertension_at_birth 
-{txt}
-{com}. local y3 sga_undetected_at_birth              
-{txt}
-{com}. local y4 malpres_undetected          
-{txt}
-{com}. local y5 lga
+{com}. global regulars $regulars clusterid
 {txt}
 {com}. 
-. tempvar all_false
+. // Rename the components of the composite outcome.
+. rename anemia_at_birth              y1
+{res}{txt}
+{com}. label variable                      y1 "Anemia at birth"
 {txt}
-{com}. generate `all_false' = (`y1'==0) & (`y2'==0) & (`y3'==0) & (`y4'==0) & (`y5'==0)
+{com}. rename severehypertension_at_birth  y2
+{res}{txt}
+{com}. label variable                      y2 "Severe hypertension at birth"
+{txt}
+{com}. rename sga_undetected_at_birth      y3
+{res}{txt}
+{com}. label variable                      y3 "SGA undetected at birth"
+{txt}
+{com}. rename malpres_undetected           y4
+{res}{txt}
+{com}. label variable                      y4 "Malpresentation undetected at birth"
+{txt}
+{com}. rename lga                          y5
+{res}{txt}
+{com}. label variable                      y5 "Large for gestational age"
 {txt}
 {com}. 
-. tempvar one_true
+. // Apply labels to the outcomes.
+. label define yes_no 0 "No" 1 "Yes"
 {txt}
-{com}. generate `one_true'  = (`y1'==1) | (`y2'==1) | (`y3'==1) | (`y4'==1) | (`y5'==1)
+{com}. label values y* yes_no
 {txt}
 {com}. 
-. generate y = .
-{txt}(6,367 missing values generated)
+. // Age.
+. replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
+{txt}(35 real changes made, 35 to missing)
 
-{com}. replace  y = 0 if `all_false'
-{txt}(2,818 real changes made)
-
-{com}. replace  y = 1 if `one_true'
-{txt}(1,396 real changes made)
-
-{com}. 
-. // Verify that we can correctly recompute the composite outcome.
-. count if y == TrialOne_adverse_pregoutc
-  {res}6,367
+{com}. label variable age "Age (years)"
 {txt}
-{com}. assert r(N) == _N
+{com}. global imputeds $imputeds age
 {txt}
 {com}. 
-. 
-. // NOTE: The above correctly defines the outcome, but it is called
-. // TrialOne_adverse_pregoutc, not the name specified in the Excel file. Mahima
-. // sent a new version of that file.
+. // BMI.
+. rename bookbmi bmi
+{res}{txt}
+{com}. label variable bmi "Body mass index"
+{txt}
+{com}. global imputeds $imputeds bmi
+{txt}
+{com}. 
+. // Education.
+. label variable education "Education (years)"
+{txt}
+{com}. global imputeds $imputeds education
+{txt}
+{com}. 
+. // Income.
+. generate log_income = log(avgincome) // Log to approximately normalize.
+{txt}(404 missing values generated)
+
+{com}. label variable log_income "Monthly household income (ILS; log scale)"
+{txt}
+{com}. global imputeds $imputeds log_income
+{txt}
+{com}. 
+. // Lab availability.
+. label variable lab_available "Lab available"
+{txt}
+{com}. global regulars $regulars lab_available
+{txt}
+{com}. 
+. // Ultrasound available.
+. label variable us_available "US available"
+{txt}
+{com}. global regulars $regulars us_available
+{txt}
+{com}. 
+. // Verify that all of the regular variables are complete, and that each of the
+. // variables to be imputed contain missing values.
+. misstable summarize $regulars
+{txt}(variables nonmissing or string)
+
+{com}. assert r(N_eq_dot) + r(N_gt_dot) == .
+{txt}
+{com}. foreach x of varlist y1-y5 $imputeds {c -(}
+{txt}  2{com}.   misstable summarize `x'
+{txt}  3{com}.   assert r(N_eq_dot) + r(N_gt_dot) != .
+{txt}  4{com}. {c )-}
+{txt}{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y1 {c |}{res}     1,743{txt}{space 10}{res}     4,624{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y2 {c |}{res}     2,258{txt}{space 10}{res}     4,109{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y3 {c |}{res}       752{txt}{space 10}{res}     5,615{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y4 {c |}{res}       875{txt}{space 10}{res}     5,492{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+            y5 {c |}{res}       752{txt}{space 10}{res}     5,615{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+           age {c |}{res}        69{txt}{space 10}{res}     6,298{txt}  {c |}     32         14          45
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+           bmi {c |}{res}       884{txt}{space 10}{res}     5,483{txt}  {c |}   >500   1.792822      207500
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+     education {c |}{res}       203{txt}{space 10}{res}     6,164{txt}  {c |}     25          1          24
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+    log_income {c |}{res}       404{txt}{space 10}{res}     5,963{txt}  {c |}    222  -5.926926    8.922658
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+
+{com}. 
+. // Keep only the variables of interest.
+. keep y* $imputeds $regulars TrialOne_adverse_pregoutc
+{txt}
+{com}. 
 . 
 {txt}end of do-file
 
@@ -140,104 +265,178 @@
 {com}. version 16.1
 {txt}
 {com}. 
-. // Do a very basic analysis that ignores all issue such as missing data.
-. melogit y arm i.strat_var || clusterid:, or
+. // Obtain the sample size (before imputation).
+. local sample_size = _N
+{txt}
+{com}. 
+. // Set up the imputation and the roles of the variables.
+. mi set mlong
+{txt}
+{com}. mi register imputed $imputeds y1-y5
+{res}{txt}{p}
+(3365 {it:m}=0 obs. now marked as incomplete)
+{p_end}
+
+{com}. mi register regular $regulars
+{txt}
+{com}. 
+. // Perform imputation. Due to collinearity between the constituent outcome
+. // variables y1-y5, these variables are exluded as predictors for one another.
+. // This is achieved by specifying the noimputed option, followed by the include
+. // option that explicityly lists the imputed variables to include in the
+. // imputation model. Specifying the omit option did not work as expected. It was
+. // not possible to include other variables in the model for the constituent
+. // outcome variables, also due to collinearity.
+. mi impute chained (regress)                               $imputeds ///
+>                   (logit, noimputed include($imputeds))   y1-y5     ///
+>                   = i.arm i.lab_available i.us_available,           ///
+>                   add($m_imputations) 
+{res}
+{txt}Conditional models:
+{p 15 21 2}
+{bf:age}: regress age education log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{p_end}
+{p 9 21 2}
+{bf:education}: regress education age log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{p_end}
+{p 8 21 2}
+{bf:log_income}: regress log_income age education i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y3}: logit y3 age bmi education log_income ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y5}: logit y5 age bmi education log_income ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y4}: logit y4 age bmi education log_income ib1.arm i.lab_available i.us_available
+{p_end}
+{p 15 21 2}
+{bf:bmi}: regress bmi age education log_income i.y3 i.y5 i.y4 i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y1}: logit y1 age bmi education log_income ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y2}: logit y2 age bmi education log_income ib1.arm i.lab_available i.us_available
+{p_end}
+
+{res}{txt}Performing chained iterations ...
 {res}{txt}
-Fitting fixed-effects model:
+Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}      20
+{txt}Chained equations{txt}{col 45}{ralign 12:added }= {res}      20
+{txt}Imputed: {it:m}=1 through {it:m}=20{txt}{col 45}{ralign 12:updated }= {res}       0
 
-Iteration 0:{space 3}log likelihood = {res:-2676.5877}  
-Iteration 1:{space 3}log likelihood = {res:-2670.4155}  
-Iteration 2:{space 3}log likelihood = {res:-2670.4123}  
-Iteration 3:{space 3}log likelihood = {res:-2670.4123}  
+{txt}Initialization: {res}monotone{txt}{col 45}{ralign 12:Iterations }= {res}     200
+{txt}{col 45}{ralign 12:burn-in }= {res}      10
 
-Refining starting values:
+{txt}{p 15 15 2}{bf:age}: linear regression{p_end}
+{txt}{p 15 15 2}{bf:bmi}: linear regression{p_end}
+{txt}{p 9 15 2}{bf:education}: linear regression{p_end}
+{txt}{p 8 15 2}{bf:log_income}: linear regression{p_end}
+{txt}{p 16 15 2}{bf:y1}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y2}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y3}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y4}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y5}: logistic regression{p_end}
 
-Grid node 0:{space 3}log likelihood = {res:-2743.7375}
-
-Fitting full model:
-{res}
-{txt}Iteration 0:{space 3}log likelihood = {res:-2743.7375}  (not concave)
-Iteration 1:{space 3}log likelihood = {res:-2706.4441}  (not concave)
-Iteration 2:{space 3}log likelihood = {res: -2671.852}  
-Iteration 3:{space 3}log likelihood = {res:-2670.5103}  
-Iteration 4:{space 3}log likelihood = {res:-2670.4234}  
-Iteration 5:{space 3}log likelihood = {res:-2670.4157}  (backed up)
-Iteration 6:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 7:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 8:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 9:{space 3}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 10:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 11:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 12:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 13:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 14:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 15:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 16:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 17:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 18:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 19:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 20:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 21:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 22:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 23:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 24:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 25:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 26:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 27:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 28:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 29:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 30:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 31:{space 2}log likelihood = {res:-2670.4138}  (backed up)
-Iteration 32:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 33:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 34:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 35:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 36:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 37:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 38:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 39:{space 2}log likelihood = {res:-2670.4138}  (not concave)
-Iteration 40:{space 2}log likelihood = {res:-2670.4138}  
-Iteration 41:{space 2}log likelihood = {res:-2670.4127}  (not concave)
-Iteration 42:{space 2}log likelihood = {res:-2670.4127}  (not concave)
-Iteration 43:{space 2}log likelihood = {res:-2670.4126}  
-Iteration 44:{space 2}log likelihood = {res:-2670.4123}  
-Iteration 45:{space 2}log likelihood = {res:-2670.4123}  
-{res}
-{txt}Mixed-effects logistic regression{col 49}{txt}Number of obs{col 67}={res}{col 69}     4,214
-{txt}Group variable: {col 23}{res}clusterid{col 49}{txt}Number of groups{col 67}={res}{col 69}       119
-
-{col 49}{txt}Obs per group:
-{col 63}{txt}min{col 67}={res}{col 69}         6
-{col 63}{txt}avg{col 67}={res}{col 69}      35.4
-{col 63}{txt}max{col 67}={res}{col 69}       139
-
-{txt}Integration method: {col 21}{res}mvaghermite{col 49}{txt}Integration pts.{col 67}={col 78}{res}7
-
-{col 49}{txt}Wald chi2({res}5{txt}){col 67}={res}{col 70}    11.43
-{txt}Log likelihood = {res}-2670.4123{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0435
-{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}           y{col 14}{c |} Odds Ratio{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
-{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 9}arm {c |}{col 14}{res}{space 2}     0.99{col 26}{space 2}     0.07{col 37}{space 1}   -0.16{col 46}{space 3} 0.88{col 54}{space 4}     0.87{col 67}{space 3}     1.13
-{txt}{space 12} {c |}
-{space 3}strat_var {c |}
-{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.15{col 26}{space 2}     0.13{col 37}{space 1}    1.31{col 46}{space 3} 0.19{col 54}{space 4}     0.93{col 67}{space 3}     1.43
-{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.85{col 26}{space 2}     0.13{col 37}{space 1}   -1.11{col 46}{space 3} 0.27{col 54}{space 4}     0.63{col 67}{space 3}     1.14
-{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.07{col 26}{space 2}     0.12{col 37}{space 1}    0.62{col 46}{space 3} 0.53{col 54}{space 4}     0.86{col 67}{space 3}     1.35
-{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.26{col 26}{space 2}     0.14{col 37}{space 1}    2.10{col 46}{space 3} 0.04{col 54}{space 4}     1.02{col 67}{space 3}     1.57
-{txt}{space 12} {c |}
-{space 7}_cons {c |}{col 14}{res}{space 2}     0.45{col 26}{space 2}     0.06{col 37}{space 1}   -5.91{col 46}{space 3} 0.00{col 54}{space 4}     0.35{col 67}{space 3}     0.59
-{txt}{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}{res}clusterid   {col 14}{txt}{c |}
-{space 3}var(_cons){c |}{col 14}{res}{space 2}     0.00{col 26}{space 2}     0.00{col 54}{space 4}        .{col 67}{space 3}        .
-{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test vs. logistic model: {txt}chi2({res}0{txt}) ={res} 0.00{col 59}{txt}Prob > chi2 ={res}{col 73}     .
-
-{txt}{p 0 6 4 79}Note: {help j_mixedlr##|_new:LR test is conservative} and provided only for reference.{p_end}
+{txt}{hline 19}{c TT}{hline 35}{hline 11}
+{txt}{col 20}{c |}{center 46:  Observations per {it:m}}
+{txt}{col 20}{c LT}{hline 35}{c TT}{hline 10}
+{txt}{col 11}Variable {c |}{ralign 12:Complete }{ralign 13:Incomplete }{ralign 10:Imputed }{c |}{ralign 10:Total}
+{hline 19}{c +}{hline 35}{c +}{hline 10}
+{txt}{ralign 19:age }{c |}{res}       6298           69        69 {txt}{c |}{res}      6367
+{txt}{ralign 19:bmi }{c |}{res}       5483          884       884 {txt}{c |}{res}      6367
+{txt}{ralign 19:education }{c |}{res}       6164          203       203 {txt}{c |}{res}      6367
+{txt}{ralign 19:log_income }{c |}{res}       5963          404       404 {txt}{c |}{res}      6367
+{txt}{ralign 19:y1 }{c |}{res}       4624         1743      1743 {txt}{c |}{res}      6367
+{txt}{ralign 19:y2 }{c |}{res}       4109         2258      2258 {txt}{c |}{res}      6367
+{txt}{ralign 19:y3 }{c |}{res}       5615          752       752 {txt}{c |}{res}      6367
+{txt}{ralign 19:y4 }{c |}{res}       5492          875       875 {txt}{c |}{res}      6367
+{txt}{ralign 19:y5 }{c |}{res}       5615          752       752 {txt}{c |}{res}      6367
+{txt}{hline 19}{c BT}{hline 35}{c BT}{hline 10}
+{p 0 1 1 66}(complete + incomplete = total; imputed is the minimum across {it:m}
+ of the number of filled-in observations.){p_end}
 
 {com}. 
+. // The composite outcome is defined as follows. If:
+. // * All of the outcomes are false -> composite outcome is false;
+. // * At least one of the outcomes is true -> composite outcome is true;
+. // * One or more of the outcomes are missing and all others are false
+. //   -> composite outcome is missing.
+. tempvar all_false
+{txt}
+{com}. generate `all_false' = (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
+{txt}
+{com}. tempvar one_true
+{txt}
+{com}. generate `one_true'  = (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
+{txt}
+{com}. 
+. generate y = .
+{txt}(73,667 missing values generated)
+
+{com}. replace  y = 0 if `all_false'
+{txt}(52,710 real changes made)
+
+{com}. replace  y = 1 if `one_true'
+{txt}(18,804 real changes made)
+
+{com}. label variable y "Adverse pregnancy outcome"
+{txt}
+{com}. 
+. // Verify that we can correctly recompute the composite outcome using the
+. // original (non-imputed) data.
+. count if y == TrialOne_adverse_pregoutc & _mi_m == 0
+  {res}6,367
+{txt}
+{com}. assert r(N) == `sample_size'
+{txt}
+{com}. 
+. // Estimate population averaged effects using a GEE. This is the planned
+. // analysis.
+. mi xtset clusterid
+{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
+{txt}
+{com}. mi estimate, eform: xtgee y i.arm, family(binomial) link(logit)
+{res}
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        20
+{txt}GEE population-averaged model{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable:{ralign 27:{res:clusterid}}{col 49}Number of groups{col 67}= {res}       119
+{txt}Link:{ralign 37:{res:logit}}{col 49}Obs per group:
+Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}         9
+{txt}Correlation:{ralign 30:{res:exchangeable}}{col 49}              avg{col 67}= {res}      53.5
+{txt}Scale parameter:{ralign 26:{res:1}}{col 49}              max{col 67}= {res}       217
+
+{txt}{col 49}Average RVI{col 67}= {res}    0.1478
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1433
+{txt}DF adjustment:{ralign 28: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    948.66
+{txt}{col 49}        avg{col 67}= {res}  1,369.56
+{txt}{col 49}        max{col 67}= {res}  1,790.46
+{txt}Model F test:{ralign 29: {res:Equal FMI}}{col 49}F({res}   1{txt},{res} 1790.5{txt}){col 67}= {res}      0.08
+{txt}Within VCE type: {ralign 25:{res:Conventional}}{col 49}Prob > F{col 67}= {res}    0.7728
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y{col 14}{c |}     exp(b){col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}arm {c |}
+{space 10}D  {c |}{col 14}{res}{space 2}     1.02{col 26}{space 2}     0.07{col 37}{space 1}    0.29{col 46}{space 3} 0.77{col 54}{space 4}     0.90{col 67}{space 3}     1.16
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}     0.34{col 26}{space 2}     0.02{col 37}{space 1}  -23.50{col 46}{space 3} 0.00{col 54}{space 4}     0.31{col 67}{space 3}     0.37
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+. // We cannot obtain the ICC from the GEE model, so fit a mixed-effects logistic
+. // mode. Note that we have to use the option cmdok to force Stata to fit the
+. // model. As documented at the following, the coefficients, constant, and their
+. // CIs, and the variance components will be appropriately estimated, but the CIs
+. // for the variance components may not be correct. See
+. // https://www.statalist.org/forums/forum/general-stata-discussion/general/1349542-mi-estimate-melogit-is-it-legit
+. //
+. // mi estimate, or cmdok: melogit y i.arm i.strat_var || clusterid:
+. // estat icc // TODO: Command not valid after imputation it seems, so estimate
+. // this from complete cases.
+. // TODO: Following the note above, the ICC may not be reliable...
 . 
 {txt}end of do-file
 
