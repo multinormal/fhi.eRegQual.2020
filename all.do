@@ -18,6 +18,9 @@ do data/impute
 // Do estimation.
 do estimation/estimation
 
+// Make figures
+do figures/figures
+
 // Obtain the git revision hash, which is used in the reports.
 tempfile git_revision_filename
 tempname revision_file
