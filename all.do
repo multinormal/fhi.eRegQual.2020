@@ -11,11 +11,15 @@ do setup/setup
 // Set up globals.
 do globals/globals
 
-// Import data.
-do data/data
+// Import data and perform imputation.
+do data/import
+do data/impute
 
 // Do estimation.
 do estimation/estimation
+
+// Make figures
+do figures/figures
 
 // Obtain the git revision hash, which is used in the reports.
 tempfile git_revision_filename
