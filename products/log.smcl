@@ -593,4 +593,298 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 
 {com}. view products/log.smcl
 
+. help markdoc
+
+. help frame copy
+
+. display "$regulars"
+{res}arm strat_var clusterid lab_available us_available
+
+{com}. do data/impute
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. frame copy original imputed, replace
+{txt}
+{com}. frame imputed {c -(}
+.   // Obtain the sample size (before imputation).
+.   local sample_size = _N
 . 
+.   // Set up the imputation and the roles of the variables.
+.   mi set mlong
+.   mi register imputed $imputeds y1-y5
+{res}{txt}{p}
+(3396 {it:m}=0 obs. now marked as incomplete)
+{p_end}
+{com}.   mi register regular $regulars
+. 
+.   // Perform imputation. Due to collinearity between the constituent outcome
+.   // variables y1-y5, these variables are exluded as predictors for one another.
+.   // This is achieved by specifying the noimputed option, followed by the include
+.   // option that explicityly lists the imputed variables to include in the
+.   // imputation model. Specifying the omit option did not work as expected. It was
+.   // not possible to include other variables in the model for the constituent
+.   // outcome variables, also due to collinearity.
+.   mi impute chained (regress)                               $imputeds ///
+>                     (logit, noimputed include($imputeds strat_var))   y1-y5     ///
+>                     = i.arm i.lab_available i.us_available,           ///
+>                     add($m_imputations) 
+{res}
+{txt}Conditional models:
+{p 15 21 2}
+{bf:age}: regress age education log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{p_end}
+{p 9 21 2}
+{bf:education}: regress education age log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{p_end}
+{p 8 21 2}
+{bf:log_income}: regress log_income age education i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y3}: logit y3 age bmi education log_income strat_var ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y5}: logit y5 age bmi education log_income strat_var ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y4}: logit y4 age bmi education log_income strat_var ib1.arm i.lab_available i.us_available
+{p_end}
+{p 15 21 2}
+{bf:bmi}: regress bmi age education log_income i.y3 i.y5 i.y4 i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y1}: logit y1 age bmi education log_income strat_var ib1.arm i.lab_available i.us_available
+{p_end}
+{p 16 21 2}
+{bf:y2}: logit y2 age bmi education log_income strat_var ib1.arm i.lab_available i.us_available
+{p_end}
+
+{res}{txt}Performing chained iterations ...
+{res}{txt}
+Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
+{txt}Chained equations{txt}{col 45}{ralign 12:added }= {res}       5
+{txt}Imputed: {it:m}=1 through {it:m}=5{txt}{col 45}{ralign 12:updated }= {res}       0
+
+{txt}Initialization: {res}monotone{txt}{col 45}{ralign 12:Iterations }= {res}      50
+{txt}{col 45}{ralign 12:burn-in }= {res}      10
+
+{txt}{p 15 15 2}{bf:age}: linear regression{p_end}
+{txt}{p 15 15 2}{bf:bmi}: linear regression{p_end}
+{txt}{p 9 15 2}{bf:education}: linear regression{p_end}
+{txt}{p 8 15 2}{bf:log_income}: linear regression{p_end}
+{txt}{p 16 15 2}{bf:y1}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y2}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y3}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y4}: logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y5}: logistic regression{p_end}
+
+{txt}{hline 19}{c TT}{hline 35}{hline 11}
+{txt}{col 20}{c |}{center 46:  Observations per {it:m}}
+{txt}{col 20}{c LT}{hline 35}{c TT}{hline 10}
+{txt}{col 11}Variable {c |}{ralign 12:Complete }{ralign 13:Incomplete }{ralign 10:Imputed }{c |}{ralign 10:Total}
+{hline 19}{c +}{hline 35}{c +}{hline 10}
+{txt}{ralign 19:age }{c |}{res}       6298           69        69 {txt}{c |}{res}      6367
+{txt}{ralign 19:bmi }{c |}{res}       5429          938       938 {txt}{c |}{res}      6367
+{txt}{ralign 19:education }{c |}{res}       6164          203       203 {txt}{c |}{res}      6367
+{txt}{ralign 19:log_income }{c |}{res}       5963          404       404 {txt}{c |}{res}      6367
+{txt}{ralign 19:y1 }{c |}{res}       4624         1743      1743 {txt}{c |}{res}      6367
+{txt}{ralign 19:y2 }{c |}{res}       4109         2258      2258 {txt}{c |}{res}      6367
+{txt}{ralign 19:y3 }{c |}{res}       5615          752       752 {txt}{c |}{res}      6367
+{txt}{ralign 19:y4 }{c |}{res}       5492          875       875 {txt}{c |}{res}      6367
+{txt}{ralign 19:y5 }{c |}{res}       5615          752       752 {txt}{c |}{res}      6367
+{txt}{hline 19}{c BT}{hline 35}{c BT}{hline 10}
+{p 0 1 1 66}(complete + incomplete = total; imputed is the minimum across {it:m}
+ of the number of filled-in observations.){p_end}
+{com}. 
+.   // The composite outcome is defined as follows. If:
+.   // * All of the outcomes are false -> composite outcome is false;
+.   // * At least one of the outcomes is true -> composite outcome is true;
+.   // * One or more of the outcomes are missing and all others are false
+.   //   -> composite outcome is missing.
+.   tempvar all_false
+.   mi passive: generate `all_false' = ///
+>     (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
+{res}{txt}{it:m}=0:
+{res}{txt}{it:m}=1:
+{res}{txt}{it:m}=2:
+{res}{txt}{it:m}=3:
+{res}{txt}{it:m}=4:
+{res}{txt}{it:m}=5:
+{res}{com}.   tempvar one_true
+.   mi passive: generate `one_true'  = ///
+>     (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
+{res}{txt}{it:m}=0:
+{res}{txt}{it:m}=1:
+{res}{txt}{it:m}=2:
+{res}{txt}{it:m}=3:
+{res}{txt}{it:m}=4:
+{res}{txt}{it:m}=5:
+{res}{com}. 
+.   mi passive: generate y = .
+{res}{txt}{it:m}=0:
+(6,367 missing values generated)
+{res}{txt}{it:m}=1:
+(6,367 missing values generated)
+{res}{txt}{it:m}=2:
+(6,367 missing values generated)
+{res}{txt}{it:m}=3:
+(6,367 missing values generated)
+{res}{txt}{it:m}=4:
+(6,367 missing values generated)
+{res}{txt}{it:m}=5:
+(6,367 missing values generated)
+{res}{com}.   mi passive: replace  y = 0 if `all_false'
+{res}{txt}{it:m}=0:
+(2,818 real changes made)
+{res}{txt}{it:m}=1:
+(4,732 real changes made)
+{res}{txt}{it:m}=2:
+(4,759 real changes made)
+{res}{txt}{it:m}=3:
+(4,772 real changes made)
+{res}{txt}{it:m}=4:
+(4,789 real changes made)
+{res}{txt}{it:m}=5:
+(4,764 real changes made)
+{res}{com}.   mi passive: replace  y = 1 if `one_true'
+{res}{txt}{it:m}=0:
+(1,396 real changes made)
+{res}{txt}{it:m}=1:
+(1,635 real changes made)
+{res}{txt}{it:m}=2:
+(1,608 real changes made)
+{res}{txt}{it:m}=3:
+(1,595 real changes made)
+{res}{txt}{it:m}=4:
+(1,578 real changes made)
+{res}{txt}{it:m}=5:
+(1,603 real changes made)
+{res}{com}.   label variable y "Adverse pregnancy outcome"
+. 
+.   // Verify that we can correctly recompute the composite outcome using the
+.   // original (non-imputed) data.
+.   count if y == TrialOne_adverse_pregoutc & _mi_m == 0
+  {res}6,367
+{com}.   assert r(N) == `sample_size'
+. {c )-}
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. do figures/figures
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. set graphics off
+{txt}
+{com}. 
+. // Define the number of imputations to plot.
+. local imputations_to_plot 5
+{txt}
+{com}. assert `imputations_to_plot' <= $m_imputations
+{txt}
+{com}. 
+. // Make the plots.
+. tempname this_frame
+{txt}
+{com}. frame copy imputed `this_frame'
+{txt}
+{com}. frame `this_frame' {c -(}
+.   mi set M = `imputations_to_plot'
+{txt}(number of imputations {it:M} = 5 unchanged)
+{com}. 
+.   // Generate a variable for each imputed variable that contains the original
+.   // values (with the missing data), repeated for each imputed data set.
+.   mi convert wide, clear
+{txt}{p}
+(passive variables
+{res}__000000 __000001
+{txt}unregistered because not in {it:m}=0)
+{p_end}
+{res}{com}.   foreach var of varlist $imputeds y1-y5 y {c -(}
+{txt}  2{com}.     generate `var'_orig = `var'
+{txt}  3{com}.   {c )-}
+{txt}(69 missing values generated)
+(938 missing values generated)
+(203 missing values generated)
+(404 missing values generated)
+(1,743 missing values generated)
+(2,258 missing values generated)
+(752 missing values generated)
+(875 missing values generated)
+(752 missing values generated)
+(2,153 missing values generated)
+{com}.   mi convert flong, clear
+{res}{com}. 
+.   // Create readable value labels for the imputations, and order them so that
+.   // the original data will appear first in the plots.
+.   generate imputation_str = ""
+{txt}(38,202 missing values generated)
+{com}.   replace imputation_str = "Original" if _mi_m == 0
+{txt}variable {bf}imputation_str{sf} was {bf}{res}str1{sf}{txt} now {bf}{res}str8{sf}
+{txt}(6,367 real changes made)
+{com}.   replace imputation_str = "Imputation " + string(_mi_m) if _mi_m != 0
+{txt}variable {bf}imputation_str{sf} was {bf}{res}str8{sf}{txt} now {bf}{res}str12{sf}
+{txt}(31,835 real changes made)
+{com}.   encode imputation_str, generate(imputation)
+.   replace imputation = (`imputations_to_plot' + 1) - imputation
+{txt}(31,835 real changes made)
+{com}.   local label_var: value label imputation
+.   label define `label_var' 0 "Original", modify
+. 
+.   // Plot the density of each of the continuous imputed variables.
+.   foreach var of global imputeds {c -(}
+{txt}  2{com}.     quietly misstable patterns `var'_orig if imputation == 0
+{txt}  3{com}.     local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
+{txt}  4{com}.     local pc_miss = string(`pc_miss', "%8.1f") + "% missing"
+{txt}  5{com}. 
+.     local var_label : variable label `var'
+{txt}  6{com}.     twoway (kdensity `var'_orig)               ///
+>            (kdensity `var'),                   ///
+>            by(imputation arm, note(""))        ///
+>            xtitle("`var_label' (`pc_miss')")   ///
+>            ylabel(none)                        ///
+>            legend(label(1 "Original") label(2 "Imputed"))
+{txt}  7{com}.     graph export "products/Imputations (cont) - `var_label'.pdf", replace
+{txt}  8{com}.   {c )-}
+{res}{txt}(file products/Imputations (cont) - Age (years).pdf written in PDF format)
+{res}{txt}(file products/Imputations (cont) - Body mass index.pdf written in PDF format)
+{res}{txt}(file products/Imputations (cont) - Education (years).pdf written in PDF format)
+{res}{txt}(file products/Imputations (cont) - Monthly household income (ILS; log scale).pdf written in PDF format)
+{com}. 
+.   // Plot the distribution of each of the dichotomous imputed variables.
+.   label values y* yes_no
+.   foreach var of varlist y y1-y5 {c -(}
+{txt}  2{com}.     quietly misstable patterns `var'_orig if imputation == 0
+{txt}  3{com}.     local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
+{txt}  4{com}.     local pc_miss = string(`pc_miss', "%8.1f") + "% missing"
+{txt}  5{com}.     local var_label : variable label `var'
+{txt}  6{com}. 
+.     splitvallabels imputation, recode
+{txt}  7{com}.     graph hbar (count),                                             ///
+>       over(`var', label(labsize(small)))                            ///
+>       over(arm, label(labsize(small)))                              ///
+>       over(imputation, label(labsize(small)) relabel(`r(relabel)')) ///
+>       blabel(bar) intensity(25)                                     ///
+>       ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))
+{txt}  8{com}.     graph export "products/Imputations (dich) - `var_label'.pdf", replace
+{txt}  9{com}.   {c )-}
+{res}{txt}(file products/Imputations (dich) - Adverse pregnancy outcome.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - Anemia at birth.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - Severe hypertension at birth.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - SGA undetected at birth.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - Malpresentation undetected at birth.pdf written in PDF format)
+{res}{txt}(file products/Imputations (dich) - Large for gestational age.pdf written in PDF format)
+{com}. {c )-}
+{txt}
+{com}. 
+. set graphics on
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. 
