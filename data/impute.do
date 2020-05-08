@@ -1,6 +1,6 @@
 version 16.1
 
-frame copy original imputed
+frame copy original imputed, replace
 frame imputed {
   // Obtain the sample size (before imputation).
   local sample_size = _N
@@ -17,9 +17,9 @@ frame imputed {
   // imputation model. Specifying the omit option did not work as expected. It was
   // not possible to include other variables in the model for the constituent
   // outcome variables, also due to collinearity.
-  mi impute chained (regress)                               $imputeds ///
-                    (logit, noimputed include($imputeds))   y1-y5     ///
-                    = i.arm i.lab_available i.us_available,           ///
+  mi impute chained (regress)                                       $imputeds ///
+                    (logit, noimputed include($imputeds strat_var)) y1-y5     ///
+                    = i.arm i.lab_available i.us_available,                   ///
                     add($m_imputations) 
 
   // The composite outcome is defined as follows. If:
