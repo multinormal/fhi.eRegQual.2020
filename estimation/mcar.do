@@ -5,6 +5,10 @@ version 16.1
 // P < 0.05 would reject the hypotheses (i.e., as usual, if P>= 0.05, we cannot
 // "conclude" that the data are MCAR or have CDM, merely that we cannot reject
 // those hypotheses).
-mcartest y1-y5
-mcartest y1-y5 = i.arm i.strat_var
+frame original {
+  mcartest y1-y5
+  global p_mcar = r(p)
+  mcartest y1-y5 = i.arm i.strat_var
+  global p_cdm  = r(p)
+}
 
