@@ -17,6 +17,7 @@ do data/impute
 
 // Do estimation.
 do estimation/estimation
+do estimation/mcar
 
 // Make figures
 do figures/figures

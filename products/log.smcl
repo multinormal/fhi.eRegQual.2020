@@ -887,4 +887,64 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 . 
 {txt}end of do-file
 
+{com}. frame dir
+{p2col 3 13 15 2:{txt}default }{res}0 {txt:{it:x}} 0
+{p_end}
+{p2col 1 13 15 2:{res}* {txt}imputed }{res}23347 {txt:{it:x}} 19{txt:;} 04May2020_eRegQual birth outcomes.dta
+{p_end}
+{p2col 1 13 15 2:{res}* {txt}original }{res}6367 {txt:{it:x}} 15{txt:;} 04May2020_eRegQual birth outcomes.dta
+{p_end}
+
+{txt}Note: frames marked with {res:*} contain unsaved data
+
+{com}. frame change original
+
+. mcartest y1-y5 = i.arm 
+{res}{txt}{p 0 6}note: 560 {txt}observations {txt}omitted from EM estimation because of all {txt}imputation variables missing{p_end}
+{res}
+{txt}Little's CDM test
+
+Number of obs       = {res}5807
+{txt}Chi-square distance = {res}74.9234     
+{txt}Degrees of freedom  = {res}68
+{txt}Prob > chi-square   = {res}0.2639
+
+{com}. mcartest y1-y5 = i.arm i.strat_var 
+{res}{txt}{p 0 6}note: 560 {txt}observations {txt}omitted from EM estimation because of all {txt}imputation variables missing{p_end}
+{res}
+{txt}Little's CDM test
+
+Number of obs       = {res}5807
+{txt}Chi-square distance = {res}196.2496    
+{txt}Degrees of freedom  = {res}204
+{txt}Prob > chi-square   = {res}0.6389
+
+{com}. mcartest i.y1 i.y2 i.y3 i.y4 i.y6 = i.arm i.strat_var 
+{res}{err}variable {bf}y6{sf} not found
+{txt}{search r(111), local:r(111);}
+
+{com}. mcartest i.y1 i.y2 i.y3 i.y4 i.y5 = i.arm i.strat_var 
+{res}{err}depvars may not be factor variables
+{txt}{search r(198), local:r(198);}
+
+{com}. mcartest y1-y5 = i.arm i.strat_var 
+{res}{txt}{p 0 6}note: 560 {txt}observations {txt}omitted from EM estimation because of all {txt}imputation variables missing{p_end}
+{res}
+{txt}Little's CDM test
+
+Number of obs       = {res}5807
+{txt}Chi-square distance = {res}196.2496    
+{txt}Degrees of freedom  = {res}204
+{txt}Prob > chi-square   = {res}0.6389
+
+{com}. mcartest y1-y5
+{res}{txt}{p 0 6}note: 560 {txt}observations {txt}omitted from EM estimation because of all {txt}imputation variables missing{p_end}
+{res}
+{txt}Little's MCAR test
+
+Number of obs       = {res}5807
+{txt}Chi-square distance = {res}42.4844     
+{txt}Degrees of freedom  = {res}34
+{txt}Prob > chi-square   = {res}0.1507
+
 {com}. 
