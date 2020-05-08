@@ -40,7 +40,7 @@ putdocx text ("Methods")
 `newpara'
 We used Little's tests of the null hypotheses that the constituent outcomes are 
 jointly missing completely at random (MCAR) and covariate-dependent missing 
-(CDM) using the significance criterion P < 0.05 (Little 1988).
+(CDM) using the significance criterion P<0.05 (Little 1988).
 putdocx textblock end
 
 // Results section
@@ -49,10 +49,13 @@ putdocx text ("Results")
 
 `newpara'
 We were unable to reject the MCAR and CDM hypotheses 
-(P = <<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P = 
+(P=<<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P=
 <<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively).
 putdocx textblock end
 
+//estimates restore est_main_result
+estimates replay est_main_result, eform
+putdocx table tbl_main_result = etable, title("TODO: Main result")
 
 // Appendix
 `heading'
