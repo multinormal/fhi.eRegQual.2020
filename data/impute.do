@@ -28,13 +28,15 @@ frame imputed {
   // * One or more of the outcomes are missing and all others are false
   //   -> composite outcome is missing.
   tempvar all_false
-  generate `all_false' = (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
+  mi passive: generate `all_false' = ///
+    (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
   tempvar one_true
-  generate `one_true'  = (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
+  mi passive: generate `one_true'  = ///
+    (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
 
-  generate y = .
-  replace  y = 0 if `all_false'
-  replace  y = 1 if `one_true'
+  mi passive: generate y = .
+  mi passive: replace  y = 0 if `all_false'
+  mi passive: replace  y = 1 if `one_true'
   label variable y "Adverse pregnancy outcome"
 
   // Verify that we can correctly recompute the composite outcome using the
