@@ -2,20 +2,20 @@ version 16.1
 
 set graphics off
 
-tempname this_frame
-frame copy imputed `this_frame'
-
 // Define the number of imputations to plot.
 local imputations_to_plot 5
 assert `imputations_to_plot' <= $m_imputations
 
+// Make the plots.
+tempname this_frame
+frame copy imputed `this_frame'
 frame `this_frame' {
   mi set M = `imputations_to_plot'
 
   // Generate a variable for each imputed variable that contains the original
   // values (with the missing data), repeated for each imputed data set.
   mi convert wide, clear
-  foreach var of varlist $imputeds y1-y5 {
+  foreach var of varlist $imputeds y1-y5 y {
     generate `var'_orig = `var'
   }
   mi convert flong, clear
@@ -48,7 +48,7 @@ frame `this_frame' {
 
   // Plot the distribution of each of the dichotomous imputed variables.
   label values y* yes_no
-  foreach var of varlist y1-y5 {
+  foreach var of varlist y y1-y5 {
     quietly misstable patterns `var'_orig if imputation == 0
     local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
     local pc_miss = string(`pc_miss', "%8.1f") + "% missing"

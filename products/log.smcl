@@ -3,7 +3,7 @@
       name:  {res}eRegQual Birth Outcomes Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 7 May 2020, 17:37:32
+ {txt}opened on:  {res} 8 May 2020, 10:59:11
 {txt}
 {com}. 
 . // Set up Stata.
@@ -322,17 +322,64 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 .   // * One or more of the outcomes are missing and all others are false
 .   //   -> composite outcome is missing.
 .   tempvar all_false
-.   generate `all_false' = (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
-.   tempvar one_true
-.   generate `one_true'  = (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
-. 
-.   generate y = .
-{txt}(23,347 missing values generated)
-{com}.   replace  y = 0 if `all_false'
-{txt}(15,387 real changes made)
-{com}.   replace  y = 1 if `one_true'
-{txt}(5,807 real changes made)
-{com}.   label variable y "Adverse pregnancy outcome"
+.   mi passive: generate `all_false' = ///
+>     (y1 == 0) & (y2 == 0) & (y3 == 0) & (y4 == 0) & (y5 == 0)
+{res}{txt}{it:m}=0:
+{res}{txt}{it:m}=1:
+{res}{txt}{it:m}=2:
+{res}{txt}{it:m}=3:
+{res}{txt}{it:m}=4:
+{res}{txt}{it:m}=5:
+{res}{com}.   tempvar one_true
+.   mi passive: generate `one_true'  = ///
+>     (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
+{res}{txt}{it:m}=0:
+{res}{txt}{it:m}=1:
+{res}{txt}{it:m}=2:
+{res}{txt}{it:m}=3:
+{res}{txt}{it:m}=4:
+{res}{txt}{it:m}=5:
+{res}{com}. 
+.   mi passive: generate y = .
+{res}{txt}{it:m}=0:
+(6,367 missing values generated)
+{res}{txt}{it:m}=1:
+(6,367 missing values generated)
+{res}{txt}{it:m}=2:
+(6,367 missing values generated)
+{res}{txt}{it:m}=3:
+(6,367 missing values generated)
+{res}{txt}{it:m}=4:
+(6,367 missing values generated)
+{res}{txt}{it:m}=5:
+(6,367 missing values generated)
+{res}{com}.   mi passive: replace  y = 0 if `all_false'
+{res}{txt}{it:m}=0:
+(2,818 real changes made)
+{res}{txt}{it:m}=1:
+(4,749 real changes made)
+{res}{txt}{it:m}=2:
+(4,756 real changes made)
+{res}{txt}{it:m}=3:
+(4,756 real changes made)
+{res}{txt}{it:m}=4:
+(4,739 real changes made)
+{res}{txt}{it:m}=5:
+(4,759 real changes made)
+{res}{com}.   mi passive: replace  y = 1 if `one_true'
+{res}{txt}{it:m}=0:
+(1,396 real changes made)
+{res}{txt}{it:m}=1:
+(1,618 real changes made)
+{res}{txt}{it:m}=2:
+(1,611 real changes made)
+{res}{txt}{it:m}=3:
+(1,611 real changes made)
+{res}{txt}{it:m}=4:
+(1,628 real changes made)
+{res}{txt}{it:m}=5:
+(1,608 real changes made)
+{res}{com}.   label variable y "Adverse pregnancy outcome"
 . 
 .   // Verify that we can correctly recompute the composite outcome using the
 .   // original (non-imputed) data.
@@ -356,6 +403,11 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 .   // Estimate population averaged effects using a GEE. This is the planned
 .   // analysis.
 .   mi xtset clusterid
+{res}{txt}{p}
+(passive variables
+{res}__000000 __000001
+{txt}unregistered because not in {it:m}=0)
+{p_end}
 {res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
 {com}.   mi estimate, eform: xtgee y i.arm i.strat_var, family(binomial) link(logit)
 {res}
@@ -419,25 +471,25 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 . set graphics off
 {txt}
 {com}. 
-. tempname this_frame
-{txt}
-{com}. frame copy imputed `this_frame'
-{txt}
-{com}. 
 . // Define the number of imputations to plot.
 . local imputations_to_plot 5
 {txt}
 {com}. assert `imputations_to_plot' <= $m_imputations
 {txt}
 {com}. 
-. frame `this_frame' {c -(}
+. // Make the plots.
+. tempname this_frame
+{txt}
+{com}. frame copy imputed `this_frame'
+{txt}
+{com}. frame `this_frame' {c -(}
 .   mi set M = `imputations_to_plot'
 {txt}(number of imputations {it:M} = 5 unchanged)
 {com}. 
 .   // Generate a variable for each imputed variable that contains the original
 .   // values (with the missing data), repeated for each imputed data set.
 .   mi convert wide, clear
-{res}{com}.   foreach var of varlist $imputeds y1-y5 {c -(}
+{res}{com}.   foreach var of varlist $imputeds y1-y5 y {c -(}
 {txt}  2{com}.     generate `var'_orig = `var'
 {txt}  3{com}.   {c )-}
 {txt}(69 missing values generated)
@@ -449,6 +501,7 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 (752 missing values generated)
 (875 missing values generated)
 (752 missing values generated)
+(2,153 missing values generated)
 {com}.   mi convert flong, clear
 {res}{com}. 
 .   // Create readable value labels for the imputations, and order them so that
@@ -489,7 +542,7 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 {com}. 
 .   // Plot the distribution of each of the dichotomous imputed variables.
 .   label values y* yes_no
-.   foreach var of varlist y1-y5 {c -(}
+.   foreach var of varlist y y1-y5 {c -(}
 {txt}  2{com}.     quietly misstable patterns `var'_orig if imputation == 0
 {txt}  3{com}.     local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
 {txt}  4{com}.     local pc_miss = string(`pc_miss', "%8.1f") + "% missing"
@@ -504,6 +557,7 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 >       ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))
 {txt}  8{com}.     graph export "products/Imputations (dich) - `var_label'.pdf", replace
 {txt}  9{com}.   {c )-}
+{res}{txt}(file products/Imputations (dich) - Adverse pregnancy outcome.pdf written in PDF format)
 {res}{txt}(file products/Imputations (dich) - Anemia at birth.pdf written in PDF format)
 {res}{txt}(file products/Imputations (dich) - Severe hypertension at birth.pdf written in PDF format)
 {res}{txt}(file products/Imputations (dich) - SGA undetected at birth.pdf written in PDF format)
@@ -537,4 +591,6 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 . 
 {txt}end of do-file
 
-{com}. 
+{com}. view products/log.smcl
+
+. 
