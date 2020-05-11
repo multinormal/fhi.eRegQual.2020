@@ -38,14 +38,19 @@ putdocx textblock end
 putdocx text ("Methods")
 
 `newpara'
-We used Little's tests of the null hypotheses that the constituent outcomes are 
-jointly missing completely at random (MCAR) and covariate-dependent missing 
-(CDM) using the significance criterion P<0.05 (Little 1988).
+We used Little's tests of the null hypotheses that missing values of the 
+constituent outcomes are jointly missing completely at random (MCAR) and 
+covariate-dependent missing (CDM) using the significance criterion P<0.05 
+(Little 1988).
 putdocx textblock end
 
 // Results section
 `heading'
 putdocx text ("Results")
+
+// Verify some assumptions in this section.
+assert ${p_mcar} > 0.05
+assert ${p_cdm}  > 0.05
 
 `newpara'
 We were unable to reject the MCAR and CDM hypotheses 
