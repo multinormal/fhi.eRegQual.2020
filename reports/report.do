@@ -4,10 +4,11 @@ args filename
 
 // Some locals to make this file a little more readable.
 local heading putdocx paragraph, style(Heading1)
-local newpara putdocx textblock begin
+local newpara putdocx textblock begin, halign(both)
 local putdocx textblock end putdocx textblock end
 
-local p_fmt %5.2f
+local p_fmt   %5.2f // Format used for P-values.
+local pc_fmt  %8.1f // Format used for percentages.
 
 // Start the document.
 putdocx begin
@@ -30,7 +31,7 @@ putdocx textblock end
 putdocx text ("Introduction")
 
 `newpara'
-This is some more text.
+TODO: Write this
 putdocx textblock end
 
 // Methods section
@@ -38,10 +39,35 @@ putdocx textblock end
 putdocx text ("Methods")
 
 `newpara'
-We used Little's tests of the null hypotheses that missing values of the 
-constituent outcomes are jointly missing completely at random (MCAR) and 
-covariate-dependent missing (CDM) using the significance criterion P<0.05 
-(Little 1988).
+Because outcome data were missing for about a third of participants (see 
+results), we used Little's tests (Little 1988) of the null hypotheses that 
+missing values of the constituent outcomes were jointly missing completely at 
+random (MCAR) and covariate-dependent missing (CDM). We then used multiple 
+imputation via chained equations (van Buuren 2007) to create and analyze 
+<<dd_docx_display: $m_imputations>> multiply-imputed datasets. Methodologists 
+currently regard multiple imputation as a state-of-the-art technique because it 
+reduces bias and increases precision relative to other missing data techniques. 
+We imputed each of the constituent outcomes using the auxiliary variables age, 
+BMI, years of education, average monthly income (transformed to the log scale), 
+and variables that indicated whether a laboratory or ultrasound were available 
+at the clinics; the variables included in the analysis described below were also 
+included. We were not able to include auxiliary variables that indicated 
+previous pregnancy with pre-eclampsia and previous history of GDM due to 
+collinearity. We evaluated the convergence of the imputation algorithm by 
+inspecting trace plots and evaluated imputed data by inspecting kernel 
+density and bar plots comparing the distributions of imputed and complete case 
+data. For each imputed data set, we computed the composite outcome from the 
+imputed constituent outcome data and estimated an odds ratio to compare 
+treatment to control, adjusting for the stratification variable as a fixed 
+effect, using generalized estimating equations (GEE; binomial errors and logit 
+link) to account for the cluster design. Estimates were then combined using 
+Rubin's rules. For comparison, we also performed a complete case analysis under 
+the MCAR assumption. With the exception of the complete case analysis, we 
+followed the intention-to-treat principle (all participants were included in the 
+analysis and were analyzed in the groups to which they were randomized). We 
+computed 95% confidence intervals and used the significance criterion P<0.05 
+throughout. Statistical analysis was performed using Stata 16 (StataCorp LLC, 
+College Station, Texas, USA).
 putdocx textblock end
 
 // Results section
@@ -53,7 +79,11 @@ assert ${p_mcar} > 0.05
 assert ${p_cdm}  > 0.05
 
 `newpara'
-We were unable to reject the MCAR and CDM hypotheses 
+Outcome data were missing for between 
+<<dd_docx_display: string(${pc_min_miss}, "`pc_fmt'")>>% and 
+<<dd_docx_display: string(${pc_max_miss}, "`pc_fmt'")>>% of the constituent 
+outcomes, and <<dd_docx_display: string(${pc_miss_y}, "`pc_fmt'")>>% of the 
+composite outcome. We were unable to reject the MCAR and CDM hypotheses 
 (P=<<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P=
 <<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively).
 putdocx textblock end
@@ -67,7 +97,7 @@ putdocx table tbl_main_result = etable, title("TODO: Main result")
 putdocx text ("Appendix")
 
 `newpara'
-This is some more text.
+TODO: Write this
 putdocx textblock end
 
 
@@ -76,9 +106,15 @@ putdocx textblock end
 putdocx text ("References")
 
 `newpara'
-Little, R. J. A.  1988.  A test of missing completely at random for multivariate 
-data with missing values.  Journal of the American Statistical Association 83:
-1198-1202.
+Little, R. J. (1988). A test of missing completely at random for multivariate 
+data with missing values. Journal of the American statistical Association, 
+83(404), 1198-1202.
+putdocx textblock end
+
+`newpara'
+van Buuren, S. (2007). Multiple imputation of discrete and continuous data by 
+fully conditional specification. Statistical methods in medical research, 
+16(3), 219-242.
 putdocx textblock end
 
 
