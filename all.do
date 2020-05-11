@@ -16,6 +16,7 @@ do data/import
 do data/impute
 
 // Do estimation.
+do estimation/missing
 do estimation/estimation
 do estimation/mcar
 
