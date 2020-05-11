@@ -66,7 +66,7 @@ the MCAR assumption. With the exception of the complete case analysis, we
 followed the intention-to-treat principle (all participants were included in the 
 analysis and were analyzed in the groups to which they were randomized). We 
 computed 95% confidence intervals and used the significance criterion P<0.05 
-throughout. Statistical analysis was performed using Stata 16 (StataCorp LLC, 
+throughout. Statistical analyses were performed using Stata 16 (StataCorp LLC, 
 College Station, Texas, USA).
 putdocx textblock end
 
