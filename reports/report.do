@@ -48,12 +48,12 @@ imputation via chained equations (van Buuren 2007) to create and analyze
 currently regard multiple imputation as a state-of-the-art technique because it 
 reduces bias and increases precision relative to other missing data techniques. 
 We imputed each of the constituent outcomes using the auxiliary variables age, 
-BMI, years of education, average monthly income (transformed to the log scale), 
-and variables that indicated whether a laboratory or ultrasound were available 
-at the clinics; the variables included in the analysis described below were also 
-included. We were not able to include auxiliary variables that indicated 
-previous pregnancy with pre-eclampsia and previous history of GDM due to 
-collinearity. We evaluated the convergence of the imputation algorithm by 
+BMI, years of education, average monthly household income (transformed to the 
+log scale), and variables that indicated whether a laboratory or ultrasound were 
+available at the clinics; the variables included in the analysis described below 
+were also included. We were not able to include auxiliary variables that 
+indicated previous pregnancy with pre-eclampsia and previous history of GDM due 
+to collinearity. We evaluated the convergence of the imputation algorithm by 
 inspecting trace plots and evaluated imputed data by inspecting kernel 
 density and bar plots comparing the distributions of imputed and complete case 
 data. For each imputed data set, we computed the composite outcome from the 
