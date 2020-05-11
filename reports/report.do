@@ -45,29 +45,30 @@ missing values of the constituent outcomes were jointly missing completely at
 random (MCAR) and covariate-dependent missing (CDM). We then used multiple 
 imputation via chained equations (van Buuren 2007) to create and analyze 
 <<dd_docx_display: $m_imputations>> multiply-imputed datasets. Methodologists 
-currently regard multiple imputation as a state-of-the-art technique because it 
-reduces bias and increases precision relative to other missing data techniques. 
-We imputed each of the constituent outcomes using the auxiliary variables age, 
-BMI, years of education, average monthly household income (transformed to the 
-log scale), and variables that indicated whether a laboratory or ultrasound were 
-available at the clinics; the variables included in the analysis described below 
-were also included. We were not able to include auxiliary variables that 
-indicated previous pregnancy with pre-eclampsia and previous history of GDM due 
-to collinearity. We evaluated the convergence of the imputation algorithm by 
-inspecting trace plots and evaluated imputed data by inspecting kernel 
-density and bar plots comparing the distributions of imputed and complete case 
-data. For each imputed data set, we computed the composite outcome from the 
-imputed constituent outcome data and estimated an odds ratio to compare 
-treatment to control, adjusting for the stratification variable as a fixed 
-effect, using generalized estimating equations (GEE; binomial errors and logit 
-link) to account for the cluster design. Estimates were then combined using 
-Rubin's rules. For comparison, we also performed a complete case analysis under 
-the MCAR assumption. With the exception of the complete case analysis, we 
-followed the intention-to-treat principle (all participants were included in the 
-analysis and were analyzed in the groups to which they were randomized). We 
-computed 95% confidence intervals and used the significance criterion P<0.05 
-throughout. Statistical analyses were performed using Stata 16 (StataCorp LLC, 
-College Station, Texas, USA).
+currently regard multiple imputation as a state-of-the-art technique that 
+is expected to reduce bias and increase precision relative to other missing 
+data techniques. We imputed each of the constituent outcomes using the auxiliary 
+variables age, BMI, years of education, average monthly household income 
+(transformed to the log scale due to the highly skewed distribution of income), 
+and variables that indicated whether a laboratory or ultrasound were available 
+at the clinics; the variables included in the analysis described below were also 
+included. We were not able to include auxiliary variables that indicated previous 
+pregnancy with pre-eclampsia and previous history of GDM due to collinearity. 
+We evaluated the convergence of the imputation algorithm by inspecting trace 
+plots and evaluated imputed data by inspecting kernel density and bar plots 
+comparing the distributions of imputed and complete case data. For each imputed 
+data set, we computed the composite outcome from the imputed constituent outcome 
+data and estimated an odds ratio to compare treatment to control, adjusting for 
+the stratification variable as a fixed effect, using generalized estimating 
+equations (GEE; binomial errors and logit link) to account for the cluster 
+design. Estimates were then combined using Rubin's rules. For comparison, we 
+also performed a complete case analysis under the MCAR assumption. We followed 
+the intention-to-treat principle: participants were analyzed in the arms to 
+which they were randomized and — with the exception of the complete case 
+analysis — all participants were included in the analyses. We computed 95% 
+confidence intervals and used the significance criterion P<0.05 throughout. 
+Statistical analyses were performed using Stata 16 (StataCorp LLC, College 
+Station, Texas, USA).
 putdocx textblock end
 
 // Results section
