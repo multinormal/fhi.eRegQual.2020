@@ -812,4 +812,515 @@ Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}       
 . 
 {txt}end of do-file
 
+{com}. do estimation/estimation
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. frame imputed {c -(}
+.   // Estimate population averaged effects using a GEE. This is the planned
+.   // analysis.
+.   mi xtset clusterid
+{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
+{com}.   mi estimate, eform: xtgee y i.arm i.strat_var, family(binomial) link(log)
+{res}
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}GEE population-averaged model{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable:{ralign 27:{res:clusterid}}{col 49}Number of groups{col 67}= {res}       119
+{txt}Link:{ralign 37:{res:log}}{col 49}Obs per group:
+Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}         9
+{txt}Correlation:{ralign 30:{res:exchangeable}}{col 49}              avg{col 67}= {res}      53.5
+{txt}Scale parameter:{ralign 26:{res:1}}{col 49}              max{col 67}= {res}       217
+
+{txt}{col 49}Average RVI{col 67}= {res}    0.1312
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1689
+{txt}DF adjustment:{ralign 28: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    159.11
+{txt}{col 49}        avg{col 67}= {res}    490.56
+{txt}{col 49}        max{col 67}= {res}  1,726.50
+{txt}Model F test:{ralign 29: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 1069.1{txt}){col 67}= {res}      1.47
+{txt}Within VCE type: {ralign 25:{res:Conventional}}{col 49}Prob > F{col 67}= {res}    0.1958
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y{col 14}{c |}     exp(b){col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}arm {c |}
+{space 10}D  {c |}{col 14}{res}{space 2}     1.02{col 26}{space 2}     0.04{col 37}{space 1}    0.37{col 46}{space 3} 0.71{col 54}{space 4}     0.93{col 67}{space 3}     1.11
+{txt}{space 12} {c |}
+{space 3}strat_var {c |}
+{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.10{col 26}{space 2}     0.09{col 37}{space 1}    1.25{col 46}{space 3} 0.21{col 54}{space 4}     0.94{col 67}{space 3}     1.29
+{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.94{col 26}{space 2}     0.09{col 37}{space 1}   -0.64{col 46}{space 3} 0.52{col 54}{space 4}     0.77{col 67}{space 3}     1.14
+{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.09{col 26}{space 2}     0.09{col 37}{space 1}    1.07{col 46}{space 3} 0.28{col 54}{space 4}     0.93{col 67}{space 3}     1.27
+{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.15{col 26}{space 2}     0.09{col 37}{space 1}    1.83{col 46}{space 3} 0.07{col 54}{space 4}     0.99{col 67}{space 3}     1.34
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.23{col 26}{space 2}     0.02{col 37}{space 1}  -21.19{col 46}{space 3} 0.00{col 54}{space 4}     0.20{col 67}{space 3}     0.27
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{com}.   estimates store est_main_result
+. 
+.   // We cannot obtain the ICC from the GEE model, so fit a mixed-effects logistic
+.   // mode. Note that we have to use the option cmdok to force Stata to fit the
+.   // model. As documented at the following, the coefficients, constant, and their
+.   // CIs, and the variance components will be appropriately estimated, but the CIs
+.   // for the variance components may not be correct. See
+.   // https://www.statalist.org/forums/forum/general-stata-discussion/general/1349542-mi-estimate-melogit-is-it-legit
+.   //
+.   // mi estimate, or cmdok: melogit y i.arm i.strat_var || clusterid:
+.   // estat icc // TODO: Command not valid after imputation it seems, so estimate
+.   // this from complete cases.
+.   // TODO: Following the note above, the ICC may not be reliable...
+.   // TODO: Note that we want RRs not ORs from the logit!
+. {c )-}
+{txt}
+{com}. 
+. 
+. 
+{txt}end of do-file
+
+{com}. do reports/report products/report.docx
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. args filename
+{txt}
+{com}. 
+. // Some locals to make this file a little more readable.
+. local heading putdocx paragraph, style(Heading1)
+{txt}
+{com}. local newpara putdocx textblock begin, halign(both)
+{txt}
+{com}. local putdocx textblock end putdocx textblock end
+{txt}
+{com}. 
+. local p_fmt   %5.2f // Format used for P-values.
+{txt}
+{com}. local pc_fmt  %8.1f // Format used for percentages.
+{txt}
+{com}. 
+. // Start the document.
+. putdocx begin
+{res}{txt}
+{com}. 
+. // Title.
+. putdocx paragraph, style(Title)
+{res}{txt}
+{com}. putdocx text ("eRegQual analysis")
+{res}{txt}
+{com}. 
+. // Author and revision information.
+. `newpara'
+{res}{txt}
+{com}. `newpara'
+{res}{txt}
+{com}. 
+. // Introduction section.
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Introduction")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Methods section
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Methods")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Results section
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Results")
+{res}{txt}
+{com}. 
+. // Verify some assumptions in this section.
+. assert ${c -(}p_mcar{c )-} > 0.05
+{txt}
+{com}. assert ${c -(}p_cdm{c )-}  > 0.05
+{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. //estimates restore est_main_result
+. estimates replay est_main_result, eform
+
+{txt}{hline}
+{p 0 8}Model {hi:est_main_result}{p_end}
+{hline}
+
+Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}GEE population-averaged model{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable:{ralign 27:{res:clusterid}}{col 49}Number of groups{col 67}= {res}       119
+{txt}Link:{ralign 37:{res:log}}{col 49}Obs per group:
+Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}         9
+{txt}Correlation:{ralign 30:{res:exchangeable}}{col 49}              avg{col 67}= {res}      53.5
+{txt}Scale parameter:{ralign 26:{res:1}}{col 49}              max{col 67}= {res}       217
+
+{txt}{col 49}Average RVI{col 67}= {res}    0.1312
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1689
+{txt}DF adjustment:{ralign 28: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    159.11
+{txt}{col 49}        avg{col 67}= {res}    490.56
+{txt}{col 49}        max{col 67}= {res}  1,726.50
+{txt}Model F test:{ralign 29: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 1069.1{txt}){col 67}= {res}      1.47
+{txt}Within VCE type: {ralign 25:{res:Conventional}}{col 49}Prob > F{col 67}= {res}    0.1958
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y{col 14}{c |}     exp(b){col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}arm {c |}
+{space 10}D  {c |}{col 14}{res}{space 2}     1.02{col 26}{space 2}     0.04{col 37}{space 1}    0.37{col 46}{space 3} 0.71{col 54}{space 4}     0.93{col 67}{space 3}     1.11
+{txt}{space 12} {c |}
+{space 3}strat_var {c |}
+{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.10{col 26}{space 2}     0.09{col 37}{space 1}    1.25{col 46}{space 3} 0.21{col 54}{space 4}     0.94{col 67}{space 3}     1.29
+{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.94{col 26}{space 2}     0.09{col 37}{space 1}   -0.64{col 46}{space 3} 0.52{col 54}{space 4}     0.77{col 67}{space 3}     1.14
+{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.09{col 26}{space 2}     0.09{col 37}{space 1}    1.07{col 46}{space 3} 0.28{col 54}{space 4}     0.93{col 67}{space 3}     1.27
+{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.15{col 26}{space 2}     0.09{col 37}{space 1}    1.83{col 46}{space 3} 0.07{col 54}{space 4}     0.99{col 67}{space 3}     1.34
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.23{col 26}{space 2}     0.02{col 37}{space 1}  -21.19{col 46}{space 3} 0.00{col 54}{space 4}     0.20{col 67}{space 3}     0.27
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. putdocx table tbl_main_result = etable, title("TODO: Main result")
+{res}{txt}
+{com}. 
+. // Appendix
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Appendix")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. 
+. // References
+. `heading'
+{res}{txt}
+{com}. putdocx text ("References")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. 
+. // Save the report to the specified filename.
+. putdocx save `"`filename'"', replace
+{res}successfully replaced {browse "/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/report.docx":"/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/report.docx"}
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. do reports/report products/report.docx
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. args filename
+{txt}
+{com}. 
+. // Some locals to make this file a little more readable.
+. local heading putdocx paragraph, style(Heading1)
+{txt}
+{com}. local newpara putdocx textblock begin, halign(both)
+{txt}
+{com}. local putdocx textblock end putdocx textblock end
+{txt}
+{com}. 
+. local p_fmt   %5.2f // Format used for P-values.
+{txt}
+{com}. local pc_fmt  %8.1f // Format used for percentages.
+{txt}
+{com}. 
+. // Start the document.
+. putdocx begin
+{res}{txt}
+{com}. 
+. // Title.
+. putdocx paragraph, style(Title)
+{res}{txt}
+{com}. putdocx text ("eRegQual analysis")
+{res}{txt}
+{com}. 
+. // Author and revision information.
+. `newpara'
+{res}{txt}
+{com}. `newpara'
+{res}{txt}
+{com}. 
+. // Introduction section.
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Introduction")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Methods section
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Methods")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Results section
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Results")
+{res}{txt}
+{com}. 
+. // Verify some assumptions in this section.
+. assert ${c -(}p_mcar{c )-} > 0.05
+{txt}
+{com}. assert ${c -(}p_cdm{c )-}  > 0.05
+{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. //estimates restore est_main_result
+. estimates replay est_main_result, eform
+
+{txt}{hline}
+{p 0 8}Model {hi:est_main_result}{p_end}
+{hline}
+
+Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}GEE population-averaged model{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable:{ralign 27:{res:clusterid}}{col 49}Number of groups{col 67}= {res}       119
+{txt}Link:{ralign 37:{res:log}}{col 49}Obs per group:
+Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}         9
+{txt}Correlation:{ralign 30:{res:exchangeable}}{col 49}              avg{col 67}= {res}      53.5
+{txt}Scale parameter:{ralign 26:{res:1}}{col 49}              max{col 67}= {res}       217
+
+{txt}{col 49}Average RVI{col 67}= {res}    0.1312
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1689
+{txt}DF adjustment:{ralign 28: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    159.11
+{txt}{col 49}        avg{col 67}= {res}    490.56
+{txt}{col 49}        max{col 67}= {res}  1,726.50
+{txt}Model F test:{ralign 29: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 1069.1{txt}){col 67}= {res}      1.47
+{txt}Within VCE type: {ralign 25:{res:Conventional}}{col 49}Prob > F{col 67}= {res}    0.1958
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y{col 14}{c |}     exp(b){col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}arm {c |}
+{space 10}D  {c |}{col 14}{res}{space 2}     1.02{col 26}{space 2}     0.04{col 37}{space 1}    0.37{col 46}{space 3} 0.71{col 54}{space 4}     0.93{col 67}{space 3}     1.11
+{txt}{space 12} {c |}
+{space 3}strat_var {c |}
+{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.10{col 26}{space 2}     0.09{col 37}{space 1}    1.25{col 46}{space 3} 0.21{col 54}{space 4}     0.94{col 67}{space 3}     1.29
+{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.94{col 26}{space 2}     0.09{col 37}{space 1}   -0.64{col 46}{space 3} 0.52{col 54}{space 4}     0.77{col 67}{space 3}     1.14
+{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.09{col 26}{space 2}     0.09{col 37}{space 1}    1.07{col 46}{space 3} 0.28{col 54}{space 4}     0.93{col 67}{space 3}     1.27
+{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.15{col 26}{space 2}     0.09{col 37}{space 1}    1.83{col 46}{space 3} 0.07{col 54}{space 4}     0.99{col 67}{space 3}     1.34
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.23{col 26}{space 2}     0.02{col 37}{space 1}  -21.19{col 46}{space 3} 0.00{col 54}{space 4}     0.20{col 67}{space 3}     0.27
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. putdocx table tbl_main_result = etable, title("TODO: Main result")
+{res}{txt}
+{com}. 
+. // Appendix
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Appendix")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. 
+. // References
+. `heading'
+{res}{txt}
+{com}. putdocx text ("References")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. 
+. // Save the report to the specified filename.
+. putdocx save `"`filename'"', replace
+{res}successfully replaced {browse "/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/report.docx":"/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/report.docx"}
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. do reports/report products/report.docx
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. args filename
+{txt}
+{com}. 
+. // Some locals to make this file a little more readable.
+. local heading putdocx paragraph, style(Heading1)
+{txt}
+{com}. local newpara putdocx textblock begin, halign(both)
+{txt}
+{com}. local putdocx textblock end putdocx textblock end
+{txt}
+{com}. 
+. local p_fmt   %5.2f // Format used for P-values.
+{txt}
+{com}. local pc_fmt  %8.1f // Format used for percentages.
+{txt}
+{com}. 
+. // Start the document.
+. putdocx begin
+{res}{txt}
+{com}. 
+. // Title.
+. putdocx paragraph, style(Title)
+{res}{txt}
+{com}. putdocx text ("eRegQual analysis")
+{res}{txt}
+{com}. 
+. // Author and revision information.
+. `newpara'
+{res}{txt}
+{com}. `newpara'
+{res}{txt}
+{com}. 
+. // Introduction section.
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Introduction")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Methods section
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Methods")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Results section
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Results")
+{res}{txt}
+{com}. 
+. // Verify some assumptions in this section.
+. assert ${c -(}p_mcar{c )-} > 0.05
+{txt}
+{com}. assert ${c -(}p_cdm{c )-}  > 0.05
+{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. //estimates restore est_main_result
+. estimates replay est_main_result, eform
+
+{txt}{hline}
+{p 0 8}Model {hi:est_main_result}{p_end}
+{hline}
+
+Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}GEE population-averaged model{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable:{ralign 27:{res:clusterid}}{col 49}Number of groups{col 67}= {res}       119
+{txt}Link:{ralign 37:{res:log}}{col 49}Obs per group:
+Family:{ralign 35:{res:binomial}}{col 49}              min{col 67}= {res}         9
+{txt}Correlation:{ralign 30:{res:exchangeable}}{col 49}              avg{col 67}= {res}      53.5
+{txt}Scale parameter:{ralign 26:{res:1}}{col 49}              max{col 67}= {res}       217
+
+{txt}{col 49}Average RVI{col 67}= {res}    0.1312
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1689
+{txt}DF adjustment:{ralign 28: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    159.11
+{txt}{col 49}        avg{col 67}= {res}    490.56
+{txt}{col 49}        max{col 67}= {res}  1,726.50
+{txt}Model F test:{ralign 29: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 1069.1{txt}){col 67}= {res}      1.47
+{txt}Within VCE type: {ralign 25:{res:Conventional}}{col 49}Prob > F{col 67}= {res}    0.1958
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y{col 14}{c |}     exp(b){col 26}   Std. Err.{col 38}      t{col 46}   P>|t|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 9}arm {c |}
+{space 10}D  {c |}{col 14}{res}{space 2}     1.02{col 26}{space 2}     0.04{col 37}{space 1}    0.37{col 46}{space 3} 0.71{col 54}{space 4}     0.93{col 67}{space 3}     1.11
+{txt}{space 12} {c |}
+{space 3}strat_var {c |}
+{space 5}8d9c30  {c |}{col 14}{res}{space 2}     1.10{col 26}{space 2}     0.09{col 37}{space 1}    1.25{col 46}{space 3} 0.21{col 54}{space 4}     0.94{col 67}{space 3}     1.29
+{txt}{space 5}9d5ed6  {c |}{col 14}{res}{space 2}     0.94{col 26}{space 2}     0.09{col 37}{space 1}   -0.64{col 46}{space 3} 0.52{col 54}{space 4}     0.77{col 67}{space 3}     1.14
+{txt}{space 5}e1e1d3  {c |}{col 14}{res}{space 2}     1.09{col 26}{space 2}     0.09{col 37}{space 1}    1.07{col 46}{space 3} 0.28{col 54}{space 4}     0.93{col 67}{space 3}     1.27
+{txt}{space 5}ff4457  {c |}{col 14}{res}{space 2}     1.15{col 26}{space 2}     0.09{col 37}{space 1}    1.83{col 46}{space 3} 0.07{col 54}{space 4}     0.99{col 67}{space 3}     1.34
+{txt}{space 12} {c |}
+{space 7}_cons {c |}{col 14}{res}{space 2}     0.23{col 26}{space 2}     0.02{col 37}{space 1}  -21.19{col 46}{space 3} 0.00{col 54}{space 4}     0.20{col 67}{space 3}     0.27
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. putdocx table tbl_main_result = etable, title("TODO: Main result")
+{res}{txt}
+{com}. 
+. // Appendix
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Appendix")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. 
+. // References
+. `heading'
+{res}{txt}
+{com}. putdocx text ("References")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. 
+. // Save the report to the specified filename.
+. putdocx save `"`filename'"', replace
+{res}successfully created {browse "/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/report.docx":"/Users/cjr/Repos/fhi.eRegQual-birth-outcomes.2020/products/report.docx"}
+{txt}
+{com}. 
+. 
+{txt}end of do-file
+
 {com}. 
