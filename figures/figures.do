@@ -35,13 +35,16 @@ frame `this_frame' {
     local pc_miss = string(${pc_miss_`var'}, "%8.1f") + "% missing"
 
     local var_label : variable label `var'
-    twoway (kdensity `var'_orig)               ///
-           (kdensity `var'),                   ///
-           by(imputation arm, note(""))        ///
-           xtitle("`var_label' (`pc_miss')")   ///
-           ylabel(none)                        ///
-           legend(label(1 "Original") label(2 "Imputed"))
+    twoway (kdensity `var'_orig)                                   ///
+           (kdensity `var'),                                       ///
+           by(imputation arm, note("") graphregion(fcolor(white))) ///
+           xtitle("`var_label' (`pc_miss')")                       ///
+           yscale(lcolor(white))                                   ///
+           subtitle(, bcolor(white) lcolor(white))                 ///
+           ylabel(none)                                            ///
+           legend(label(1 "Original") label(2 "Imputed") region(lcolor(white)))
     graph export "products/Imputations (cont) - `var_label'.pdf", replace
+    graph export "products/Imputations (cont) - `var_label'.png", replace
   }
 
   // Plot the distribution of each of the dichotomous imputed variables.
@@ -56,8 +59,11 @@ frame `this_frame' {
       over(arm, label(labsize(small)))                              ///
       over(imputation, label(labsize(small)) relabel(`r(relabel)')) ///
       blabel(bar) intensity(25)                                     ///
-      ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))
+      ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))       ///
+      legend(region(lcolor(white)))                                 ///
+      graphregion(fcolor(white))
     graph export "products/Imputations (dich) - `var_label'.pdf", replace
+    graph export "products/Imputations (dich) - `var_label'.png", replace
   }
 }
 
