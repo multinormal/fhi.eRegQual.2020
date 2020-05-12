@@ -65,10 +65,10 @@ constituent outcome data. An adverse pregnancy outcome was defined to have
 occurred if at least one of the constituent outcomes occurred, and not to have 
 occurred if none of the constituent outcomes occurred. Because we imputed values 
 of the constituent outcomes, none of the composite outcomes could be missing in 
-the imputed data. For each imputed data set, we estimated an odds ratio to 
+the imputed data. For each imputed data set, we estimated a risk ratio to 
 compare treatment to control, adjusting for the stratification variable as a 
 fixed effect, using generalized estimating equations (GEE; binomial errors and 
-logit link) to account for the cluster design. Estimates were then combined 
+log link) to account for the cluster design. Estimates were then combined 
 using Rubin's rules. For comparison, we also performed a complete case analysis 
 under the MCAR assumption.
 putdocx textblock end
