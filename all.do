@@ -16,6 +16,7 @@ do data/import
 do data/impute
 
 // Do estimation.
+do estimation/missing
 do estimation/estimation
 do estimation/mcar
 
@@ -29,4 +30,7 @@ shell git rev-parse --short HEAD > "`git_revision_filename'"
 file open `revision_file' using `git_revision_filename', read text
 file read `revision_file' line
 global git_revision = "`macval(line)'"
+
+// Make the report
+do reports/report products/report.docx
 

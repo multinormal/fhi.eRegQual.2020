@@ -32,9 +32,7 @@ frame `this_frame' {
 
   // Plot the density of each of the continuous imputed variables.
   foreach var of global imputeds {
-    quietly misstable patterns `var'_orig if imputation == 0
-    local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
-    local pc_miss = string(`pc_miss', "%8.1f") + "% missing"
+    local pc_miss = string(${pc_miss_`var'}, "%8.1f") + "% missing"
 
     local var_label : variable label `var'
     twoway (kdensity `var'_orig)               ///
@@ -49,9 +47,7 @@ frame `this_frame' {
   // Plot the distribution of each of the dichotomous imputed variables.
   label values y* yes_no
   foreach var of varlist y y1-y5 {
-    quietly misstable patterns `var'_orig if imputation == 0
-    local pc_miss = 100 * (r(N_incomplete) / (r(N_incomplete) + r(N_complete)))
-    local pc_miss = string(`pc_miss', "%8.1f") + "% missing"
+    local pc_miss = string(${pc_miss_`var'}, "%8.1f") + "% missing"
     local var_label : variable label `var'
 
     splitvallabels imputation, recode

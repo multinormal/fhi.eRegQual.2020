@@ -5,6 +5,7 @@ frame imputed {
   // analysis.
   mi xtset clusterid
   mi estimate, eform: xtgee y i.arm i.strat_var, family(binomial) link(logit)
+  estimates store est_main_result
 
   // We cannot obtain the ICC from the GEE model, so fit a mixed-effects logistic
   // mode. Note that we have to use the option cmdok to force Stata to fit the
