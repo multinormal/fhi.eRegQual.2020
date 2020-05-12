@@ -53,18 +53,29 @@ variables age, BMI, years of education, average monthly household income
 and variables that indicated whether a laboratory or ultrasound were available 
 at the clinics; the variables included in the analysis described below were also 
 included. We were not able to include auxiliary variables that indicated previous 
-pregnancy with pre-eclampsia and previous history of GDM due to collinearity. 
+pregnancy with pre-eclampsia or previous history of GDM due to collinearity. 
 We evaluated the convergence of the imputation algorithm by inspecting trace 
 plots and evaluated imputed data by inspecting kernel density and bar plots 
-comparing the distributions of imputed and complete case data. For each imputed 
-data set, we computed the composite outcome from the imputed constituent outcome 
-data and estimated an odds ratio to compare treatment to control, adjusting for 
-the stratification variable as a fixed effect, using generalized estimating 
-equations (GEE; binomial errors and logit link) to account for the cluster 
-design. Estimates were then combined using Rubin's rules. For comparison, we 
-also performed a complete case analysis under the MCAR assumption. We followed 
-the intention-to-treat principle: participants were analyzed in the arms to 
-which they were randomized and — with the exception of the complete case 
+comparing the distributions of imputed and complete case data.
+putdocx textblock end
+
+`newpara'
+For each imputed data set, we computed the composite outcome from the imputed 
+constituent outcome data. An adverse pregnancy outcome was defined to have 
+occurred if at least one of the constituent outcomes occurred, and not to have 
+occurred if none of the constituent outcomes occurred. Because we imputed values 
+of the constituent outcomes, none of the composite outcomes could be missing in 
+the imputed data. For each imputed data set, we estimated an odds ratio to 
+compare treatment to control, adjusting for the stratification variable as a 
+fixed effect, using generalized estimating equations (GEE; binomial errors and 
+logit link) to account for the cluster design. Estimates were then combined 
+using Rubin's rules. For comparison, we also performed a complete case analysis 
+under the MCAR assumption.
+putdocx textblock end
+
+`newpara'
+We followed the intention-to-treat principle: participants were analyzed in the 
+arms to which they were randomized and — with the exception of the complete case 
 analysis — all participants were included in the analyses. We computed 95% 
 confidence intervals and used the significance criterion P<0.05 throughout. 
 Statistical analyses were performed using Stata 16 (StataCorp LLC, College 
