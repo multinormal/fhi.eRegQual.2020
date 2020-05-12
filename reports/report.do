@@ -20,7 +20,7 @@ putdocx text ("eRegQual analysis")
 // Author and revision information.
 `newpara'
 Chris Rose, Norwegian Institute of Public Health 
-(<<dd_docx_display: c(current_time) c(current_date)>>)
+(<<dd_docx_display: c(current_date)>>)
 putdocx textblock end
 `newpara'
 Git revision: <<dd_docx_display: "${git_revision}">>
@@ -49,7 +49,7 @@ currently regard multiple imputation as a state-of-the-art technique that
 is expected to reduce bias and increase precision relative to other missing 
 data techniques. We imputed each of the constituent outcomes using the auxiliary 
 variables age, BMI, years of education, average monthly household income 
-(transformed to the log scale due to the highly skewed distribution of income), 
+(transformed to the log scale due to the skewed distribution of income), 
 and variables that indicated whether a laboratory or ultrasound were available 
 at the clinics; the variables included in the analysis described below were also 
 included. We were not able to include auxiliary variables that indicated previous 
@@ -63,14 +63,12 @@ putdocx textblock end
 For each imputed data set, we computed the composite outcome from the imputed 
 constituent outcome data. An adverse pregnancy outcome was defined to have 
 occurred if at least one of the constituent outcomes occurred, and not to have 
-occurred if none of the constituent outcomes occurred. Because we imputed values 
-of the constituent outcomes, none of the composite outcomes could be missing in 
-the imputed data. For each imputed data set, we estimated a risk ratio to 
-compare treatment to control, adjusting for the stratification variable as a 
-fixed effect, using generalized estimating equations (GEE; binomial errors and 
-log link) to account for the cluster design. Estimates were then combined 
-using Rubin's rules. For comparison, we also performed a complete case analysis 
-under the MCAR assumption.
+occurred if none of the constituent outcomes occurred. For each imputed data 
+set, we estimated a risk ratio to compare treatment to control, adjusted for 
+the stratification variable as a fixed effect, and used generalized estimating 
+equations (GEE; binomial errors and log link) to account for the cluster design. 
+We combined these estimates using Rubin's rules (Rubin 2004). For comparison, 
+we also performed a complete case analysis under the MCAR assumption.
 putdocx textblock end
 
 `newpara'
@@ -119,17 +117,21 @@ putdocx textblock end
 putdocx text ("References")
 
 `newpara'
+van Buuren, S. (2007). Multiple imputation of discrete and continuous data by 
+fully conditional specification. Statistical methods in medical research, 
+16(3), 219-242.
+putdocx textblock end
+
+`newpara'
 Little, R. J. (1988). A test of missing completely at random for multivariate 
 data with missing values. Journal of the American statistical Association, 
 83(404), 1198-1202.
 putdocx textblock end
 
 `newpara'
-van Buuren, S. (2007). Multiple imputation of discrete and continuous data by 
-fully conditional specification. Statistical methods in medical research, 
-16(3), 219-242.
+Rubin, D. B. (2004). Multiple imputation for nonresponse in surveys (Vol. 81). 
+John Wiley & Sons.
 putdocx textblock end
-
 
 // Save the report to the specified filename.
 putdocx save `"`filename'"', replace
