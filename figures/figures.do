@@ -37,12 +37,16 @@ frame `this_frame' {
     local var_label : variable label `var'
     twoway (kdensity `var'_orig)                                   ///
            (kdensity `var'),                                       ///
-           by(imputation arm, note("") graphregion(fcolor(white))) ///
+           by(imputation arm, note("")                             ///
+              graphregion(color(white))                            ///
+              plotregion(color(white))                             ///
+              bgcolor(white))                                      ///
            xtitle("`var_label' (`pc_miss')")                       ///
            yscale(lcolor(white))                                   ///
            subtitle(, bcolor(white) lcolor(white))                 ///
            ylabel(none)                                            ///
-           legend(label(1 "Original") label(2 "Imputed") region(lcolor(white)))
+           legend(label(1 "Original") label(2 "Imputed")           ///
+                  region(lcolor(white)))
     graph export "products/Imputations (cont) - `var_label'.pdf", replace
     graph export "products/Imputations (cont) - `var_label'.png", replace
   }
@@ -61,7 +65,7 @@ frame `this_frame' {
       blabel(bar) intensity(25)                                     ///
       ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))       ///
       legend(region(lcolor(white)))                                 ///
-      graphregion(fcolor(white))
+      graphregion(color(white)) plotregion(color(white))
     graph export "products/Imputations (dich) - `var_label'.pdf", replace
     graph export "products/Imputations (dich) - `var_label'.png", replace
   }
