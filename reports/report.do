@@ -98,19 +98,11 @@ composite outcome. We were unable to reject the MCAR and CDM hypotheses
 <<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively).
 putdocx textblock end
 
-//estimates restore est_main_result
+frame imputed: local var_label : variable label y
+local title "`var_label' (multiply-imputed result)"
 estimates replay est_main_result, eform
-putdocx table tbl_main_result = etable, title("TODO: Main result")
+putdocx table tbl_main_result = etable, title("`title'")
 putdocx table tbl_main_result(2, 2) = ("Risk Ratio"), halign(right)
-
-// Appendix
-`heading'
-putdocx text ("Appendix")
-
-`newpara'
-TODO: Write this
-putdocx textblock end
-
 
 // References
 `heading'
@@ -132,6 +124,21 @@ putdocx textblock end
 Rubin, D. B. (2004). Multiple imputation for nonresponse in surveys (Vol. 81). 
 John Wiley & Sons.
 putdocx textblock end
+
+// Appendix
+`heading'
+putdocx text ("Appendix")
+
+`newpara'
+The following figures show the distributions of the original and a selection of 
+the imputed data.
+putdocx textblock end
+
+foreach var of newlist y1-y5 y $imputeds { // newlist as vars only exist in (other) frames.
+  display "${`var'_plot_fname}"
+  putdocx image "${`var'_plot_fname}.png", linebreak
+}
+
 
 // Save the report to the specified filename.
 putdocx save `"`filename'"', replace

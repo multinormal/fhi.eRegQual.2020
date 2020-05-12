@@ -46,9 +46,10 @@ frame `this_frame' {
            subtitle(, bcolor(white) lcolor(white))                 ///
            ylabel(none)                                            ///
            legend(label(1 "Original") label(2 "Imputed")           ///
-                  region(lcolor(white)))
-    graph export "products/Imputations (cont) - `var_label'.pdf", replace
-    graph export "products/Imputations (cont) - `var_label'.png", replace
+                  region(color(white)))
+    global `var'_plot_fname "products/Imputations (cont) - `var_label'"
+    graph export "${`var'_plot_fname}.pdf", replace
+    graph export "${`var'_plot_fname}.png", replace
   }
 
   // Plot the distribution of each of the dichotomous imputed variables.
@@ -65,9 +66,10 @@ frame `this_frame' {
       blabel(bar) intensity(25)                                     ///
       ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))       ///
       legend(region(lcolor(white)))                                 ///
-      graphregion(color(white)) plotregion(color(white))
-    graph export "products/Imputations (dich) - `var_label'.pdf", replace
-    graph export "products/Imputations (dich) - `var_label'.png", replace
+      graphregion(color(white)) plotregion(color(white)) bgcolor(white)
+    global `var'_plot_fname "products/Imputations (cont) - `var_label'"
+    graph export "${`var'_plot_fname}.pdf", replace
+    graph export "${`var'_plot_fname}.png", replace
   }
 }
 
