@@ -103,6 +103,7 @@ putdocx textblock end
 //estimates restore est_main_result
 estimates replay est_main_result, eform
 putdocx table tbl_main_result = etable, title("TODO: Main result")
+putdocx table tbl_main_result(2, 2) = ("Risk Ratio"), halign(right)
 
 // Appendix
 `heading'
