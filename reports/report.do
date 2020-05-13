@@ -7,8 +7,9 @@ local heading putdocx paragraph, style(Heading1)
 local newpara putdocx textblock begin, halign(both)
 local putdocx textblock end putdocx textblock end
 
-local p_fmt   %5.2f // Format used for P-values.
-local pc_fmt  %8.1f // Format used for percentages.
+local p_fmt  %5.2f // Format used for P-values.
+local e_fmt  %5.2f // Format used for estimates.
+local pc_fmt %8.1f // Format used for percentages.
 
 // Start the document.
 putdocx begin
@@ -23,7 +24,7 @@ Chris Rose, Norwegian Institute of Public Health
 (<<dd_docx_display: c(current_date)>>)
 putdocx textblock end
 `newpara'
-Git revision: <<dd_docx_display: "${git_revision}">>
+Generated using git revision: <<dd_docx_display: "${git_revision}">>
 putdocx textblock end
 
 // Introduction section.
@@ -95,11 +96,17 @@ Outcome data were missing for between
 outcomes, and <<dd_docx_display: string(${pc_miss_y}, "`pc_fmt'")>>% of the 
 composite outcome. We were unable to reject the MCAR and CDM hypotheses 
 (P=<<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P=
-<<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively).
+<<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively). Distributions 
+of the original and the first five imputed data sets are shown in the Appendix. 
+Table 1 shows the result of the adverse pregnancy outcome analysis. The risk 
+ratio was estimated to be <<dd_docx_display: string(${rr_b_y}, "`e_fmt'")>> 
+(95% CI <<dd_docx_display: string(${rr_ll_y}, "`e_fmt'")>> to 
+<<dd_docx_display: string(${rr_ul_y}, "`e_fmt'")>>, P = 
+<<dd_docx_display: string(${rr_p_y}, "`p_fmt'")>>).
 putdocx textblock end
 
 frame imputed: local var_label : variable label y
-local title "`var_label' (multiply-imputed result)"
+local title "Table 1. `var_label' (multiply-imputed result)"
 estimates replay est_main_result, eform
 putdocx table tbl_main_result = etable, title("`title'")
 putdocx table tbl_main_result(2, 2) = ("Risk Ratio"), halign(right)
