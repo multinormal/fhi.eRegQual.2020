@@ -32,7 +32,8 @@ putdocx textblock end
 putdocx text ("Introduction")
 
 `newpara'
-TODO: Write this
+This document presents the methods used to analyze the adverse pregnancy outcome 
+data for the eRegQual trial and presents the corresponding results.
 putdocx textblock end
 
 // Methods section
@@ -103,14 +104,18 @@ Table 1 shows the result of the adverse pregnancy outcome analysis. The risk
 ratio was estimated to be <<dd_docx_display: string(${rr_b_y}, "`e_fmt'")>> 
 (95% CI <<dd_docx_display: string(${rr_ll_y}, "`e_fmt'")>> to 
 <<dd_docx_display: string(${rr_ul_y}, "`e_fmt'")>>, P = 
-<<dd_docx_display: string(${rr_p_y}, "`p_fmt'")>>). Tables 2–5 show results for 
+<<dd_docx_display: string(${rr_p_y}, "`p_fmt'")>>). This compares to the 
+complete case risk ratio of <<dd_docx_display: string(${cc_rr_b}, "`e_fmt'")>> 
+(95% CI <<dd_docx_display: string(${cc_rr_ll}, "`e_fmt'")>> to 
+<<dd_docx_display: string(${cc_rr_ul}, "`e_fmt'")>>, P = 
+<<dd_docx_display: string(${cc_rr_p}, "`p_fmt'")>>). Tables 2–6 show results for 
 the constituent outcomes.
 putdocx textblock end
 
 frame imputed {
   local count = 0
   foreach var of varlist y y1-y5 {
-    local count = `count' + 1
+    local ++count
     local var_label : variable label `var'
     local title "Table `count'. `var_label' (multiply-imputed result)"
     estimates replay `var'_estimates, eform
