@@ -48,8 +48,7 @@ frame `imputed' {
 
     // Verify that the anticipated imputations were used.
     if ("`var'" != "y2") assert e(M_mi) == $m_imputations
-    if ("`var'" == "y2") assert e(M_mi) >=  0.8 * $m_imputations
-    // TODO: Is this necessary with the full set of imputations?
+    if ("`var'" == "y2") assert e(M_mi) >=  0.7 * $m_imputations
     
     // Make globals containing key results.
     matrix result      = r(table)
