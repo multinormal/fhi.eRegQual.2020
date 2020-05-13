@@ -1,10 +1,35 @@
 version 16.1
 
-frame imputed {
+// Specify the model.
+local covars     i.arm i.strat_var
+local model_spec family(binomial) link(log) asis
+local model      xtgee \`var' `covars', `model_spec'
+
+// Compute the complete case estimate.
+tempname original
+frame copy imputed `original'
+frame `original' {
+  // Fit the model.
+  mi extract 0, clear
+  xtset clusterid
+  local var y
+  `model' eform
+  estimates store complete_case_estimates
+
+  // Make globals containing key results.
+  matrix result   = r(table)
+  global cc_rr_b  = result["b",      "2.arm"]
+  global cc_rr_ll = result["ll",     "2.arm"]
+  global cc_rr_ul = result["ul",     "2.arm"]
+  global cc_rr_p  = result["pvalue", "2.arm"]
+}
+
+// Compute the multiply-imputed estimates.
+tempname imputed
+frame copy imputed `imputed'
+frame `imputed' {
   mi xtset clusterid
 
-  local covars     i.arm i.strat_var
-  local model_spec family(binomial) link(log) asis
   local mi_opts    eform errorok
     // The asis and errorok options are neeeded because, by chance, collinearity
     // can exist between the stratification variable and the dependent variable.
@@ -12,7 +37,7 @@ frame imputed {
 
   foreach var of varlist y y1-y5 { 
     // Estimate population averaged effects using a GEE.
-    mi estimate, `mi_opts': xtgee `var' `covars', `model_spec'
+    mi estimate, `mi_opts': `model'
     estimates store `var'_estimates
 
     // Verify that the anticipated imputations were used.
@@ -41,5 +66,4 @@ frame imputed {
   // TODO: Following the note above, the ICC may not be reliable...
   // TODO: Note that we want RRs not ORs from the logit!
 }
-
 
