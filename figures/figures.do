@@ -35,13 +35,21 @@ frame `this_frame' {
     local pc_miss = string(${pc_miss_`var'}, "%8.1f") + "% missing"
 
     local var_label : variable label `var'
-    twoway (kdensity `var'_orig)               ///
-           (kdensity `var'),                   ///
-           by(imputation arm, note(""))        ///
-           xtitle("`var_label' (`pc_miss')")   ///
-           ylabel(none)                        ///
-           legend(label(1 "Original") label(2 "Imputed"))
-    graph export "products/Imputations (cont) - `var_label'.pdf", replace
+    twoway (kdensity `var'_orig)                                   ///
+           (kdensity `var'),                                       ///
+           by(imputation arm, note("")                             ///
+              graphregion(color(white))                            ///
+              plotregion(color(white))                             ///
+              bgcolor(white))                                      ///
+           xtitle("`var_label' (`pc_miss')")                       ///
+           yscale(lcolor(white))                                   ///
+           subtitle(, bcolor(white) lcolor(white))                 ///
+           ylabel(none)                                            ///
+           legend(label(1 "Original") label(2 "Imputed")           ///
+                  region(color(white)))
+    global `var'_plot_fname "products/Imputations (cont) - `var_label'"
+    graph export "${`var'_plot_fname}.pdf", replace
+    graph export "${`var'_plot_fname}.png", replace
   }
 
   // Plot the distribution of each of the dichotomous imputed variables.
@@ -56,8 +64,12 @@ frame `this_frame' {
       over(arm, label(labsize(small)))                              ///
       over(imputation, label(labsize(small)) relabel(`r(relabel)')) ///
       blabel(bar) intensity(25)                                     ///
-      ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))
-    graph export "products/Imputations (dich) - `var_label'.pdf", replace
+      ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))       ///
+      legend(region(lcolor(white)))                                 ///
+      graphregion(color(white)) plotregion(color(white)) bgcolor(white)
+    global `var'_plot_fname "products/Imputations (cont) - `var_label'"
+    graph export "${`var'_plot_fname}.pdf", replace
+    graph export "${`var'_plot_fname}.png", replace
   }
 }
 

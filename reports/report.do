@@ -7,8 +7,9 @@ local heading putdocx paragraph, style(Heading1)
 local newpara putdocx textblock begin, halign(both)
 local putdocx textblock end putdocx textblock end
 
-local p_fmt   %5.2f // Format used for P-values.
-local pc_fmt  %8.1f // Format used for percentages.
+local p_fmt  %5.2f // Format used for P-values.
+local e_fmt  %5.2f // Format used for estimates.
+local pc_fmt %8.1f // Format used for percentages.
 
 // Start the document.
 putdocx begin
@@ -20,10 +21,10 @@ putdocx text ("eRegQual analysis")
 // Author and revision information.
 `newpara'
 Chris Rose, Norwegian Institute of Public Health 
-(<<dd_docx_display: c(current_time) c(current_date)>>)
+(<<dd_docx_display: c(current_date)>>)
 putdocx textblock end
 `newpara'
-Git revision: <<dd_docx_display: "${git_revision}">>
+Generated using git revision: <<dd_docx_display: "${git_revision}">>
 putdocx textblock end
 
 // Introduction section.
@@ -49,7 +50,7 @@ currently regard multiple imputation as a state-of-the-art technique that
 is expected to reduce bias and increase precision relative to other missing 
 data techniques. We imputed each of the constituent outcomes using the auxiliary 
 variables age, BMI, years of education, average monthly household income 
-(transformed to the log scale due to the highly skewed distribution of income), 
+(transformed to the log scale due to the skewed distribution of income), 
 and variables that indicated whether a laboratory or ultrasound were available 
 at the clinics; the variables included in the analysis described below were also 
 included. We were not able to include auxiliary variables that indicated previous 
@@ -63,14 +64,12 @@ putdocx textblock end
 For each imputed data set, we computed the composite outcome from the imputed 
 constituent outcome data. An adverse pregnancy outcome was defined to have 
 occurred if at least one of the constituent outcomes occurred, and not to have 
-occurred if none of the constituent outcomes occurred. Because we imputed values 
-of the constituent outcomes, none of the composite outcomes could be missing in 
-the imputed data. For each imputed data set, we estimated a risk ratio to 
-compare treatment to control, adjusting for the stratification variable as a 
-fixed effect, using generalized estimating equations (GEE; binomial errors and 
-log link) to account for the cluster design. Estimates were then combined 
-using Rubin's rules. For comparison, we also performed a complete case analysis 
-under the MCAR assumption.
+occurred if none of the constituent outcomes occurred. For each imputed data 
+set, we estimated a risk ratio to compare treatment to control, adjusted for 
+the stratification variable as a fixed effect, and used generalized estimating 
+equations (GEE; binomial errors and log link) to account for the cluster design. 
+We combined these estimates using Rubin's rules (Rubin 2004). For comparison, 
+we also performed a complete case analysis under the MCAR assumption.
 putdocx textblock end
 
 `newpara'
@@ -97,25 +96,30 @@ Outcome data were missing for between
 outcomes, and <<dd_docx_display: string(${pc_miss_y}, "`pc_fmt'")>>% of the 
 composite outcome. We were unable to reject the MCAR and CDM hypotheses 
 (P=<<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P=
-<<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively).
+<<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively). Distributions 
+of the original and the first five imputed data sets are shown in the Appendix. 
+Table 1 shows the result of the adverse pregnancy outcome analysis. The risk 
+ratio was estimated to be <<dd_docx_display: string(${rr_b_y}, "`e_fmt'")>> 
+(95% CI <<dd_docx_display: string(${rr_ll_y}, "`e_fmt'")>> to 
+<<dd_docx_display: string(${rr_ul_y}, "`e_fmt'")>>, P = 
+<<dd_docx_display: string(${rr_p_y}, "`p_fmt'")>>).
 putdocx textblock end
 
-//estimates restore est_main_result
+frame imputed: local var_label : variable label y
+local title "Table 1. `var_label' (multiply-imputed result)"
 estimates replay est_main_result, eform
-putdocx table tbl_main_result = etable, title("TODO: Main result")
-
-// Appendix
-`heading'
-putdocx text ("Appendix")
-
-`newpara'
-TODO: Write this
-putdocx textblock end
-
+putdocx table tbl_main_result = etable, title("`title'")
+putdocx table tbl_main_result(2, 2) = ("Risk Ratio"), halign(right)
 
 // References
 `heading'
 putdocx text ("References")
+
+`newpara'
+van Buuren, S. (2007). Multiple imputation of discrete and continuous data by 
+fully conditional specification. Statistical methods in medical research, 
+16(3), 219-242.
+putdocx textblock end
 
 `newpara'
 Little, R. J. (1988). A test of missing completely at random for multivariate 
@@ -124,10 +128,23 @@ data with missing values. Journal of the American statistical Association,
 putdocx textblock end
 
 `newpara'
-van Buuren, S. (2007). Multiple imputation of discrete and continuous data by 
-fully conditional specification. Statistical methods in medical research, 
-16(3), 219-242.
+Rubin, D. B. (2004). Multiple imputation for nonresponse in surveys (Vol. 81). 
+John Wiley & Sons.
 putdocx textblock end
+
+// Appendix
+`heading'
+putdocx text ("Appendix")
+
+`newpara'
+The following figures show the distributions of the original and a selection of 
+the imputed data.
+putdocx textblock end
+
+foreach var of newlist y1-y5 y $imputeds { // newlist as vars only exist in (other) frames.
+  display "${`var'_plot_fname}"
+  putdocx image "${`var'_plot_fname}.png", linebreak
+}
 
 
 // Save the report to the specified filename.
