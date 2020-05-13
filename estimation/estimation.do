@@ -22,6 +22,12 @@ frame `original' {
   global cc_rr_ll = result["ll",     "2.arm"]
   global cc_rr_ul = result["ul",     "2.arm"]
   global cc_rr_p  = result["pvalue", "2.arm"]
+
+  // Estimate ICC.
+  loneway `var' clusterid
+  global icc    = r(rho)
+  global icc_lb = r(lb)
+  global icc_ub = r(ub)
 }
 
 // Compute the multiply-imputed estimates.

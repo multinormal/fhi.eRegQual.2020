@@ -71,13 +71,14 @@ adjusted for the stratification variable as a fixed effect, and used
 generalized estimating equations (GEE; binomial errors and log link) to account 
 for the cluster design. We combined estimates for each outcome using Rubin's 
 rules (Rubin 2004). For comparison, we also performed a complete case analysis 
-under the MCAR assumption.
+under the MCAR assumption. We estimated the intraclass correlation coefficient 
+(ICC) using the complete cases.
 putdocx textblock end
 
 `newpara'
 We followed the intention-to-treat principle: participants were analyzed in the 
 arms to which they were randomized and — with the exception of the complete case 
-analysis — all participants were included in the analyses. We computed 95% 
+analyses — all participants were included in the analyses. We computed 95% 
 confidence intervals and used the significance criterion P<0.05 throughout. 
 Statistical analyses were performed using Stata 16 (StataCorp LLC, College 
 Station, Texas, USA).
@@ -109,7 +110,9 @@ complete case risk ratio of <<dd_docx_display: string(${cc_rr_b}, "`e_fmt'")>>
 (95% CI <<dd_docx_display: string(${cc_rr_ll}, "`e_fmt'")>> to 
 <<dd_docx_display: string(${cc_rr_ul}, "`e_fmt'")>>, P = 
 <<dd_docx_display: string(${cc_rr_p}, "`p_fmt'")>>). Tables 2–6 show results for 
-the constituent outcomes.
+the constituent outcomes. The ICC was estimated to be close to zero and no 
+greater than <<dd_docx_display: string(${icc_ub}, "%5.3f")>> (upper bound of 
+95% CI).
 putdocx textblock end
 
 frame imputed {
