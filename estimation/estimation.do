@@ -1,19 +1,32 @@
 version 16.1
 
 frame imputed {
-  // Estimate population averaged effects using a GEE. This is the planned
-  // analysis.
   mi xtset clusterid
-  mi estimate, eform: xtgee y i.arm i.strat_var, family(binomial) link(log)
-  estimates store est_main_result
 
-  // Make globals containing key results.
-  matrix result  = r(table)
-  global rr_b_y  = result["b",      "2.arm"]
-  global rr_ll_y = result["ll",     "2.arm"]
-  global rr_ul_y = result["ul",     "2.arm"]
-  global rr_p_y  = result["pvalue", "2.arm"]
+  local covars     i.arm i.strat_var
+  local model_spec family(binomial) link(log) asis
+  local mi_opts    eform errorok
+    // The asis and errorok options are neeeded because, by chance, collinearity
+    // can exist between the stratification variable and the dependent variable.
+    // See the assert below, which specifies when this happens.
 
+  foreach var of varlist y y1-y5 { 
+    // Estimate population averaged effects using a GEE.
+    mi estimate, `mi_opts': xtgee `var' `covars', `model_spec'
+    estimates store `var'_estimates
+
+    // Verify that the anticipated imputations were used.
+    if ("`var'" != "y2") assert e(M_mi) == $m_imputations
+    if ("`var'" == "y2") assert e(M_mi) >=  0.8 * $m_imputations
+    // TODO: Is this necessary with the full set of imputations?
+    
+    // Make globals containing key results.
+    matrix result      = r(table)
+    global rr_b_`var'  = result["b",      "2.arm"]
+    global rr_ll_`var' = result["ll",     "2.arm"]
+    global rr_ul_`var' = result["ul",     "2.arm"]
+    global rr_p_`var'  = result["pvalue", "2.arm"]
+  }
 
   // We cannot obtain the ICC from the GEE model, so fit a mixed-effects logistic
   // mode. Note that we have to use the option cmdok to force Stata to fit the

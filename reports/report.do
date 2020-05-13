@@ -65,11 +65,12 @@ For each imputed data set, we computed the composite outcome from the imputed
 constituent outcome data. An adverse pregnancy outcome was defined to have 
 occurred if at least one of the constituent outcomes occurred, and not to have 
 occurred if none of the constituent outcomes occurred. For each imputed data 
-set, we estimated a risk ratio to compare treatment to control, adjusted for 
-the stratification variable as a fixed effect, and used generalized estimating 
-equations (GEE; binomial errors and log link) to account for the cluster design. 
-We combined these estimates using Rubin's rules (Rubin 2004). For comparison, 
-we also performed a complete case analysis under the MCAR assumption.
+set and outcome, we estimated a risk ratio to compare treatment to control, 
+adjusted for the stratification variable as a fixed effect, and used 
+generalized estimating equations (GEE; binomial errors and log link) to account 
+for the cluster design. We combined estimates for each outcome using Rubin's 
+rules (Rubin 2004). For comparison, we also performed a complete case analysis 
+under the MCAR assumption.
 putdocx textblock end
 
 `newpara'
@@ -102,14 +103,21 @@ Table 1 shows the result of the adverse pregnancy outcome analysis. The risk
 ratio was estimated to be <<dd_docx_display: string(${rr_b_y}, "`e_fmt'")>> 
 (95% CI <<dd_docx_display: string(${rr_ll_y}, "`e_fmt'")>> to 
 <<dd_docx_display: string(${rr_ul_y}, "`e_fmt'")>>, P = 
-<<dd_docx_display: string(${rr_p_y}, "`p_fmt'")>>).
+<<dd_docx_display: string(${rr_p_y}, "`p_fmt'")>>). Tables 2–5 show results for 
+the constituent outcomes.
 putdocx textblock end
 
-frame imputed: local var_label : variable label y
-local title "Table 1. `var_label' (multiply-imputed result)"
-estimates replay est_main_result, eform
-putdocx table tbl_main_result = etable, title("`title'")
-putdocx table tbl_main_result(2, 2) = ("Risk Ratio"), halign(right)
+frame imputed {
+  local count = 0
+  foreach var of varlist y y1-y5 {
+    local count = `count' + 1
+    local var_label : variable label `var'
+    local title "Table `count'. `var_label' (multiply-imputed result)"
+    estimates replay `var'_estimates, eform
+    putdocx table tbl_`count' = etable, title("`title'")
+    putdocx table tbl_`count'(2, 2) = ("Risk Ratio"), halign(right)
+  }
+}
 
 // References
 `heading'
