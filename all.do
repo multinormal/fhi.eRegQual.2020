@@ -29,6 +29,11 @@ do data/attendance
 // // Make figures
 // do figures/figures
 
+// TODO: Make Spider diagram for each process outcome
+// (see https://folkehelse.sharepoint.com/:i:/r/sites/1461/Restricted%20Documents/4.Research/Analysis,%20Sample%20Size,%20Randomizatio/eRegQual/radar_chart_eRegQual.png?csf=1&web=1&e=JeKbbU)
+
+
+
 // Obtain the git revision hash, which is used in the reports.
 tempfile git_revision_filename
 tempname revision_file
