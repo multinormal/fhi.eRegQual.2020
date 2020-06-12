@@ -3,7 +3,7 @@ version 16.1
 // Clear everything and set up logging.
 clear all
 log close _all
-log using products/log.smcl, name("eRegQual Birth Outcomes Analysis") replace
+log using products/log.smcl, name("eRegQual Analysis") replace
 
 // Set up Stata.
 do setup/setup
@@ -12,7 +12,7 @@ do setup/setup
 do globals/globals
 
 // Import data and perform imputation.
-do data/import
+do data/birth_outcomes
 do data/impute
 
 // Do estimation.
