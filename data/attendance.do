@@ -11,33 +11,40 @@ frame attendance {
   datasignature
   assert r(datasignature) == "`signature'"
 
-  // Reshape to long format. Note that the column uniqueid is not actually
-  // unique but identifies women, who can have multiple pregnancies (not
+  // Reshape to long format. Note that the uniqueid variable is not actually
+  // unique but identifies women, who can have multiple pregnancies (but not
   // twins in this data set). Rows in the wide data frame are pregnancies, so
-  // we simply generate a unique pregnancy number for them.
+  // we simply generate a unique pregnancy number for each row. We generate a 
+  // visit variable, as each woman (pregnancy) may attend clinic multiple times. 
   generate pregnancy = _n
   local stubs opportunity_attendance_ success_attendance_
   reshape long `stubs', i(pregnancy) j(visit)
 
-  // We are interested in relative probability of success.
+  // The outcome is successful attendance. While the success_attendance_
+  // variable is a factor with three levels, we are only interested in the
+  // relative odds of success. The other levels are "NOT SUCCESSFUL" and
+  // "NOT APPLICABLE". Not applicable is not of scientific interest here.
   local success_label_name = "`: value label success_attendance_'"
   generate y = success_attendance_ == "SUCCESSFUL":`success_label_name'
 
+  // Encode/rename arm and cluster identifier variables.
   encode prettyExposure, generate(arm)
   rename str_TRIAL_1_Cluster clusterid
 
+  // Keep only the variables of interest.
+  keep y arm pregnancy visit clusterid
+
+  // There should be no missing data.
+  misstable summarize, all
+  assert r(N_lt_dot) == _N
+
+  // Set pregnancy as the panel variable and visit at the time variable.
   xtset pregnancy visit
 
   // TODO: Move this estimation command elsewhere.
   xtlogit y i.arm, vce(cluster clusterid) or
 
-
-  // NOTE: The abive will not work because uniqueid is not unique! The
-  // unit of observation is pregnancy, so just create a 1, 2, 3, ... column.  
-
   // TODO: Think about other variable that are important to keep/use.
-
-  // TODO: Look at xtgee for the regression
 
   // TODO: If you generate an OR for this analysis, switch the birth outcomes
   // to OR, too.
