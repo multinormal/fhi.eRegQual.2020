@@ -34,6 +34,12 @@ frame attendance {
   // Keep only the variables of interest.
   keep y arm pregnancy visit clusterid
 
+  // Label the variables
+  label variable y         "Successful attendance"
+  label variable arm       "Study arm"
+  label variable pregnancy "Pregnancy"
+  label variable clusterid "Cluster"
+
   // There should be no missing data.
   misstable summarize, all
   assert r(N_lt_dot) == _N

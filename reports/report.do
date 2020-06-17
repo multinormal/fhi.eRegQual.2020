@@ -89,7 +89,7 @@ putdocx textblock end
 `newpara'
 We followed the intention-to-treat principle: participants were analyzed in the 
 arms to which they were randomized and — with the exception of the complete case 
-analyses for the adverse pregnancy anslysis — all participants were included in 
+analyses for the adverse pregnancy analysis — all participants were included in 
 the analyses. We computed 95% confidence intervals and used the significance 
 criterion P<0.05 throughout. Statistical analyses were performed using Stata 16 
 (StataCorp LLC, College Station, Texas, USA).
@@ -146,7 +146,9 @@ frame attendance {
   putdocx table tbl_`tbl_num' = etable, title("`title'")
   putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
   putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
-  // TODO: Remove the table rows that are not of immediate interest.
+  forvalues i = 9(-1)6 { // Drop rows that are not of immediate interest.
+    putdocx table tbl_`tbl_num'(`i', .), drop
+  }
 }
 
 // References
