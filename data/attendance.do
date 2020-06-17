@@ -42,7 +42,7 @@ frame attendance {
   xtset pregnancy visit
 
   // TODO: Move this estimation command elsewhere.
-  xtlogit y i.arm, vce(cluster clusterid) or
+  // xtlogit y i.arm, vce(cluster clusterid) or
 
   // TODO: Think about other variable that are important to keep/use.
 
