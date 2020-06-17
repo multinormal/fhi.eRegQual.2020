@@ -11,6 +11,8 @@ local p_fmt  %5.2f // Format used for P-values.
 local e_fmt  %5.2f // Format used for estimates.
 local pc_fmt %8.1f // Format used for percentages.
 
+local tbl_num = 0  // A table counter.
+
 // Start the document.
 putdocx begin
 
@@ -126,16 +128,26 @@ assert ${p_cdm}  > 0.05
 //// putdocx textblock end
 //// 
 //// frame imputed {
-////   local count = 0
 ////   foreach var of varlist y y1-y5 {
-////     local ++count
+////     local ++tbl_num
 ////     local var_label : variable label `var'
-////     local title "Table `count'. `var_label' (multiply-imputed result)"
+////     local title "Table `tbl_num'. `var_label' (multiply-imputed result)"
 ////     estimates replay `var'_estimates, eform
-////     putdocx table tbl_`count' = etable, title("`title'")
-////     putdocx table tbl_`count'(2, 2) = ("Risk Ratio"), halign(right)
+////     putdocx table tbl_`tbl_num' = etable, title("`title'")
+////     putdocx table tbl_`tbl_num'(2, 2) = ("Risk Ratio"), halign(right)
 ////   }
 //// }
+
+frame attendance {
+  local ++tbl_num  
+  local var_label : variable label y
+  local title "Table `tbl_num'. `var_label'"
+  estimates replay attendance_estimates
+  putdocx table tbl_`tbl_num' = etable, title("`title'")
+  putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+  putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
+  // TODO: Remove the table rows that are not of immediate interest.
+}
 
 // References
 `heading'
