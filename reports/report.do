@@ -69,18 +69,19 @@ putdocx text ("Methods")
 //// set and outcome, we estimated a risk ratio to compare treatment to control, 
 //// adjusted for the stratification variable as a fixed effect, and used 
 //// generalized estimating equations (GEE; binomial errors and log link) to account 
-//// for the cluster design. We combined estimates for each outcome using Rubin's 
+//// for the cluster-randomized design. We combined estimates for each outcome using Rubin's 
 //// rules (Rubin 2004). For comparison, we also performed a complete case analysis 
 //// under the MCAR assumption. We estimated the intraclass correlation coefficient 
 //// (ICC) using the complete cases.
 //// putdocx textblock end
 
 `newpara'
-We used logistic regression to estimate the relative odds of success for each 
-of the process outcomes under the treatment versus control conditions. Random 
-effects were used to account for clustering of multiple opportunities for 
-success within each pregnancy, and clustering of pregnancies within clinics. No 
-data were missing for these analyses.
+We used random-effects logistic regression to estimate the relative odds of 
+success for each of the process outcomes under the treatment versus control 
+conditions, accounting for clustering of multiple opportunities for success 
+within each pregnancy. We computed cluster-robust standard errors to account 
+for the cluster-randomized design (i.e., clustering of pregnancies within 
+clinics). No data were missing for these analyses.
 putdocx textblock end
 
 `newpara'
