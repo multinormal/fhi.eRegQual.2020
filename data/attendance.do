@@ -34,6 +34,12 @@ frame attendance {
   // Keep only the variables of interest.
   keep y arm pregnancy visit clusterid
 
+  // Label the variables
+  label variable y         "Successful attendance"
+  label variable arm       "Study arm"
+  label variable pregnancy "Pregnancy"
+  label variable clusterid "Cluster"
+
   // There should be no missing data.
   misstable summarize, all
   assert r(N_lt_dot) == _N
@@ -44,7 +50,7 @@ frame attendance {
   // TODO: Think about other variable that are important to keep/use.
 
   // TODO: If you generate an OR for this analysis, switch the birth outcomes
-  // to OR, too.
+  // to OR, too. Make sure you update the report text if you change the link.
 
   // TODO: Probably report OR and assumed and corresponding risks.
 
