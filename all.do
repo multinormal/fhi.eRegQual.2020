@@ -3,7 +3,7 @@ version 16.1
 // Clear everything and set up logging.
 clear all
 log close _all
-log using products/log.smcl, name("eRegQual Birth Outcomes Analysis") replace
+log using products/log.smcl, name("eRegQual Analysis") replace
 
 // Set up Stata.
 do setup/setup
@@ -11,17 +11,28 @@ do setup/setup
 // Set up globals.
 do globals/globals
 
-// Import data and perform imputation.
-do data/import
-do data/impute
+// TODO: Reinstate
+// // Import birth outcome data and perform imputation.
+// do data/birth_outcomes
+// do data/impute
 
-// Do estimation.
-do estimation/missing
-do estimation/estimation
-do estimation/mcar
+// Import the process outcome data.
+do data/attendance
 
-// Make figures
-do figures/figures
+// TODO: Reinstate
+// // Do estimation.
+// do estimation/missing
+// do estimation/estimation
+// do estimation/mcar
+
+// TODO: Reinstate
+// // Make figures
+// do figures/figures
+
+// TODO: Make Spider diagram for each process outcome
+// (see https://folkehelse.sharepoint.com/:i:/r/sites/1461/Restricted%20Documents/4.Research/Analysis,%20Sample%20Size,%20Randomizatio/eRegQual/radar_chart_eRegQual.png?csf=1&web=1&e=JeKbbU)
+
+
 
 // Obtain the git revision hash, which is used in the reports.
 tempfile git_revision_filename
@@ -31,6 +42,7 @@ file open `revision_file' using `git_revision_filename', read text
 file read `revision_file' line
 global git_revision = "`macval(line)'"
 
-// Make the report
-do reports/report products/report.docx
+// Make the reports
+// TODO: Reinstate this
+// do reports/report products/report.docx
 
