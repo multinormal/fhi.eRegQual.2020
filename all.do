@@ -11,9 +11,9 @@ do setup/setup
 // Set up globals.
 do globals/globals
 
+// Import birth outcome data and perform imputation.
 // TODO: Reinstate
-// // Import birth outcome data and perform imputation.
-// do data/birth_outcomes
+do data/birth_outcomes
 // do data/impute
 
 // Import the process outcome data.
@@ -23,7 +23,7 @@ do data/attendance
 // // Do estimation.
 // do estimation/missing
 // do estimation/estimation
-// do estimation/mcar
+do estimation/mcar
 
 // TODO: Reinstate
 // // Make figures
@@ -42,7 +42,5 @@ file open `revision_file' using `git_revision_filename', read text
 file read `revision_file' line
 global git_revision = "`macval(line)'"
 
-// Make the reports
-// TODO: Reinstate this
-// do reports/report products/report.docx
-
+// Make the report
+do reports/report products/report.docx
