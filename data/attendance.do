@@ -41,14 +41,11 @@ frame attendance {
   // Set pregnancy as the panel variable and visit at the time variable.
   xtset pregnancy visit
 
-  // TODO: Move this estimation command elsewhere.
-  // xtlogit y i.arm, vce(cluster clusterid) or
-
   // TODO: Think about other variable that are important to keep/use.
 
   // TODO: If you generate an OR for this analysis, switch the birth outcomes
   // to OR, too.
 
   // TODO: Probably report OR and assumed and corresponding risks.
-  
+
 }
