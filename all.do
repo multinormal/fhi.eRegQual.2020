@@ -21,9 +21,10 @@ do data/attendance
 
 // TODO: Reinstate
 // // Do estimation.
-// do estimation/missing
-// do estimation/estimation
-// do estimation/mcar
+// do estimation/missing          // Calculate percentage of data missing.
+// do estimation/mcar             // Test the MCAR hypothesis.
+// do estimation/birth_outcomes   // Analyze the birth outcome data.
+do estimation/attendance          // Analyze the attendance data.
 
 // TODO: Reinstate
 // // Make figures
