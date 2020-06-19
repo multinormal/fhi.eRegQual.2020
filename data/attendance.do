@@ -31,8 +31,12 @@ frame attendance {
   encode prettyExposure, generate(arm)
   rename str_TRIAL_1_Cluster clusterid
 
+  // Convert the stratification variable from string to integer.
+  encode bookorgdistricthashed, generate(strat_var)
+  label variable strat_var District
+
   // Keep only the variables of interest.
-  keep y arm pregnancy visit clusterid
+  keep y arm pregnancy visit clusterid strat_var
 
   // Label the variables
   label variable y         "Successful attendance"
