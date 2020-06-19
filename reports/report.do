@@ -69,7 +69,7 @@ putdocx text ("Methods")
 //// occurred if at least one of the constituent outcomes occurred, and not to have 
 //// occurred if none of the constituent outcomes occurred. For each imputed data 
 //// set and outcome, we estimated a risk ratio to compare treatment to control, 
-//// adjusted for the stratification variable as a fixed effect, and used 
+//// adjusted for the stratification variable as a fixed effect (CHMP 2015), and used 
 //// generalized estimating equations (GEE; binomial errors and log link) to account 
 //// for the cluster-randomized design. We combined estimates for each outcome using Rubin's 
 //// rules (Rubin 2004). For comparison, we also performed a complete case analysis 
@@ -80,19 +80,20 @@ putdocx text ("Methods")
 `newpara'
 We used random-effects logistic regression to estimate the relative odds of 
 success for each of the process outcomes under the treatment versus control 
-conditions, accounting for clustering of multiple opportunities for success 
-within each pregnancy. We computed cluster-robust standard errors to account 
-for the cluster-randomized design (i.e., clustering of pregnancies within 
-clinics). No data were missing for these analyses.
+conditions. We adjusted for the stratification variable as a fixed-effect 
+(CHMP 2015), modelled the clustering of multiple opportunities for success 
+within each pregnancy using random-effects, and computed cluster-robust 
+standard errors to account for the cluster-randomized design (i.e., clustering 
+of pregnancies within clinics). No data were missing for these analyses.
 putdocx textblock end
 
 `newpara'
-We followed the intention-to-treat principle: participants were analyzed in the 
-arms to which they were randomized and — with the exception of the complete case 
-analyses for the adverse pregnancy analysis — all participants were included in 
-the analyses. We computed 95% confidence intervals and used the significance 
-criterion P<0.05 throughout. Statistical analyses were performed using Stata 16 
-(StataCorp LLC, College Station, Texas, USA).
+We followed the intention-to-treat principle for all analyses: participants were 
+analyzed in the arms to which they were randomized and — with the exception of 
+the complete case analyses for the adverse pregnancy analysis — all participants 
+were included in the analyses. We computed 95% confidence intervals and used the 
+significance criterion P<0.05 throughout. Statistical analyses were performed 
+using Stata 16 (StataCorp LLC, College Station, Texas, USA).
 putdocx textblock end
 
 // Results section
@@ -146,7 +147,7 @@ frame attendance {
   putdocx table tbl_`tbl_num' = etable, title("`title'")
   putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
   putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
-  forvalues i = 9(-1)6 { // Drop rows that are not of immediate interest.
+  forvalues i = 16(-1)6 { // Drop rows that are not of immediate interest.
     putdocx table tbl_`tbl_num'(`i', .), drop
   }
 }
@@ -154,6 +155,12 @@ frame attendance {
 // References
 `heading'
 putdocx text ("References")
+
+`newpara'
+Committee for Medicinal Products for Human Use (CHMP) (2015). Guideline on 
+adjustment for baseline covariates in clinical trials. London: European 
+Medicines Agency.
+putdocx textblock end
 
 `newpara'
 van Buuren, S. (2007). Multiple imputation of discrete and continuous data by 
