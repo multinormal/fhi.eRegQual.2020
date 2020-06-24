@@ -68,23 +68,35 @@ putdocx text ("Methods")
 //// constituent outcome data. An adverse pregnancy outcome was defined to have 
 //// occurred if at least one of the constituent outcomes occurred, and not to have 
 //// occurred if none of the constituent outcomes occurred. For each imputed data 
-//// set and outcome, we estimated a risk ratio to compare treatment to control, 
-//// adjusted for the stratification variable as a fixed effect (CHMP 2015), and used 
-//// generalized estimating equations (GEE; binomial errors and log link) to account 
-//// for the cluster-randomized design. We combined estimates for each outcome using Rubin's 
-//// rules (Rubin 2004). For comparison, we also performed a complete case analysis 
-//// under the MCAR assumption. We estimated the intraclass correlation coefficient 
-//// (ICC) using the complete cases.
+//// set and outcome, we estimated a risk ratio to compare treatment to control 
+//// and used  generalized estimating equations (GEE; binomial errors and log 
+//// link) to account for the cluster-randomized design. We combined estimates 
+//// for each outcome using Rubin's rules (Rubin 2004). For comparison, we also 
+//// performed a complete case analysis under the MCAR assumption. We estimated 
+//// the intraclass correlation coefficient (ICC) using the complete cases.
 //// putdocx textblock end
 
 `newpara'
 We used random-effects logistic regression to estimate the relative odds of 
 success for each of the process outcomes under the treatment versus control 
-conditions. We adjusted for the stratification variable as a fixed-effect 
-(CHMP 2015), modelled the clustering of multiple opportunities for success 
+conditions. We modelled the clustering of multiple opportunities for success 
 within each pregnancy using random-effects, and computed cluster-robust 
 standard errors to account for the cluster-randomized design (i.e., clustering 
 of pregnancies within clinics). No data were missing for these analyses.
+putdocx textblock end
+
+// TODO: Make sure that the adjustments desribed below are applied to all 
+// analyses.
+
+`newpara'
+While we randomized clusters by stratifying on district for administrative 
+reasons, we judged prior to analysis that district may be prognostic for 
+all outcomes, and therefore adjusted for district as a fixed effect in all 
+analyses (CHMP 2015). Because we constrained the randomization by lab 
+availability, clinic size (number of new enrollments), proportion of women 
+aged >40 years, and proportion of primiparous women, we also adjusted for 
+these prognostic variables as fixed effects using individual- rather than 
+cluster-level data where possible (Li 2017).
 putdocx textblock end
 
 `newpara'
@@ -101,8 +113,9 @@ putdocx textblock end
 putdocx text ("Results")
 
 // Verify some assumptions in this section.
-assert ${p_mcar} > 0.05
-assert ${p_cdm}  > 0.05
+//// TODO: Reinstate
+//// assert ${p_mcar} > 0.05
+//// assert ${p_cdm}  > 0.05
 
 //// TODO: Reinstate
 //// `newpara'
@@ -166,6 +179,13 @@ putdocx textblock end
 van Buuren, S. (2007). Multiple imputation of discrete and continuous data by 
 fully conditional specification. Statistical methods in medical research, 
 16(3), 219-242.
+putdocx textblock end
+
+`newpara'
+Li, F., Turner, E. L., Heagerty, P. J., Murray, D. M., Vollmer, W. M., & 
+DeLong, E. R. (2017). An evaluation of constrained randomization for the design 
+and analysis of group‐randomized trials with binary outcomes. Statistics in 
+medicine, 36(24), 3791-3806.
 putdocx textblock end
 
 `newpara'
