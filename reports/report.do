@@ -89,18 +89,10 @@ putdocx textblock end
 // analyses.
 
 `newpara'
-While we randomized clusters by stratifying on district for administrative 
-reasons, we judged prior to analysis that district may be prognostic for 
-all outcomes, and therefore adjusted for district as a fixed effect in all 
-analyses (CHMP 2015). Because we constrained the randomization by lab 
-availability, clinic size (number of new enrollments), proportion of women 
-aged >40 years, and proportion of primiparous women, we also adjusted for 
-these prognostic variables as fixed effects using individual- rather than 
-cluster-level data where possible (Li 2017).
-putdocx textblock end
-
-`newpara'
-We followed the intention-to-treat principle for all analyses: participants were 
+We adjusted for the stratification variable (CHMP 2015) and the variables used 
+to constrain randomization (Li 2017) as fixed effects in all analyses, using 
+individual- rather than cluster-level measurements where possible. We followed 
+the intention-to-treat principle for all analyses: participants were 
 analyzed in the arms to which they were randomized and — with the exception of 
 the complete case analyses for the adverse pregnancy analysis — all participants 
 were included in the analyses. We computed 95% confidence intervals and used the 

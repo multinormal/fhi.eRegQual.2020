@@ -1,8 +1,8 @@
 version 16.1
 
 // Define the path to the data and the signature we expect it to have.
-local fname "data/raw/12June2020_eRegQual process outcomes_attendance.dta"
-local signature "6367:38(71787):4163979373:2535885136"
+local fname "data/raw/25June2020_eRegQual process outcomes_attendance.dta"
+local signature "6367:39(51496):3578513271:2127801624"
 
 frame create attendance
 frame attendance {
@@ -33,16 +33,33 @@ frame attendance {
 
   // Convert the stratification variable from string to integer.
   encode bookorgdistricthashed, generate(strat_var)
-  label variable strat_var District
+
+  // Compute the cluster size from the trial data. We use the trial data for
+  // simplicity and have verified that these agree with the "baseline" data on
+  // trial size.
+  by clusterid, sort: generate cluster_size = _N
+
+  // Generate an indicator for whether each woman is aged > 40 years.
+  generate age_over_40 = age > 40
+  label values age_over_40 yes_no_label
+  
+  // Generate an indicator for whether each woman is primiparous.
+  rename bookprimi primiparous
+  label values primiparous yes_no_label
 
   // Keep only the variables of interest.
-  keep y arm pregnancy visit clusterid strat_var
+  keep y arm pregnancy visit clusterid $adj_var_names
 
   // Label the variables
-  label variable y         "Successful attendance"
-  label variable arm       "Study arm"
-  label variable pregnancy "Pregnancy"
-  label variable clusterid "Cluster"
+  label variable y             "Successful attendance"
+  label variable arm           "Study arm"
+  label variable pregnancy     "Pregnancy"
+  label variable clusterid     "Cluster"
+  label variable strat_var     "District"
+  label variable lab_available "Lab available"
+  label variable cluster_size  "Cluster size"
+  label variable age_over_40   "Age > 40 years"
+  label variable primiparous   "Primiparous"
 
   // There should be no missing data.
   misstable summarize, all
@@ -51,11 +68,8 @@ frame attendance {
   // Set pregnancy as the panel variable and visit at the time variable.
   xtset pregnancy visit
 
-  // TODO: Think about other variable that are important to keep/use.
-
   // TODO: If you generate an OR for this analysis, switch the birth outcomes
   // to OR, too. Make sure you update the report text if you change the link.
 
   // TODO: Probably report OR and assumed and corresponding risks.
-
 }
