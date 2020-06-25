@@ -152,7 +152,7 @@ frame attendance {
   putdocx table tbl_`tbl_num' = etable, title("`title'")
   putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
   putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
-  forvalues i = 16(-1)6 { // Drop rows that are not of immediate interest.
+  forvalues i = 20(-1)6 { // Drop rows that are not of immediate interest.
     putdocx table tbl_`tbl_num'(`i', .), drop
   }
 }
