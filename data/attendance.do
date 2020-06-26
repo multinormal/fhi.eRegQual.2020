@@ -25,6 +25,7 @@ frame attendance {
   // relative odds of success. The other levels are "NOT SUCCESSFUL" and
   // "NOT APPLICABLE". Not applicable is not of scientific interest here.
   local success_label_name = "`: value label success_attendance_'"
+  drop if      success_attendance_ == "NOT APPLICABLE":`success_label_name'
   generate y = success_attendance_ == "SUCCESSFUL":`success_label_name'
 
   // Encode/rename arm and cluster identifier variables.
