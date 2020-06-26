@@ -65,8 +65,11 @@ foreach outcome of global process_outcomes {
     misstable summarize, all
     assert r(N_lt_dot) == _N
 
-    // Set pregnancy as the panel variable and visit at the time variable.
-    xtset pregnancy visit
+    // Set pregnancy as the panel variable and visit as the time variable, if
+    // appropriate.
+    if "`outcome'" != "malpresentation" {
+      xtset pregnancy visit
+    }
 
     // TODO: If you generate an OR for this analysis, switch the birth outcomes
     // to OR, too. Make sure you update the report text if you change the link.
