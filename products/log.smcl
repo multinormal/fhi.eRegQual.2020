@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}26 Jun 2020, 13:46:54
+ {txt}opened on:  {res}26 Jun 2020, 13:54:47
 {txt}
 {com}. 
 . // Set up Stata.
@@ -45,7 +45,7 @@
 {txt}
 {com}. 
 . // Define the names of the process outcomes.
-. global process_outcomes attendance hypertension
+. global process_outcomes attendance hypertension diabetes
 {txt}
 {com}. 
 . // Labels for binary variables with levels yes and no.
@@ -70,11 +70,15 @@
 {txt}
 {com}. global fname_hypertension "data/raw/25June2020_eRegQual process outcomes_hypertension.dta"
 {txt}
+{com}. global fname_diabetes "data/raw/25June2020_eRegQual process outcomes_diabetes.dta"
+{txt}
 {com}. 
 . // Define data signatures for the process outcome files.
 . global datasignature_attendance   "6367:39(51496):3578513271:2127801624"
 {txt}
 {com}. global datasignature_hypertension "6367:60(68365):3970041110:3735367683"
+{txt}
+{com}. global datasignature_diabetes     "6367:38(91264):1895688975:3113856828"
 {txt}
 {com}. 
 {txt}end of do-file
@@ -396,6 +400,39 @@ success_hypertension_1 success_hypertension_2 ... success_hypertension_8{txt}->{
 {res}{txt}{col 8}panel variable:  {res}pregnancy (unbalanced)
 {txt}{col 9}time variable:  {res}{col 25}visit, 1 to 8, but with gaps
 {txt}{col 17}delta:  {res}1 unit
+  6367:38(91264):1895688975:3113856828
+{txt}(note: j = 1 2 3 4)
+(note: success_diabetes_2 not found)
+
+Data{col 36}wide{col 43}->{col 48}long
+{hline 77}
+Number of obs.                 {res}    6367   {txt}->{res}   25468
+{txt}Number of variables            {res}      39   {txt}->{res}      35
+{txt}j variable (4 values)                     ->   {res}visit
+{txt}xij variables:
+{res}opportunity_diabetes_1 opportunity_diabetes_2 ... opportunity_diabetes_4{txt}->{res}opportunity_diabetes_
+success_diabetes_1 success_diabetes_2 ... success_diabetes_4{txt}->{res}success_diabetes_
+{txt}{hline 77}
+(13,340 observations deleted)
+{res}{txt}{col 64}Obs<.
+{col 49}{c TLC}{hline 30}
+{col 16}{c |}{col 49}{c |} Unique
+{col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
+  {hline 13}{c +}{hline 32}{c +}{hline 30}
+     pregnancy {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}   >500          1        6367
+         visit {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}      4          1           4
+     clusterid {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}    119          1         120
+   primiparous {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}      2          0           1
+  lab_availa~e {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}      2          0           1
+             y {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}      2          0           1
+           arm {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}      2          1           2
+     strat_var {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}      5          1           5
+  cluster_size {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}     92        .16        4.32
+   age_over_40 {c |}{space 10}{space 10}{res}    12,128{txt}  {c |}      2          0           1
+  {hline 13}{c BT}{hline 32}{c BT}{hline 30}
+{res}{txt}{col 8}panel variable:  {res}pregnancy (unbalanced)
+{txt}{col 9}time variable:  {res}{col 25}visit, 1 to 4, but with gaps
+{txt}{col 17}delta:  {res}1 unit
 {txt}
 {com}. 
 {txt}end of do-file
@@ -556,6 +593,72 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
         sigma_u {c |}{col 17}{res}{space 2}     0.92{col 29}{space 2}     0.12{col 57}{space 4}     0.71{col 70}{space 3}     1.19
 {txt}            rho {c |}{col 17}{res}{space 2}     0.20{col 29}{space 2}     0.04{col 57}{space 4}     0.13{col 70}{space 3}     0.30
+{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
+{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-6178.6866}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-5927.3418}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-5920.7676}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-5920.7609}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-5920.7609}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log pseudolikelihood = {res}-5920.7609
+{txt}tau = {res} 0.1     {txt}log pseudolikelihood = {res}-5955.8031
+
+{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-5955.8031}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-5921.2125}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-5920.8574}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-5920.7759}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-5920.7628}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-5920.7613}  
+Iteration 6:{space 3}log pseudolikelihood = {res:-5920.7612}  
+Iteration 7:{space 3}log pseudolikelihood = {res:-5920.7611}  
+Iteration 8:{space 3}log pseudolikelihood = {res:-5920.7611}  
+{res}
+{txt}Calculating robust standard errors:
+
+Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}    12,128
+{txt}Group variable: {res}pregnancy{col 49}{txt}Number of groups{col 67}={col 69}{res}     6,367
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         1
+{txt}{col 63}avg{col 67}={col 69}{res}       1.9
+{txt}{col 63}max{col 67}={col 69}{res}         3
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    76.57
+{txt}Log pseudolikelihood  = {res}-5920.7611{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
+
+{txt}{ralign 81:(Std. Err. adjusted for {res:119} clusters in clusterid)}
+{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 17}{c |}{col 29}    Robust
+{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
+{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 12}arm {c |}
+{space 13}L  {c |}{col 17}{res}{space 2}     1.46{col 29}{space 2}     0.18{col 40}{space 1}    3.11{col 49}{space 3} 0.00{col 57}{space 4}     1.15{col 70}{space 3}     1.85
+{txt}{space 15} {c |}
+{space 6}strat_var {c |}
+{space 8}8d9c30  {c |}{col 17}{res}{space 2}     0.68{col 29}{space 2}     0.13{col 40}{space 1}   -2.06{col 49}{space 3} 0.04{col 57}{space 4}     0.48{col 70}{space 3}     0.98
+{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     0.57{col 29}{space 2}     0.13{col 40}{space 1}   -2.43{col 49}{space 3} 0.01{col 57}{space 4}     0.36{col 70}{space 3}     0.90
+{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     0.49{col 29}{space 2}     0.10{col 40}{space 1}   -3.40{col 49}{space 3} 0.00{col 57}{space 4}     0.32{col 70}{space 3}     0.74
+{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     0.72{col 29}{space 2}     0.11{col 40}{space 1}   -2.15{col 49}{space 3} 0.03{col 57}{space 4}     0.53{col 70}{space 3}     0.97
+{txt}{space 15} {c |}
+1.lab_available {c |}{col 17}{res}{space 2}     1.97{col 29}{space 2}     0.29{col 40}{space 1}    4.53{col 49}{space 3} 0.00{col 57}{space 4}     1.47{col 70}{space 3}     2.64
+{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     1.18{col 29}{space 2}     0.09{col 40}{space 1}    2.26{col 49}{space 3} 0.02{col 57}{space 4}     1.02{col 70}{space 3}     1.37
+{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     1.07{col 29}{space 2}     0.25{col 40}{space 1}    0.27{col 49}{space 3} 0.79{col 57}{space 4}     0.67{col 70}{space 3}     1.70
+{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.06{col 29}{space 2}     0.05{col 40}{space 1}    1.20{col 49}{space 3} 0.23{col 57}{space 4}     0.96{col 70}{space 3}     1.17
+{txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.15{col 29}{space 2}     0.03{col 40}{space 1}  -10.35{col 49}{space 3} 0.00{col 57}{space 4}     0.11{col 70}{space 3}     0.22
+{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 7}/lnsig2u {c |}{col 17}{res}{space 2}   -14.34{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
+{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+        sigma_u {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
+{txt}            rho {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
 {txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
@@ -838,6 +941,51 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
+{res}
+{txt}{hline}
+{p 0 8}Model {hi:diabetes_estimates}{p_end}
+{hline}
+
+Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}    12,128
+{txt}Group variable: {res}pregnancy{col 49}{txt}Number of groups{col 67}={col 69}{res}     6,367
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         1
+{txt}{col 63}avg{col 67}={col 69}{res}       1.9
+{txt}{col 63}max{col 67}={col 69}{res}         3
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    76.57
+{txt}Log pseudolikelihood  = {res}-5920.7611{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
+
+{txt}{ralign 81:(Std. Err. adjusted for {res:119} clusters in clusterid)}
+{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 17}{c |}{col 29}    Robust
+{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
+{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 12}arm {c |}
+{space 13}L  {c |}{col 17}{res}{space 2}     1.46{col 29}{space 2}     0.18{col 40}{space 1}    3.11{col 49}{space 3} 0.00{col 57}{space 4}     1.15{col 70}{space 3}     1.85
+{txt}{space 15} {c |}
+{space 6}strat_var {c |}
+{space 8}8d9c30  {c |}{col 17}{res}{space 2}     0.68{col 29}{space 2}     0.13{col 40}{space 1}   -2.06{col 49}{space 3} 0.04{col 57}{space 4}     0.48{col 70}{space 3}     0.98
+{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     0.57{col 29}{space 2}     0.13{col 40}{space 1}   -2.43{col 49}{space 3} 0.01{col 57}{space 4}     0.36{col 70}{space 3}     0.90
+{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     0.49{col 29}{space 2}     0.10{col 40}{space 1}   -3.40{col 49}{space 3} 0.00{col 57}{space 4}     0.32{col 70}{space 3}     0.74
+{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     0.72{col 29}{space 2}     0.11{col 40}{space 1}   -2.15{col 49}{space 3} 0.03{col 57}{space 4}     0.53{col 70}{space 3}     0.97
+{txt}{space 15} {c |}
+1.lab_available {c |}{col 17}{res}{space 2}     1.97{col 29}{space 2}     0.29{col 40}{space 1}    4.53{col 49}{space 3} 0.00{col 57}{space 4}     1.47{col 70}{space 3}     2.64
+{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     1.18{col 29}{space 2}     0.09{col 40}{space 1}    2.26{col 49}{space 3} 0.02{col 57}{space 4}     1.02{col 70}{space 3}     1.37
+{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     1.07{col 29}{space 2}     0.25{col 40}{space 1}    0.27{col 49}{space 3} 0.79{col 57}{space 4}     0.67{col 70}{space 3}     1.70
+{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.06{col 29}{space 2}     0.05{col 40}{space 1}    1.20{col 49}{space 3} 0.23{col 57}{space 4}     0.96{col 70}{space 3}     1.17
+{txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.15{col 29}{space 2}     0.03{col 40}{space 1}  -10.35{col 49}{space 3} 0.00{col 57}{space 4}     0.11{col 70}{space 3}     0.22
+{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 7}/lnsig2u {c |}{col 17}{res}{space 2}   -14.34{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
+{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+        sigma_u {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
+{txt}            rho {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
+{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
+{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {res}{txt}
 {com}. 
 . // References
@@ -887,4 +1035,20 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {com}. 
 {txt}end of do-file
 
-{com}. 
+{com}. frame dir
+{p2col 1 17 19 2:{res}* {txt}attendance }{res}21703 {txt:{it:x}} 11
+{p_end}
+{p2col 1 17 19 2:{res}* {txt}default }{res}0 {txt:{it:x}} 0
+{p_end}
+{p2col 1 17 19 2:{res}* {txt}diabetes }{res}12128 {txt:{it:x}} 11
+{p_end}
+{p2col 1 17 19 2:{res}* {txt}hypertension }{res}15553 {txt:{it:x}} 11
+{p_end}
+{p2col 1 17 19 2:{res}* {txt}original }{res}6367 {txt:{it:x}} 15{txt:;} 04May2020_eRegQual birth outcomes.dta
+{p_end}
+
+{txt}Note: frames marked with {res:*} contain unsaved data
+
+{com}. frame change diabetes
+
+. 
