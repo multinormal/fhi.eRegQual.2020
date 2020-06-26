@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}25 Jun 2020, 15:22:35
+ {txt}opened on:  {res}26 Jun 2020, 11:08:23
 {txt}
 {com}. 
 . // Set up Stata.
@@ -48,7 +48,7 @@
 . label define yes_no_label 1 Yes 0 No
 {txt}
 {com}. 
-. // The variables to adjust for, with their "typed". See the generated report for
+. // The variables to adjust for, with their "types". See the generated report for
 . // an explanation of why these variables are adjusted for.
 . global adj_vars i.strat_var i.lab_available c.cluster_size i.age_over_40 ///
 >                 i.primiparous
@@ -293,8 +293,10 @@ success_attendance_1 success_attendance_2 ... success_attendance_5{txt}->{res}su
 . 
 .   // Compute the cluster size from the trial data. We use the trial data for
 .   // simplicity and have verified that these agree with the "baseline" data on
-.   // trial size.
-.   by clusterid, sort: generate cluster_size = _N
+.   // trial size. We divide by 100 because cluster sizes range from about 150 to
+.   // about 750, and we want to get regression coefficients that are non-null
+.   // within two decimal places!
+.   by clusterid, sort: generate cluster_size = _N / 100
 . 
 .   // Generate an indicator for whether each woman is aged > 40 years.
 .   generate age_over_40 = age > 40
@@ -314,7 +316,7 @@ success_attendance_1 success_attendance_2 ... success_attendance_5{txt}->{res}su
 .   label variable clusterid     "Cluster"
 .   label variable strat_var     "District"
 .   label variable lab_available "Lab available"
-.   label variable cluster_size  "Cluster size"
+.   label variable cluster_size  "Cluster size (100s of new enrollments)"
 .   label variable age_over_40   "Age > 40 years"
 .   label variable primiparous   "Primiparous"
 . 
@@ -333,7 +335,7 @@ success_attendance_1 success_attendance_2 ... success_attendance_5{txt}->{res}su
              y {c |}{space 10}{space 10}{res}    31,835{txt}  {c |}      2          0           1
            arm {c |}{space 10}{space 10}{res}    31,835{txt}  {c |}      2          1           2
      strat_var {c |}{space 10}{space 10}{res}    31,835{txt}  {c |}      5          1           5
-  cluster_size {c |}{space 10}{space 10}{res}    31,835{txt}  {c |}     70         45        1085
+  cluster_size {c |}{space 10}{space 10}{res}    31,835{txt}  {c |}     70        .45       10.85
    age_over_40 {c |}{space 10}{space 10}{res}    31,835{txt}  {c |}      2          0           1
   {hline 13}{c BT}{hline 32}{c BT}{hline 30}
 {com}.   assert r(N_lt_dot) == _N
@@ -423,7 +425,7 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     1.88{col 29}{space 2}     0.34{col 40}{space 1}    3.47{col 49}{space 3} 0.00{col 57}{space 4}     1.32{col 70}{space 3}     2.68
 {txt}{space 15} {c |}
 1.lab_available {c |}{col 17}{res}{space 2}     1.00{col 29}{space 2}     0.14{col 40}{space 1}    0.03{col 49}{space 3} 0.97{col 57}{space 4}     0.77{col 70}{space 3}     1.31
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     1.00{col 29}{space 2}     0.00{col 40}{space 1}    2.93{col 49}{space 3} 0.00{col 57}{space 4}     1.00{col 70}{space 3}     1.00
+{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     1.11{col 29}{space 2}     0.04{col 40}{space 1}    2.93{col 49}{space 3} 0.00{col 57}{space 4}     1.03{col 70}{space 3}     1.19
 {txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     0.31{col 29}{space 2}     0.07{col 40}{space 1}   -5.12{col 49}{space 3} 0.00{col 57}{space 4}     0.20{col 70}{space 3}     0.49
 {txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.36{col 29}{space 2}     0.10{col 40}{space 1}    4.27{col 49}{space 3} 0.00{col 57}{space 4}     1.18{col 70}{space 3}     1.57
 {txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.13{col 29}{space 2}     0.03{col 40}{space 1}   -9.19{col 49}{space 3} 0.00{col 57}{space 4}     0.08{col 70}{space 3}     0.20
@@ -650,7 +652,7 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     0.63{col 29}{space 2}     0.18{col 40}{space 1}    3.47{col 49}{space 3} 0.00{col 57}{space 4}     0.27{col 70}{space 3}     0.98
 {txt}{space 15} {c |}
 1.lab_available {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}     0.14{col 40}{space 1}    0.03{col 49}{space 3} 0.97{col 57}{space 4}    -0.26{col 70}{space 3}     0.27
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}     0.00{col 40}{space 1}    2.93{col 49}{space 3} 0.00{col 57}{space 4}     0.00{col 70}{space 3}     0.00
+{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     0.10{col 29}{space 2}     0.04{col 40}{space 1}    2.93{col 49}{space 3} 0.00{col 57}{space 4}     0.03{col 70}{space 3}     0.17
 {txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}    -1.16{col 29}{space 2}     0.23{col 40}{space 1}   -5.12{col 49}{space 3} 0.00{col 57}{space 4}    -1.61{col 70}{space 3}    -0.72
 {txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     0.31{col 29}{space 2}     0.07{col 40}{space 1}    4.27{col 49}{space 3} 0.00{col 57}{space 4}     0.17{col 70}{space 3}     0.45
 {txt}{space 10}_cons {c |}{col 17}{res}{space 2}    -2.04{col 29}{space 2}     0.22{col 40}{space 1}   -9.19{col 49}{space 3} 0.00{col 57}{space 4}    -2.47{col 70}{space 3}    -1.60
@@ -717,4 +719,69 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {com}. 
 {txt}end of do-file
 
+{com}. margins i.arm, at(cluster_size = (2(1)7))
+{err}{bf:e(sample)} does not identify the estimation sample
+{txt}{search r(322), local:r(322);}
+
+{com}. estimates restore attendance_estimates
+{txt}(results {stata estimates replay attendance_estimates:attendance_estimates} are active now)
+
+{com}. frame change attendance
+
+. margins i.arm, at(cluster_size = (2(1)7))
+{res}
+{txt}Predictive margins{col 49}Number of obs{col 67}= {res}    31,835
+{txt}{col 1}Model VCE{col 14}: {res}Robust
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:Expression}:{space 1}{res:Pr(y=1), predict(pr)}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:1._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 10}2}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:2._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 10}3}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:3._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 10}4}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:4._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 10}5}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:5._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 10}6}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:6._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 10}7}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}     Margin{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}_at#arm {c |}
+{space 8}1#E  {c |}{col 14}{res}{space 2}     0.25{col 26}{space 2}     0.01{col 37}{space 1}   18.67{col 46}{space 3} 0.00{col 54}{space 4}     0.22{col 67}{space 3}     0.28
+{txt}{space 8}1#F  {c |}{col 14}{res}{space 2}     0.29{col 26}{space 2}     0.01{col 37}{space 1}   24.15{col 46}{space 3} 0.00{col 54}{space 4}     0.27{col 67}{space 3}     0.32
+{txt}{space 8}2#E  {c |}{col 14}{res}{space 2}     0.26{col 26}{space 2}     0.01{col 37}{space 1}   23.27{col 46}{space 3} 0.00{col 54}{space 4}     0.24{col 67}{space 3}     0.29
+{txt}{space 8}2#F  {c |}{col 14}{res}{space 2}     0.31{col 26}{space 2}     0.01{col 37}{space 1}   26.07{col 46}{space 3} 0.00{col 54}{space 4}     0.28{col 67}{space 3}     0.33
+{txt}{space 8}3#E  {c |}{col 14}{res}{space 2}     0.28{col 26}{space 2}     0.01{col 37}{space 1}   25.81{col 46}{space 3} 0.00{col 54}{space 4}     0.26{col 67}{space 3}     0.30
+{txt}{space 8}3#F  {c |}{col 14}{res}{space 2}     0.32{col 26}{space 2}     0.01{col 37}{space 1}   23.89{col 46}{space 3} 0.00{col 54}{space 4}     0.30{col 67}{space 3}     0.35
+{txt}{space 8}4#E  {c |}{col 14}{res}{space 2}     0.29{col 26}{space 2}     0.01{col 37}{space 1}   23.92{col 46}{space 3} 0.00{col 54}{space 4}     0.27{col 67}{space 3}     0.31
+{txt}{space 8}4#F  {c |}{col 14}{res}{space 2}     0.34{col 26}{space 2}     0.02{col 37}{space 1}   20.08{col 46}{space 3} 0.00{col 54}{space 4}     0.30{col 67}{space 3}     0.37
+{txt}{space 8}5#E  {c |}{col 14}{res}{space 2}     0.30{col 26}{space 2}     0.02{col 37}{space 1}   20.00{col 46}{space 3} 0.00{col 54}{space 4}     0.28{col 67}{space 3}     0.33
+{txt}{space 8}5#F  {c |}{col 14}{res}{space 2}     0.35{col 26}{space 2}     0.02{col 37}{space 1}   16.71{col 46}{space 3} 0.00{col 54}{space 4}     0.31{col 67}{space 3}     0.39
+{txt}{space 8}6#E  {c |}{col 14}{res}{space 2}     0.32{col 26}{space 2}     0.02{col 37}{space 1}   16.48{col 46}{space 3} 0.00{col 54}{space 4}     0.28{col 67}{space 3}     0.36
+{txt}{space 8}6#F  {c |}{col 14}{res}{space 2}     0.37{col 26}{space 2}     0.03{col 37}{space 1}   14.16{col 46}{space 3} 0.00{col 54}{space 4}     0.32{col 67}{space 3}     0.42
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{com}. marginsplot
+{res}
+{text}{p 2 6 2}Variables that uniquely identify margins: cluster_size arm{p_end}
+{res}
 {com}. 

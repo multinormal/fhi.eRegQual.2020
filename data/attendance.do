@@ -36,8 +36,10 @@ frame attendance {
 
   // Compute the cluster size from the trial data. We use the trial data for
   // simplicity and have verified that these agree with the "baseline" data on
-  // trial size.
-  by clusterid, sort: generate cluster_size = _N
+  // trial size. We divide by 100 because cluster sizes range from about 150 to
+  // about 750, and we want to get regression coefficients that are non-null
+  // within two decimal places!
+  by clusterid, sort: generate cluster_size = _N / 100
 
   // Generate an indicator for whether each woman is aged > 40 years.
   generate age_over_40 = age > 40
@@ -57,7 +59,7 @@ frame attendance {
   label variable clusterid     "Cluster"
   label variable strat_var     "District"
   label variable lab_available "Lab available"
-  label variable cluster_size  "Cluster size"
+  label variable cluster_size  "Cluster size (100s of new enrollments)"
   label variable age_over_40   "Age > 40 years"
   label variable primiparous   "Primiparous"
 
