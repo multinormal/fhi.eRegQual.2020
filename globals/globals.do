@@ -3,6 +3,9 @@ version 16.1
 // The number of imputations to perform.
 global m_imputations 50 // Very slightly narrower CI if m=100.
 
+// Define the names of the process outcomes.
+global process_outcomes attendance
+
 // Labels for binary variables with levels yes and no.
 label define yes_no_label 1 Yes 0 No
 
@@ -15,3 +18,9 @@ foreach x of global adj_vars {
   local x_name = substr("`x'", 3, .) // Remove the i. or c.
   global adj_var_names $adj_var_names `x_name'
 }
+
+// Define paths to the process outcome files.
+global fname_attendance "data/raw/25June2020_eRegQual process outcomes_attendance.dta"
+
+// Define data signatures for the process outcome files.
+global datasignature_attendance "6367:39(51496):3578513271:2127801624"
