@@ -17,14 +17,14 @@ do data/birth_outcomes
 // do data/impute
 
 // Import the process outcome data.
-do data/attendance
+do data/process_outcomes
 
 // TODO: Reinstate
 // // Do estimation.
 // do estimation/missing          // Calculate percentage of data missing.
 // do estimation/mcar             // Test the MCAR hypothesis.
 // do estimation/birth_outcomes   // Analyze the birth outcome data.
-do estimation/attendance          // Analyze the attendance data.
+do estimation/process_outcomes    // Analyze process outcome data.
 
 // TODO: Reinstate
 // // Make figures

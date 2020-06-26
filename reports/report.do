@@ -144,16 +144,18 @@ putdocx text ("Results")
 ////   }
 //// }
 
-frame attendance {
-  local ++tbl_num  
-  local var_label : variable label y
-  local title "Table `tbl_num'. `var_label'"
-  estimates replay attendance_estimates
-  putdocx table tbl_`tbl_num' = etable, title("`title'")
-  putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
-  putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
-  forvalues i = 20(-1)6 { // Drop rows that are not of immediate interest.
-    putdocx table tbl_`tbl_num'(`i', .), drop
+foreach outcome of global process_outcomes {
+  frame `outcome' {
+    local ++tbl_num  
+    local var_label : variable label y
+    local title "Table `tbl_num'. `var_label'"
+    estimates replay `outcome'_estimates, or
+    putdocx table tbl_`tbl_num' = etable, title("`title'")
+    putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+    putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
+    forvalues i = 20(-1)6 { // Drop rows that are not of immediate interest.
+      putdocx table tbl_`tbl_num'(`i', .), drop
+    }
   }
 }
 
@@ -192,8 +194,9 @@ John Wiley & Sons.
 putdocx textblock end
 
 // Appendix
-`heading'
-putdocx text ("Appendix")
+//// TODO: Reinstate
+//// `heading'
+//// putdocx text ("Appendix")
 
 //// TODO: Reinstate
 //// `newpara'
