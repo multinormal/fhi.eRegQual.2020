@@ -77,16 +77,17 @@ putdocx text ("Methods")
 //// putdocx textblock end
 
 `newpara'
-We used random-effects logistic regression to estimate the relative odds of 
-success for each of the process outcomes under the treatment versus control 
-conditions. We modelled the clustering of multiple opportunities for success 
-within each pregnancy using random-effects, and computed cluster-robust 
-standard errors to account for the cluster-randomized design (i.e., clustering 
-of pregnancies within clinics). No data were missing for these analyses.
+We used logistic regression to estimate the relative odds of success 
+for each of the process outcomes under the treatment versus control conditions. 
+For outcomes measured at multiple time points, we modelled clustering within 
+each pregnancy using random-effects, and computed cluster-robust standard errors 
+to account for the cluster-randomized design. For outcomes measured at only one 
+time point within each pregnancy, we accounted for the cluster-randomized design 
+using random effects. No data were missing for these analyses.
 putdocx textblock end
 
 // TODO: Make sure that the adjustments desribed below are applied to all 
-// analyses.
+// analyses, including the "main" analysis that uses imputation.
 
 `newpara'
 We adjusted for the stratification variable (CHMP 2015) and the variables used 
@@ -153,7 +154,11 @@ foreach outcome of global process_outcomes {
     putdocx table tbl_`tbl_num' = etable, title("`title'")
     putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
     putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
-    forvalues i = 20(-1)6 { // Drop rows that are not of immediate interest.
+    local n_rows  20
+    local n_start 6
+    if "`outcome'" == "malpresentation" local n_rows  18
+    if "`outcome'" == "malpresentation" local n_start 5
+    forvalues i = `n_rows'(-1)`n_start' { // Drop rows not of interest.
       putdocx table tbl_`tbl_num'(`i', .), drop
     }
   }

@@ -2,7 +2,13 @@ version 16.1
 
 foreach outcome of global process_outcomes {
   frame `outcome' {
-    xtlogit y i.arm $adj_vars, vce(cluster clusterid) or
+    if "`outcome'" != "malpresentation" {
+      xtlogit y i.arm $adj_vars, vce(cluster clusterid) or
+    }
+    else {
+      melogit y i.arm $adj_vars || clusterid:, or
+    }
+
     estimates store `outcome'_estimates
 
     // TODO: As an alternative to the "spider plots" proposed in the protocol to
