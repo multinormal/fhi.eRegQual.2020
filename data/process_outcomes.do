@@ -16,7 +16,9 @@ foreach outcome of global process_outcomes {
     // simplicity and have verified that these agree with the "baseline" data on
     // trial size. We divide by 100 because cluster sizes range from about 10 to
     // about 220, and we want to get regression coefficients that are non-null
-    // within two decimal places!
+    // within two decimal places! Note that cluster size computation must be
+    // done before the data set is reshaped to long format, or we will count
+    // one enrollment per visit rather than pregnancy.
     by clusterid, sort: generate cluster_size = _N / 100
 
     // Reshape to long format. Note that the uniqueid variable is not actually
