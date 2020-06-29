@@ -8,6 +8,17 @@ foreach outcome of global process_outcomes {
     datasignature
     assert r(datasignature) == "${datasignature_`outcome'}"
 
+    // Encode/rename arm and cluster identifier variables.
+    encode prettyExposure, generate(arm)
+    rename str_TRIAL_1_Cluster clusterid
+
+    // Compute the cluster size from the trial data. We use the trial data for
+    // simplicity and have verified that these agree with the "baseline" data on
+    // trial size. We divide by 100 because cluster sizes range from about 10 to
+    // about 220, and we want to get regression coefficients that are non-null
+    // within two decimal places!
+    by clusterid, sort: generate cluster_size = _N / 100
+
     // Reshape to long format. Note that the uniqueid variable is not actually
     // unique but identifies women, who can have multiple pregnancies (but not
     // twins in this data set). Rows in the wide data frame are pregnancies, so
@@ -25,20 +36,8 @@ foreach outcome of global process_outcomes {
     drop if      success_`outcome'_ == "NOT APPLICABLE":`success_label_name'
     generate y = success_`outcome'_ == "SUCCESSFUL":`success_label_name'
 
-    // Encode/rename arm and cluster identifier variables.
-    encode prettyExposure, generate(arm)
-    rename str_TRIAL_1_Cluster clusterid
-
     // Convert the stratification variable from string to integer.
     encode bookorgdistricthashed, generate(strat_var)
-
-    // Compute the cluster size from the trial data. We use the trial data for
-    // simplicity and have verified that these agree with the "baseline" data on
-    // trial size. We divide by 100 because cluster sizes range from about 150 to
-    // about 750, and we want to get regression coefficients that are non-null
-    // within two decimal places!
-    // TODO: This incorrectly counts every visit as contributing towards the cluster count!
-    by clusterid, sort: generate cluster_size = _N / 100
 
     // Generate an indicator for whether each woman is aged > 40 years.
     generate age_over_40 = age > 40
