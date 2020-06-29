@@ -156,7 +156,7 @@ foreach outcome of global process_outcomes {
     putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
     local n_rows  20
     local n_start 6
-    if "`outcome'" == "malpresentation" local n_rows  18
+    if "`outcome'" == "malpresentation" local n_rows  19
     if "`outcome'" == "malpresentation" local n_start 5
     forvalues i = `n_rows'(-1)`n_start' { // Drop rows not of interest.
       putdocx table tbl_`tbl_num'(`i', .), drop

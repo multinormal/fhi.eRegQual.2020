@@ -37,6 +37,7 @@ foreach outcome of global process_outcomes {
     // trial size. We divide by 100 because cluster sizes range from about 150 to
     // about 750, and we want to get regression coefficients that are non-null
     // within two decimal places!
+    // TODO: This incorrectly counts every visit as contributing towards the cluster count!
     by clusterid, sort: generate cluster_size = _N / 100
 
     // Generate an indicator for whether each woman is aged > 40 years.
@@ -65,11 +66,12 @@ foreach outcome of global process_outcomes {
     misstable summarize, all
     assert r(N_lt_dot) == _N
 
-    // Set pregnancy as the panel variable and visit as the time variable, if
-    // appropriate.
-    if "`outcome'" != "malpresentation" {
-      xtset pregnancy visit
-    }
+    // For most of the process outcomes, we have multiple visits within
+    // pregnancy; we model the cluster-randomized design in the estimation.
+    // For malpresentation, there is only one visit and so cluster can be the
+    // panel variable.
+    if "`outcome'" != "malpresentation" xtset pregnancy visit
+    if "`outcome'" == "malpresentation" xtset clusterid
 
     // TODO: If you generate an OR for this analysis, switch the birth outcomes
     // to OR, too. Make sure you update the report text if you change the link.
