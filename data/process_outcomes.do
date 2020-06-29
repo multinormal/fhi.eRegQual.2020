@@ -68,7 +68,9 @@ foreach outcome of global process_outcomes {
     // For most of the process outcomes, we have multiple visits within
     // pregnancy; we model the cluster-randomized design in the estimation.
     // For malpresentation, there is only one visit and so cluster can be the
-    // panel variable.
+    // panel variable. Note that the xtlogit-based analysis with cluster as the
+    // panel variable gives identical point estimates and confidence intervals
+    // as a melogit-based analysis with cluster as the random effect.
     if "`outcome'" != "malpresentation" xtset pregnancy visit
     if "`outcome'" == "malpresentation" xtset clusterid
 
