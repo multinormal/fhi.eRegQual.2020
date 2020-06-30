@@ -41,6 +41,7 @@ foreach outcome of global process_outcomes {
                   name(`var', replace)
     }
 
+    set scheme white_background // Hack to address thin lines around plot.
     graph combine `margin_vars', cols(`n_plots')                    ///
                                  title("``outcome'_margins_title'") ///
                                  graphregion(color(white) lwidth(none)) ///
