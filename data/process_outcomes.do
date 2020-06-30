@@ -60,8 +60,8 @@ foreach outcome of global process_outcomes {
     label variable strat_var     "District"
     label variable lab_available "Lab availability"
     label variable cluster_size  "Cluster size" // 100s of new enrollments
-    label variable age_over_40   "Age" // Indicator of age > 40.
-    label variable primiparous   "Parity" // Indicator of primiparity.
+    label variable age_over_40   "Age"          // Indicator of age > 40.
+    label variable primiparous   "Parity"       // Indicator of primiparity.
 
     // Label values.
     label define lab_available_label 1 "Lab" 0 "No lab"

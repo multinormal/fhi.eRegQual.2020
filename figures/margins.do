@@ -22,13 +22,15 @@ frame `outcome' {
   foreach var of local margin_vars {
     if "`var'" == "cluster_size" {
       margins i.arm, at(cluster_size = (0.1(0.5)2.1))
+      local ylabel ylabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1.0 "1")
     }
     else {
       margins i.arm#`var'
+      local ylabel ylabel(0 " " 0.2 " " 0.4 " " 0.6 " " 0.8 " " 1.0 " ")
     }
 
     local var_label : variable label `var'
-    marginsplot, yscale(range(0 1)) ylabel(#5) ytitle("")   ///
+    marginsplot, yscale(range(0 1)) `ylabel' ytitle("")   ///
                  title("`var_label'", span)                        ///
                  legend(cols(1) region(color(white)))              ///
                  graphregion(color(white))                         ///

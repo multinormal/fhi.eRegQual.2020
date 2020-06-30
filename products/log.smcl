@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}30 Jun 2020, 15:08:29
+ {txt}opened on:  {res}30 Jun 2020, 15:18:47
 {txt}
 {com}. 
 . // Set up Stata.
@@ -322,8 +322,8 @@
 {txt} 26{com}.     label variable strat_var     "District"
 {txt} 27{com}.     label variable lab_available "Lab availability"
 {txt} 28{com}.     label variable cluster_size  "Cluster size" // 100s of new enrollments
-{txt} 29{com}.     label variable age_over_40   "Age" // Indicator of age > 40.
-{txt} 30{com}.     label variable primiparous   "Parity" // Indicator of primiparity.
+{txt} 29{com}.     label variable age_over_40   "Age"          // Indicator of age > 40.
+{txt} 30{com}.     label variable primiparous   "Parity"       // Indicator of primiparity.
 {txt} 31{com}. 
 .     // Label values.
 .     label define lab_available_label 1 "Lab" 0 "No lab"
@@ -467,7 +467,7 @@ Number of obs.                 {res}    6367   {txt}->{res}    6367
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500          6        6367
+     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500          2        6367
          visit {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      1          1           1
      clusterid {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}    116          1         120
    primiparous {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      2          0           1
@@ -841,20 +841,22 @@ lab_available {c |}
 .   foreach var of local margin_vars {c -(}
 {txt}  2{com}.     if "`var'" == "cluster_size" {c -(}
 {txt}  3{com}.       margins i.arm, at(cluster_size = (0.1(0.5)2.1))
-{txt}  4{com}.     {c )-}
-{txt}  5{com}.     else {c -(}
-{txt}  6{com}.       margins i.arm#`var'
-{txt}  7{com}.     {c )-}
-{txt}  8{com}. 
+{txt}  4{com}.       local ylabel ylabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1.0 "1")
+{txt}  5{com}.     {c )-}
+{txt}  6{com}.     else {c -(}
+{txt}  7{com}.       margins i.arm#`var'
+{txt}  8{com}.       local ylabel ylabel(0 " " 0.2 " " 0.4 " " 0.6 " " 0.8 " " 1.0 " ")
+{txt}  9{com}.     {c )-}
+{txt} 10{com}. 
 .     local var_label : variable label `var'
-{txt}  9{com}.     marginsplot, yscale(range(0 1)) ylabel(#5) ytitle("")   ///
+{txt} 11{com}.     marginsplot, yscale(range(0 1)) `ylabel' ytitle("")   ///
 >                  title("`var_label'", span)                        ///
 >                  legend(cols(1) region(color(white)))              ///
 >                  graphregion(color(white))                         ///
 >                  plotregion(color(white))                          ///
 >                  bgcolor(white)                                    ///
 >                  name(`var', replace)
-{txt} 10{com}.   {c )-}
+{txt} 12{com}.   {c )-}
 {res}
 {txt}Predictive margins{col 49}Number of obs{col 67}= {res}    21,703
 {txt}{col 1}Model VCE{col 14}: {res}Robust
