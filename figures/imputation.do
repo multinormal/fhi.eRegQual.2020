@@ -74,4 +74,3 @@ frame `this_frame' {
 }
 
 set graphics on
-

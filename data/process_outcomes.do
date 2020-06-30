@@ -16,7 +16,9 @@ foreach outcome of global process_outcomes {
     // simplicity and have verified that these agree with the "baseline" data on
     // trial size. We divide by 100 because cluster sizes range from about 10 to
     // about 220, and we want to get regression coefficients that are non-null
-    // within two decimal places!
+    // within two decimal places! Note that cluster size computation must be
+    // done before the data set is reshaped to long format, or we will count
+    // one enrollment per visit rather than pregnancy.
     by clusterid, sort: generate cluster_size = _N / 100
 
     // Reshape to long format. Note that the uniqueid variable is not actually
@@ -56,10 +58,18 @@ foreach outcome of global process_outcomes {
     label variable pregnancy     "Pregnancy"
     label variable clusterid     "Cluster"
     label variable strat_var     "District"
-    label variable lab_available "Lab available"
-    label variable cluster_size  "Cluster size (100s of new enrollments)"
-    label variable age_over_40   "Age > 40 years"
-    label variable primiparous   "Primiparous"
+    label variable lab_available "Lab availability"
+    label variable cluster_size  "Cluster size" // 100s of new enrollments
+    label variable age_over_40   "Age"          // Indicator of age > 40.
+    label variable primiparous   "Parity"       // Indicator of primiparity.
+
+    // Label values.
+    label define lab_available_label 1 "Lab" 0 "No lab"
+    label values lab_available lab_available_label
+    label define age_over_40_label 1 ">40 years" 0 "≤40 years"
+    label values age_over_40 age_over_40_label
+    label define primiparous_label 1 "Primiparous" 0 "Multiparous"
+    label values primiparous primiparous_label
 
     // There should be no missing data.
     misstable summarize, all

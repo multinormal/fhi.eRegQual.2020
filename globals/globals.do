@@ -6,12 +6,9 @@ global m_imputations 50 // Very slightly narrower CI if m=100.
 // Define the names of the process outcomes.
 global process_outcomes attendance hypertension diabetes malpresentation
 
-// Labels for binary variables with levels yes and no.
-label define yes_no_label 1 Yes 0 No
-
 // The variables to adjust for, with their "types". See the generated report for
 // an explanation of why these variables are adjusted for.
-global adj_vars i.strat_var i.lab_available c.cluster_size i.age_over_40 ///
+global adj_vars i.strat_var c.cluster_size i.lab_available i.age_over_40 ///
                 i.primiparous
 global adj_var_names // A global with just the *names* of the adj_vars
 foreach x of global adj_vars {

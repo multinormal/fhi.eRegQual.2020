@@ -28,7 +28,8 @@ do estimation/process_outcomes    // Analyze process outcome data.
 
 // TODO: Reinstate
 // // Make figures
-// do figures/figures
+// do figures/imputation
+do figures/margins
 
 // TODO: Make Spider diagram for each process outcome
 // (see https://folkehelse.sharepoint.com/:i:/r/sites/1461/Restricted%20Documents/4.Research/Analysis,%20Sample%20Size,%20Randomizatio/eRegQual/radar_chart_eRegQual.png?csf=1&web=1&e=JeKbbU)
