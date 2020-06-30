@@ -2,6 +2,13 @@ version 16.1
 
 set graphics off
 
+// Define titles to use for the margins plots.
+local mpo "Marginal probability of"
+local attendance_margins_title      "`mpo' ANC attendance"
+local hypertension_margins_title    "`mpo' hypertension" "screening & management"
+local diabetes_margins_title        "`mpo' diabetes" "screening & management"
+local malpresentation_margins_title "`mpo' malpresentation" "screening & management"
+
 // Define the names and number of variables over which to make marginsplots.
 local margin_vars = ustrtrim(usubinstr("$adj_var_names", "strat_var", "", .))
 local n_plots = wordcount("`margin_vars'")
@@ -24,7 +31,7 @@ foreach outcome of global process_outcomes {
       }
 
       local var_label : variable label `var'
-      marginsplot, yscale(range(0 1)) `ylabel' ytitle("")  ///
+      marginsplot, yscale(range(0 1)) `ylabel' ytitle("") ///
                   `xscale'                                ///
                   title("`var_label'", span)              ///
                   legend(cols(1) region(color(white)))    ///
@@ -34,9 +41,10 @@ foreach outcome of global process_outcomes {
                   name(`var', replace)
     }
 
-    graph combine `margin_vars', cols(`n_plots')           ///
-                                graphregion(color(white)) ///
-                                plotregion(color(white))
+    graph combine `margin_vars', cols(`n_plots')                    ///
+                                 title("``outcome'_margins_title'") ///
+                                 graphregion(color(white) lwidth(none)) ///
+                                 plotregion(color(white))
     global `outcome'_margins_fname "products/Margins - `outcome'"
     graph export "${`outcome'_margins_fname}.pdf", replace
     graph export "${`outcome'_margins_fname}.png", replace
