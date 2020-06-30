@@ -27,10 +27,3 @@ global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
 global datasignature_hypertension        "6367:60(68365):3970041110:3735367683"
 global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
 global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
-
-// Define titles to use for the margins plots.
-global mpo "Marginal probability of"
-global attendance_margins_title      "`mpo' ANC attendance"
-global hypertension_margins_title    "`mpo' hypertension screening and management"
-global diabetes_margins_title        "`mpo' diabetes screening and management"
-global malpresentation_margins_title "`mpo' malpresentation screening and management"
