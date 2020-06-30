@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}30 Jun 2020, 15:18:47
+ {txt}opened on:  {res}30 Jun 2020, 15:48:11
 {txt}
 {com}. 
 . // Set up Stata.
@@ -79,6 +79,18 @@
 {com}. global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
 {txt}
 {com}. global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
+{txt}
+{com}. 
+. // Define titles to use for the margins plots.
+. global mpo "Marginal probability of"
+{txt}
+{com}. global attendance_margins_title      "`mpo' ANC attendance"
+{txt}
+{com}. global hypertension_margins_title    "`mpo' hypertension screening and management"
+{txt}
+{com}. global diabetes_margins_title        "`mpo' diabetes screening and management"
+{txt}
+{com}. global malpresentation_margins_title "`mpo' malpresentation screening and management"
 {txt}
 {com}. 
 {txt}end of do-file
@@ -370,7 +382,7 @@ success_attendance_1 success_attendance_2 ... success_attendance_5{txt}->{res}su
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}   >500          1        6366
+     pregnancy {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}   >500          1        6367
          visit {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}      5          1           5
      clusterid {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}    119          1         120
    primiparous {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}      2          0           1
@@ -467,7 +479,7 @@ Number of obs.                 {res}    6367   {txt}->{res}    6367
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500          2        6367
+     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500         17        6366
          visit {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      1          1           1
      clusterid {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}    116          1         120
    primiparous {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      2          0           1
@@ -822,41 +834,33 @@ lab_available {c |}
 {com}. local n_plots = wordcount("`margin_vars'")
 {txt}
 {com}. 
-. // Define titles to use for the plots.
-. local mpo "Marginal probability of"
-{txt}
-{com}. local attendance_title      "`mpo' ANC attendance"
-{txt}
-{com}. local hypertension_title    "`mpo' hypertension screening and management"
-{txt}
-{com}. local diabetes_title        "`mpo' diabetes screening and management"
-{txt}
-{com}. local malpresentation_title "`mpo' malpresentation screening and management"
-{txt}
-{com}. 
 . frame `outcome' {c -(}
 .   estimates restore `outcome'_estimates
 {txt}(results {stata estimates replay attendance_estimates:attendance_estimates} are active now)
 {com}. 
 .   foreach var of local margin_vars {c -(}
 {txt}  2{com}.     if "`var'" == "cluster_size" {c -(}
-{txt}  3{com}.       margins i.arm, at(cluster_size = (0.1(0.5)2.1))
-{txt}  4{com}.       local ylabel ylabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1.0 "1")
-{txt}  5{com}.     {c )-}
-{txt}  6{com}.     else {c -(}
-{txt}  7{com}.       margins i.arm#`var'
-{txt}  8{com}.       local ylabel ylabel(0 " " 0.2 " " 0.4 " " 0.6 " " 0.8 " " 1.0 " ")
-{txt}  9{com}.     {c )-}
-{txt} 10{com}. 
+{txt}  3{com}.       margins i.arm, at(cluster_size = (0.1 1 2))
+{txt}  4{com}.       local xscale          xscale(range(0 2.25)) 
+{txt}  5{com}.       local xscale `xscale' xlabel(0.1 "10" 1 "100" 2 "200")
+{txt}  6{com}.       local ylabel ylabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1.0 "1")
+{txt}  7{com}.     {c )-}
+{txt}  8{com}.     else {c -(}
+{txt}  9{com}.       margins i.arm#`var'
+{txt} 10{com}.       local xscale
+{txt} 11{com}.       local ylabel ylabel(0 " " 0.2 " " 0.4 " " 0.6 " " 0.8 " " 1.0 " ")
+{txt} 12{com}.     {c )-}
+{txt} 13{com}. 
 .     local var_label : variable label `var'
-{txt} 11{com}.     marginsplot, yscale(range(0 1)) `ylabel' ytitle("")   ///
->                  title("`var_label'", span)                        ///
->                  legend(cols(1) region(color(white)))              ///
->                  graphregion(color(white))                         ///
->                  plotregion(color(white))                          ///
->                  bgcolor(white)                                    ///
+{txt} 14{com}.     marginsplot, yscale(range(0 1)) `ylabel' ytitle("")  ///
+>                  `xscale'                                ///
+>                  title("`var_label'", span)              ///
+>                  legend(cols(1) region(color(white)))    ///
+>                  graphregion(color(white))               ///
+>                  plotregion(color(white))                ///
+>                  bgcolor(white)                          ///
 >                  name(`var', replace)
-{txt} 12{com}.   {c )-}
+{txt} 15{com}.   {c )-}
 {res}
 {txt}Predictive margins{col 49}Number of obs{col 67}= {res}    21,703
 {txt}{col 1}Model VCE{col 14}: {res}Robust
@@ -870,19 +874,11 @@ lab_available {c |}
 {p2colreset}{...}
 
 {txt}{p2colset 1 14 16 2}{...}
-{p2col:2._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 9}.6}{p_end}
+{p2col:2._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 10}1}{p_end}
 {p2colreset}{...}
 
 {txt}{p2colset 1 14 16 2}{...}
-{p2col:3._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 8}1.1}{p_end}
-{p2colreset}{...}
-
-{txt}{p2colset 1 14 16 2}{...}
-{p2col:4._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 8}1.6}{p_end}
-{p2colreset}{...}
-
-{txt}{p2colset 1 14 16 2}{...}
-{p2col:5._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 8}2.1}{p_end}
+{p2col:3._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 10}2}{p_end}
 {p2colreset}{...}
 
 {res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
@@ -892,14 +888,10 @@ lab_available {c |}
 {space 5}_at#arm {c |}
 {space 8}1#E  {c |}{col 14}{res}{space 2}     0.37{col 26}{space 2}     0.02{col 37}{space 1}   17.56{col 46}{space 3} 0.00{col 54}{space 4}     0.33{col 67}{space 3}     0.41
 {txt}{space 8}1#F  {c |}{col 14}{res}{space 2}     0.40{col 26}{space 2}     0.02{col 37}{space 1}   23.66{col 46}{space 3} 0.00{col 54}{space 4}     0.36{col 67}{space 3}     0.43
-{txt}{space 8}2#E  {c |}{col 14}{res}{space 2}     0.41{col 26}{space 2}     0.01{col 37}{space 1}   29.78{col 46}{space 3} 0.00{col 54}{space 4}     0.38{col 67}{space 3}     0.43
-{txt}{space 8}2#F  {c |}{col 14}{res}{space 2}     0.44{col 26}{space 2}     0.01{col 37}{space 1}   31.28{col 46}{space 3} 0.00{col 54}{space 4}     0.41{col 67}{space 3}     0.46
-{txt}{space 8}3#E  {c |}{col 14}{res}{space 2}     0.44{col 26}{space 2}     0.01{col 37}{space 1}   32.20{col 46}{space 3} 0.00{col 54}{space 4}     0.42{col 67}{space 3}     0.47
-{txt}{space 8}3#F  {c |}{col 14}{res}{space 2}     0.47{col 26}{space 2}     0.02{col 37}{space 1}   23.94{col 46}{space 3} 0.00{col 54}{space 4}     0.43{col 67}{space 3}     0.51
-{txt}{space 8}4#E  {c |}{col 14}{res}{space 2}     0.48{col 26}{space 2}     0.02{col 37}{space 1}   21.83{col 46}{space 3} 0.00{col 54}{space 4}     0.44{col 67}{space 3}     0.52
-{txt}{space 8}4#F  {c |}{col 14}{res}{space 2}     0.51{col 26}{space 2}     0.03{col 37}{space 1}   17.21{col 46}{space 3} 0.00{col 54}{space 4}     0.45{col 67}{space 3}     0.57
-{txt}{space 8}5#E  {c |}{col 14}{res}{space 2}     0.52{col 26}{space 2}     0.03{col 37}{space 1}   15.84{col 46}{space 3} 0.00{col 54}{space 4}     0.46{col 67}{space 3}     0.58
-{txt}{space 8}5#F  {c |}{col 14}{res}{space 2}     0.55{col 26}{space 2}     0.04{col 37}{space 1}   13.55{col 46}{space 3} 0.00{col 54}{space 4}     0.47{col 67}{space 3}     0.63
+{txt}{space 8}2#E  {c |}{col 14}{res}{space 2}     0.44{col 26}{space 2}     0.01{col 37}{space 1}   33.83{col 46}{space 3} 0.00{col 54}{space 4}     0.41{col 67}{space 3}     0.46
+{txt}{space 8}2#F  {c |}{col 14}{res}{space 2}     0.47{col 26}{space 2}     0.02{col 37}{space 1}   25.73{col 46}{space 3} 0.00{col 54}{space 4}     0.43{col 67}{space 3}     0.50
+{txt}{space 8}3#E  {c |}{col 14}{res}{space 2}     0.51{col 26}{space 2}     0.03{col 37}{space 1}   16.73{col 46}{space 3} 0.00{col 54}{space 4}     0.45{col 67}{space 3}     0.57
+{txt}{space 8}3#F  {c |}{col 14}{res}{space 2}     0.54{col 26}{space 2}     0.04{col 37}{space 1}   14.12{col 46}{space 3} 0.00{col 54}{space 4}     0.47{col 67}{space 3}     0.62
 {txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {res}
 {text}{p 2 6 2}Variables that uniquely identify margins: cluster_size arm{p_end}
@@ -965,11 +957,13 @@ arm#primiparous {c |}
 {text}{p 2 6 2}Variables that uniquely identify margins: arm primiparous{p_end}
 {res}{com}. 
 .   graph combine `margin_vars', cols(`n_plots')           ///
->                                title(``outcome'_title')  ///
 >                                graphregion(color(white)) ///
 >                                plotregion(color(white))
-{res}{com}.   graph export "products/Margins.pdf", replace
-{txt}(file products/Margins.pdf written in PDF format)
+{res}{com}.   global `outcome'_margins_fname "products/Margins - `outcome'"
+.   graph export "${c -(}`outcome'_margins_fname{c )-}.pdf", replace
+{txt}(file products/Margins - attendance.pdf written in PDF format)
+{com}.   graph export "${c -(}`outcome'_margins_fname{c )-}.png", replace
+{txt}(file /Users/cjr/Repos/fhi.eRegQual.2020/products/Margins - attendance.png written in PNG format)
 {com}. {c )-}
 {txt}
 {com}. 
