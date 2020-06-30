@@ -30,12 +30,12 @@ frame `outcome' {
     }
 
     local var_label : variable label `var'
-    marginsplot, yscale(range(0 1)) `ylabel' ytitle("")   ///
-                 title("`var_label'", span)                        ///
-                 legend(cols(1) region(color(white)))              ///
-                 graphregion(color(white))                         ///
-                 plotregion(color(white))                          ///
-                 bgcolor(white)                                    ///
+    marginsplot, yscale(range(0 1)) `ylabel' ytitle("")  ///
+                 title("`var_label'", span)              ///
+                 legend(cols(1) region(color(white)))    ///
+                 graphregion(color(white))               ///
+                 plotregion(color(white))                ///
+                 bgcolor(white)                          ///
                  name(`var', replace)
   }
 
