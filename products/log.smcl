@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}30 Jun 2020, 15:53:27
+ {txt}opened on:  {res}30 Jun 2020, 17:18:35
 {txt}
 {com}. 
 . // Set up Stata.
@@ -79,18 +79,6 @@
 {com}. global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
 {txt}
 {com}. global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
-{txt}
-{com}. 
-. // Define titles to use for the margins plots.
-. global mpo "Marginal probability of"
-{txt}
-{com}. global attendance_margins_title      "`mpo' ANC attendance"
-{txt}
-{com}. global hypertension_margins_title    "`mpo' hypertension screening and management"
-{txt}
-{com}. global diabetes_margins_title        "`mpo' diabetes screening and management"
-{txt}
-{com}. global malpresentation_margins_title "`mpo' malpresentation screening and management"
 {txt}
 {com}. 
 {txt}end of do-file
@@ -382,7 +370,7 @@ success_attendance_1 success_attendance_2 ... success_attendance_5{txt}->{res}su
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}   >500          2        6367
+     pregnancy {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}   >500          1        6367
          visit {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}      5          1           5
      clusterid {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}    119          1         120
    primiparous {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}      2          0           1
@@ -479,7 +467,7 @@ Number of obs.                 {res}    6367   {txt}->{res}    6367
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500          6        6364
+     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500          2        6366
          visit {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      1          1           1
      clusterid {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}    116          1         120
    primiparous {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      2          0           1
@@ -824,6 +812,18 @@ lab_available {c |}
 . set graphics off
 {txt}
 {com}. 
+. // Define titles to use for the margins plots.
+. local mpo "Marginal probability of"
+{txt}
+{com}. local attendance_margins_title      "`mpo' ANC attendance"
+{txt}
+{com}. local hypertension_margins_title    "`mpo' hypertension" "screening & management"
+{txt}
+{com}. local diabetes_margins_title        "`mpo' diabetes" "screening & management"
+{txt}
+{com}. local malpresentation_margins_title "`mpo' malpresentation" "screening & management"
+{txt}
+{com}. 
 . // Define the names and number of variables over which to make marginsplots.
 . local margin_vars = ustrtrim(usubinstr("$adj_var_names", "strat_var", "", .))
 {txt}
@@ -839,7 +839,7 @@ lab_available {c |}
 {txt}  6{com}.         margins i.arm, at(cluster_size = (0.1 1 2))
 {txt}  7{com}.         local xscale          xscale(range(0 2.25)) 
 {txt}  8{com}.         local xscale `xscale' xlabel(0.1 "10" 1 "100" 2 "200")
-{txt}  9{com}.         local ylabel ylabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1.0 "1")
+{txt}  9{com}.         local ylabel ylabel(0 "0%" 0.2 "20%" 0.4 "40%" 0.6 "60%" 0.8 "80%" 1.0 "100%", angle(horizontal))
 {txt} 10{com}.       {c )-}
 {txt} 11{com}.       else {c -(}
 {txt} 12{com}.         margins i.arm#`var'
@@ -848,7 +848,7 @@ lab_available {c |}
 {txt} 15{com}.       {c )-}
 {txt} 16{com}. 
 .       local var_label : variable label `var'
-{txt} 17{com}.       marginsplot, yscale(range(0 1)) `ylabel' ytitle("")  ///
+{txt} 17{com}.       marginsplot, yscale(range(0 1)) `ylabel' ytitle("") ///
 >                   `xscale'                                ///
 >                   title("`var_label'", span)              ///
 >                   legend(cols(1) region(color(white)))    ///
@@ -858,14 +858,16 @@ lab_available {c |}
 >                   name(`var', replace)
 {txt} 18{com}.     {c )-}
 {txt} 19{com}. 
-.     graph combine `margin_vars', cols(`n_plots')           ///
->                                 graphregion(color(white)) ///
->                                 plotregion(color(white))
-{txt} 20{com}.     global `outcome'_margins_fname "products/Margins - `outcome'"
-{txt} 21{com}.     graph export "${c -(}`outcome'_margins_fname{c )-}.pdf", replace
-{txt} 22{com}.     graph export "${c -(}`outcome'_margins_fname{c )-}.png", replace
-{txt} 23{com}.   {c )-}
-{txt} 24{com}. {c )-}
+.     set scheme white_background // Hack to address thin lines around plot.
+{txt} 20{com}.     graph combine `margin_vars', cols(`n_plots')                    ///
+>                                  title("``outcome'_margins_title'") ///
+>                                  graphregion(color(white) lwidth(none)) ///
+>                                  plotregion(color(white))
+{txt} 21{com}.     global `outcome'_margins_fname "products/Margins - `outcome'"
+{txt} 22{com}.     graph export "${c -(}`outcome'_margins_fname{c )-}.pdf", replace
+{txt} 23{com}.     graph export "${c -(}`outcome'_margins_fname{c )-}.png", replace
+{txt} 24{com}.   {c )-}
+{txt} 25{com}. {c )-}
 {txt}(results {stata estimates replay attendance_estimates:attendance_estimates} are active now)
 {res}
 {txt}Predictive margins{col 49}Number of obs{col 67}= {res}    21,703
@@ -1437,9 +1439,9 @@ arm#primiparous {c |}
 {txt}  7{com}.     putdocx table tbl_`tbl_num' = etable, title("`title'")
 {txt}  8{com}.     putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
 {txt}  9{com}.     putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
-{txt} 10{com}.     local n_rows  20
+{txt} 10{com}.     local n_rows  26
 {txt} 11{com}.     local n_start 6
-{txt} 12{com}.     if "`outcome'" == "malpresentation" local n_rows  19
+{txt} 12{com}.     if "`outcome'" == "malpresentation" local n_rows  25
 {txt} 13{com}.     if "`outcome'" == "malpresentation" local n_start 5
 {txt} 14{com}.     forvalues i = `n_rows'(-1)`n_start' {c -(} // Drop rows not of interest.
 {txt} 15{com}.       putdocx table tbl_`tbl_num'(`i', .), drop
@@ -1650,6 +1652,14 @@ lab_available {c |}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}90.00{col 56}{txt}Prob >= chibar2 = {res}0.000
 {txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. foreach outcome of global process_outcomes {c -(}
+{txt}  2{com}.   putdocx image "${c -(}`outcome'_margins_fname{c )-}.png", linebreak
+{txt}  3{com}. {c )-}
+{res}{txt}
 {com}. 
 . // References
 . `heading'

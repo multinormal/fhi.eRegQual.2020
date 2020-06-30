@@ -22,7 +22,7 @@ foreach outcome of global process_outcomes {
         margins i.arm, at(cluster_size = (0.1 1 2))
         local xscale          xscale(range(0 2.25)) 
         local xscale `xscale' xlabel(0.1 "10" 1 "100" 2 "200")
-        local ylabel ylabel(0 "0" 0.2 "0.2" 0.4 "0.4" 0.6 "0.6" 0.8 "0.8" 1.0 "1")
+        local ylabel ylabel(0 "0%" 0.2 "20%" 0.4 "40%" 0.6 "60%" 0.8 "80%" 1.0 "100%", angle(horizontal))
       }
       else {
         margins i.arm#`var'
