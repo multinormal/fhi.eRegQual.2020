@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}29 Jun 2020, 14:03:48
+ {txt}opened on:  {res}30 Jun 2020, 15:08:29
 {txt}
 {com}. 
 . // Set up Stata.
@@ -48,13 +48,9 @@
 . global process_outcomes attendance hypertension diabetes malpresentation
 {txt}
 {com}. 
-. // Labels for binary variables with levels yes and no.
-. label define yes_no_label 1 Yes 0 No
-{txt}
-{com}. 
 . // The variables to adjust for, with their "types". See the generated report for
 . // an explanation of why these variables are adjusted for.
-. global adj_vars i.strat_var i.lab_available c.cluster_size i.age_over_40 ///
+. global adj_vars i.strat_var c.cluster_size i.lab_available i.age_over_40 ///
 >                 i.primiparous
 {txt}
 {com}. global adj_var_names // A global with just the *names* of the adj_vars
@@ -282,7 +278,9 @@
 .     // simplicity and have verified that these agree with the "baseline" data on
 .     // trial size. We divide by 100 because cluster sizes range from about 10 to
 .     // about 220, and we want to get regression coefficients that are non-null
-.     // within two decimal places!
+.     // within two decimal places! Note that cluster size computation must be
+.     // done before the data set is reshaped to long format, or we will count
+.     // one enrollment per visit rather than pregnancy.
 .     by clusterid, sort: generate cluster_size = _N / 100
 {txt} 10{com}. 
 .     // Reshape to long format. Note that the uniqueid variable is not actually
@@ -322,28 +320,38 @@
 {txt} 24{com}.     label variable pregnancy     "Pregnancy"
 {txt} 25{com}.     label variable clusterid     "Cluster"
 {txt} 26{com}.     label variable strat_var     "District"
-{txt} 27{com}.     label variable lab_available "Lab available"
-{txt} 28{com}.     label variable cluster_size  "Cluster size (100s of new enrollments)"
-{txt} 29{com}.     label variable age_over_40   "Age > 40 years"
-{txt} 30{com}.     label variable primiparous   "Primiparous"
+{txt} 27{com}.     label variable lab_available "Lab availability"
+{txt} 28{com}.     label variable cluster_size  "Cluster size" // 100s of new enrollments
+{txt} 29{com}.     label variable age_over_40   "Age" // Indicator of age > 40.
+{txt} 30{com}.     label variable primiparous   "Parity" // Indicator of primiparity.
 {txt} 31{com}. 
+.     // Label values.
+.     label define lab_available_label 1 "Lab" 0 "No lab"
+{txt} 32{com}.     label values lab_available lab_available_label
+{txt} 33{com}.     label define age_over_40_label 1 ">40 years" 0 "≤40 years"
+{txt} 34{com}.     label values age_over_40 age_over_40_label
+{txt} 35{com}.     label define primiparous_label 1 "Primiparous" 0 "Multiparous"
+{txt} 36{com}.     label values primiparous primiparous_label
+{txt} 37{com}. 
 .     // There should be no missing data.
 .     misstable summarize, all
-{txt} 32{com}.     assert r(N_lt_dot) == _N
-{txt} 33{com}. 
+{txt} 38{com}.     assert r(N_lt_dot) == _N
+{txt} 39{com}. 
 .     // For most of the process outcomes, we have multiple visits within
 .     // pregnancy; we model the cluster-randomized design in the estimation.
 .     // For malpresentation, there is only one visit and so cluster can be the
-.     // panel variable.
+.     // panel variable. Note that the xtlogit-based analysis with cluster as the
+.     // panel variable gives identical point estimates and confidence intervals
+.     // as a melogit-based analysis with cluster as the random effect.
 .     if "`outcome'" != "malpresentation" xtset pregnancy visit
-{txt} 34{com}.     if "`outcome'" == "malpresentation" xtset clusterid
-{txt} 35{com}. 
+{txt} 40{com}.     if "`outcome'" == "malpresentation" xtset clusterid
+{txt} 41{com}. 
 .     // TODO: If you generate an OR for this analysis, switch the birth outcomes
 .     // to OR, too. Make sure you update the report text if you change the link.
 . 
 .     // TODO: Probably report OR and assumed and corresponding risks.
 .   {c )-}
-{txt} 36{com}. {c )-}
+{txt} 42{com}. {c )-}
   {res}6367:39(51496):3578513271:2127801624
 {txt}(note: j = 1 2 3 4 5)
 
@@ -362,7 +370,7 @@ success_attendance_1 success_attendance_2 ... success_attendance_5{txt}->{res}su
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}   >500          1        6367
+     pregnancy {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}   >500          1        6366
          visit {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}      5          1           5
      clusterid {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}    119          1         120
    primiparous {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}      2          0           1
@@ -394,7 +402,7 @@ success_hypertension_1 success_hypertension_2 ... success_hypertension_8{txt}->{
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}    15,553{txt}  {c |}   >500          2        6367
+     pregnancy {c |}{space 10}{space 10}{res}    15,553{txt}  {c |}   >500          1        6367
          visit {c |}{space 10}{space 10}{res}    15,553{txt}  {c |}      8          1           8
      clusterid {c |}{space 10}{space 10}{res}    15,553{txt}  {c |}    119          1         120
    primiparous {c |}{space 10}{space 10}{res}    15,553{txt}  {c |}      2          0           1
@@ -459,7 +467,7 @@ Number of obs.                 {res}    6367   {txt}->{res}    6367
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500          8        6365
+     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500          6        6367
          visit {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      1          1           1
      clusterid {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}    116          1         120
    primiparous {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      2          0           1
@@ -544,31 +552,37 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    87.65
 {txt}Log pseudolikelihood  = {res}-13697.697{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
 
-{txt}{ralign 81:(Std. Err. adjusted for {res:119} clusters in clusterid)}
-{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 17}{c |}{col 29}    Robust
-{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 12}arm {c |}
-{space 13}F  {c |}{col 17}{res}{space 2}     1.18{col 29}{space 2}     0.13{col 40}{space 1}    1.46{col 49}{space 3} 0.15{col 57}{space 4}     0.95{col 70}{space 3}     1.47
-{txt}{space 15} {c |}
-{space 6}strat_var {c |}
-{space 8}8d9c30  {c |}{col 17}{res}{space 2}     0.59{col 29}{space 2}     0.11{col 40}{space 1}   -2.93{col 49}{space 3} 0.00{col 57}{space 4}     0.41{col 70}{space 3}     0.84
-{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     1.38{col 29}{space 2}     0.26{col 40}{space 1}    1.72{col 49}{space 3} 0.09{col 57}{space 4}     0.96{col 70}{space 3}     1.98
-{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     1.19{col 29}{space 2}     0.20{col 40}{space 1}    1.04{col 49}{space 3} 0.30{col 57}{space 4}     0.86{col 70}{space 3}     1.67
-{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     1.75{col 29}{space 2}     0.30{col 40}{space 1}    3.24{col 49}{space 3} 0.00{col 57}{space 4}     1.25{col 70}{space 3}     2.47
-{txt}{space 15} {c |}
-1.lab_available {c |}{col 17}{res}{space 2}     1.00{col 29}{space 2}     0.12{col 40}{space 1}   -0.03{col 49}{space 3} 0.97{col 57}{space 4}     0.78{col 70}{space 3}     1.27
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     1.52{col 29}{space 2}     0.20{col 40}{space 1}    3.19{col 49}{space 3} 0.00{col 57}{space 4}     1.18{col 70}{space 3}     1.98
-{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     0.49{col 29}{space 2}     0.16{col 40}{space 1}   -2.21{col 49}{space 3} 0.03{col 57}{space 4}     0.26{col 70}{space 3}     0.92
-{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     0.96{col 29}{space 2}     0.06{col 40}{space 1}   -0.64{col 49}{space 3} 0.53{col 57}{space 4}     0.85{col 70}{space 3}     1.08
-{txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.43{col 29}{space 2}     0.08{col 40}{space 1}   -4.31{col 49}{space 3} 0.00{col 57}{space 4}     0.29{col 70}{space 3}     0.63
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}/lnsig2u {c |}{col 17}{res}{space 2}     0.61{col 29}{space 2}     0.08{col 57}{space 4}     0.45{col 70}{space 3}     0.76
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-        sigma_u {c |}{col 17}{res}{space 2}     1.35{col 29}{space 2}     0.05{col 57}{space 4}     1.25{col 70}{space 3}     1.46
-{txt}            rho {c |}{col 17}{res}{space 2}     0.36{col 29}{space 2}     0.02{col 57}{space 4}     0.32{col 70}{space 3}     0.39
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{ralign 79:(Std. Err. adjusted for {res:119} clusters in clusterid)}
+{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 15}{c |}{col 27}    Robust
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}F  {c |}{col 15}{res}{space 2}     1.18{col 27}{space 2}     0.13{col 38}{space 1}    1.46{col 47}{space 3} 0.15{col 55}{space 4}     0.95{col 68}{space 3}     1.47
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.59{col 27}{space 2}     0.11{col 38}{space 1}   -2.93{col 47}{space 3} 0.00{col 55}{space 4}     0.41{col 68}{space 3}     0.84
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.26{col 38}{space 1}    1.72{col 47}{space 3} 0.09{col 55}{space 4}     0.96{col 68}{space 3}     1.98
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.20{col 38}{space 1}    1.04{col 47}{space 3} 0.30{col 55}{space 4}     0.86{col 68}{space 3}     1.67
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.75{col 27}{space 2}     0.30{col 38}{space 1}    3.24{col 47}{space 3} 0.00{col 55}{space 4}     1.25{col 68}{space 3}     2.47
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     1.52{col 27}{space 2}     0.20{col 38}{space 1}    3.19{col 47}{space 3} 0.00{col 55}{space 4}     1.18{col 68}{space 3}     1.98
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.12{col 38}{space 1}   -0.03{col 47}{space 3} 0.97{col 55}{space 4}     0.78{col 68}{space 3}     1.27
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.49{col 27}{space 2}     0.16{col 38}{space 1}   -2.21{col 47}{space 3} 0.03{col 55}{space 4}     0.26{col 68}{space 3}     0.92
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.06{col 38}{space 1}   -0.64{col 47}{space 3} 0.53{col 55}{space 4}     0.85{col 68}{space 3}     1.08
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.43{col 27}{space 2}     0.08{col 38}{space 1}   -4.31{col 47}{space 3} 0.00{col 55}{space 4}     0.29{col 68}{space 3}     0.63
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}     0.61{col 27}{space 2}     0.08{col 55}{space 4}     0.45{col 68}{space 3}     0.76
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     1.35{col 27}{space 2}     0.05{col 55}{space 4}     1.25{col 68}{space 3}     1.46
+{txt}          rho {c |}{col 15}{res}{space 2}     0.36{col 27}{space 2}     0.02{col 55}{space 4}     0.32{col 68}{space 3}     0.39
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 
@@ -609,31 +623,37 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    59.80
 {txt}Log pseudolikelihood  = {res}-2760.2644{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
 
-{txt}{ralign 81:(Std. Err. adjusted for {res:119} clusters in clusterid)}
-{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 17}{c |}{col 29}    Robust
-{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 12}arm {c |}
-{space 13}J  {c |}{col 17}{res}{space 2}     0.60{col 29}{space 2}     0.07{col 40}{space 1}   -4.24{col 49}{space 3} 0.00{col 57}{space 4}     0.48{col 70}{space 3}     0.76
-{txt}{space 15} {c |}
-{space 6}strat_var {c |}
-{space 8}8d9c30  {c |}{col 17}{res}{space 2}     1.16{col 29}{space 2}     0.24{col 40}{space 1}    0.73{col 49}{space 3} 0.46{col 57}{space 4}     0.78{col 70}{space 3}     1.74
-{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     1.51{col 29}{space 2}     0.27{col 40}{space 1}    2.34{col 49}{space 3} 0.02{col 57}{space 4}     1.07{col 70}{space 3}     2.13
-{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     1.21{col 29}{space 2}     0.22{col 40}{space 1}    1.01{col 49}{space 3} 0.31{col 57}{space 4}     0.84{col 70}{space 3}     1.74
-{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     1.74{col 29}{space 2}     0.31{col 40}{space 1}    3.11{col 49}{space 3} 0.00{col 57}{space 4}     1.23{col 70}{space 3}     2.47
-{txt}{space 15} {c |}
-1.lab_available {c |}{col 17}{res}{space 2}     1.15{col 29}{space 2}     0.15{col 40}{space 1}    1.11{col 49}{space 3} 0.27{col 57}{space 4}     0.90{col 70}{space 3}     1.47
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     0.94{col 29}{space 2}     0.10{col 40}{space 1}   -0.58{col 49}{space 3} 0.56{col 57}{space 4}     0.76{col 70}{space 3}     1.16
-{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     0.50{col 29}{space 2}     0.15{col 40}{space 1}   -2.34{col 49}{space 3} 0.02{col 57}{space 4}     0.28{col 70}{space 3}     0.89
-{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.02{col 29}{space 2}     0.11{col 40}{space 1}    0.16{col 49}{space 3} 0.87{col 57}{space 4}     0.83{col 70}{space 3}     1.25
-{txt}{space 10}_cons {c |}{col 17}{res}{space 2}    30.86{col 29}{space 2}     7.28{col 40}{space 1}   14.54{col 49}{space 3} 0.00{col 57}{space 4}    19.44{col 70}{space 3}    48.99
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}/lnsig2u {c |}{col 17}{res}{space 2}    -0.17{col 29}{space 2}     0.26{col 57}{space 4}    -0.68{col 70}{space 3}     0.34
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-        sigma_u {c |}{col 17}{res}{space 2}     0.92{col 29}{space 2}     0.12{col 57}{space 4}     0.71{col 70}{space 3}     1.19
-{txt}            rho {c |}{col 17}{res}{space 2}     0.20{col 29}{space 2}     0.04{col 57}{space 4}     0.13{col 70}{space 3}     0.30
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{ralign 79:(Std. Err. adjusted for {res:119} clusters in clusterid)}
+{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 15}{c |}{col 27}    Robust
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}J  {c |}{col 15}{res}{space 2}     0.60{col 27}{space 2}     0.07{col 38}{space 1}   -4.24{col 47}{space 3} 0.00{col 55}{space 4}     0.48{col 68}{space 3}     0.76
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.16{col 27}{space 2}     0.24{col 38}{space 1}    0.73{col 47}{space 3} 0.46{col 55}{space 4}     0.78{col 68}{space 3}     1.74
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.51{col 27}{space 2}     0.27{col 38}{space 1}    2.34{col 47}{space 3} 0.02{col 55}{space 4}     1.07{col 68}{space 3}     2.13
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.22{col 38}{space 1}    1.01{col 47}{space 3} 0.31{col 55}{space 4}     0.84{col 68}{space 3}     1.74
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.74{col 27}{space 2}     0.31{col 38}{space 1}    3.11{col 47}{space 3} 0.00{col 55}{space 4}     1.23{col 68}{space 3}     2.47
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.10{col 38}{space 1}   -0.58{col 47}{space 3} 0.56{col 55}{space 4}     0.76{col 68}{space 3}     1.16
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.15{col 27}{space 2}     0.15{col 38}{space 1}    1.11{col 47}{space 3} 0.27{col 55}{space 4}     0.90{col 68}{space 3}     1.47
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.50{col 27}{space 2}     0.15{col 38}{space 1}   -2.34{col 47}{space 3} 0.02{col 55}{space 4}     0.28{col 68}{space 3}     0.89
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     1.02{col 27}{space 2}     0.11{col 38}{space 1}    0.16{col 47}{space 3} 0.87{col 55}{space 4}     0.83{col 68}{space 3}     1.25
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}    30.86{col 27}{space 2}     7.28{col 38}{space 1}   14.54{col 47}{space 3} 0.00{col 55}{space 4}    19.44{col 68}{space 3}    48.99
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -0.17{col 27}{space 2}     0.26{col 55}{space 4}    -0.68{col 68}{space 3}     0.34
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.92{col 27}{space 2}     0.12{col 55}{space 4}     0.71{col 68}{space 3}     1.19
+{txt}          rho {c |}{col 15}{res}{space 2}     0.20{col 27}{space 2}     0.04{col 55}{space 4}     0.13{col 68}{space 3}     0.30
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 
@@ -675,31 +695,37 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    76.16
 {txt}Log pseudolikelihood  = {res}-5920.4824{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
 
-{txt}{ralign 81:(Std. Err. adjusted for {res:119} clusters in clusterid)}
-{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 17}{c |}{col 29}    Robust
-{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 12}arm {c |}
-{space 13}L  {c |}{col 17}{res}{space 2}     1.46{col 29}{space 2}     0.18{col 40}{space 1}    3.13{col 49}{space 3} 0.00{col 57}{space 4}     1.15{col 70}{space 3}     1.85
-{txt}{space 15} {c |}
-{space 6}strat_var {c |}
-{space 8}8d9c30  {c |}{col 17}{res}{space 2}     0.68{col 29}{space 2}     0.13{col 40}{space 1}   -2.10{col 49}{space 3} 0.04{col 57}{space 4}     0.47{col 70}{space 3}     0.97
-{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     0.57{col 29}{space 2}     0.13{col 40}{space 1}   -2.42{col 49}{space 3} 0.02{col 57}{space 4}     0.36{col 70}{space 3}     0.90
-{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     0.49{col 29}{space 2}     0.10{col 40}{space 1}   -3.37{col 49}{space 3} 0.00{col 57}{space 4}     0.33{col 70}{space 3}     0.74
-{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     0.72{col 29}{space 2}     0.11{col 40}{space 1}   -2.10{col 49}{space 3} 0.04{col 57}{space 4}     0.53{col 70}{space 3}     0.98
-{txt}{space 15} {c |}
-1.lab_available {c |}{col 17}{res}{space 2}     1.97{col 29}{space 2}     0.29{col 40}{space 1}    4.54{col 49}{space 3} 0.00{col 57}{space 4}     1.47{col 70}{space 3}     2.63
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     1.40{col 29}{space 2}     0.20{col 40}{space 1}    2.28{col 49}{space 3} 0.02{col 57}{space 4}     1.05{col 70}{space 3}     1.86
-{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     1.07{col 29}{space 2}     0.25{col 40}{space 1}    0.27{col 49}{space 3} 0.79{col 57}{space 4}     0.67{col 70}{space 3}     1.70
-{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.06{col 29}{space 2}     0.05{col 40}{space 1}    1.20{col 49}{space 3} 0.23{col 57}{space 4}     0.96{col 70}{space 3}     1.17
-{txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.15{col 29}{space 2}     0.03{col 40}{space 1}  -10.31{col 49}{space 3} 0.00{col 57}{space 4}     0.11{col 70}{space 3}     0.22
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}/lnsig2u {c |}{col 17}{res}{space 2}   -14.34{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-        sigma_u {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
-{txt}            rho {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{ralign 79:(Std. Err. adjusted for {res:119} clusters in clusterid)}
+{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 15}{c |}{col 27}    Robust
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}L  {c |}{col 15}{res}{space 2}     1.46{col 27}{space 2}     0.18{col 38}{space 1}    3.13{col 47}{space 3} 0.00{col 55}{space 4}     1.15{col 68}{space 3}     1.85
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.13{col 38}{space 1}   -2.10{col 47}{space 3} 0.04{col 55}{space 4}     0.47{col 68}{space 3}     0.97
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.57{col 27}{space 2}     0.13{col 38}{space 1}   -2.42{col 47}{space 3} 0.02{col 55}{space 4}     0.36{col 68}{space 3}     0.90
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.49{col 27}{space 2}     0.10{col 38}{space 1}   -3.37{col 47}{space 3} 0.00{col 55}{space 4}     0.33{col 68}{space 3}     0.74
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.72{col 27}{space 2}     0.11{col 38}{space 1}   -2.10{col 47}{space 3} 0.04{col 55}{space 4}     0.53{col 68}{space 3}     0.98
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     1.40{col 27}{space 2}     0.20{col 38}{space 1}    2.28{col 47}{space 3} 0.02{col 55}{space 4}     1.05{col 68}{space 3}     1.86
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.97{col 27}{space 2}     0.29{col 38}{space 1}    4.54{col 47}{space 3} 0.00{col 55}{space 4}     1.47{col 68}{space 3}     2.63
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.25{col 38}{space 1}    0.27{col 47}{space 3} 0.79{col 55}{space 4}     0.67{col 68}{space 3}     1.70
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.05{col 38}{space 1}    1.20{col 47}{space 3} 0.23{col 55}{space 4}     0.96{col 68}{space 3}     1.17
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.03{col 38}{space 1}  -10.31{col 47}{space 3} 0.00{col 55}{space 4}     0.11{col 68}{space 3}     0.22
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -14.34{col 27}{space 2}        .{col 55}{space 4}        .{col 68}{space 3}        .
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}        .{col 55}{space 4}        .{col 68}{space 3}        .
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}        .{col 55}{space 4}        .{col 68}{space 3}        .
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 
@@ -738,29 +764,35 @@ Iteration 3:{space 3}log likelihood = {res:-910.09283}
 {txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    35.08
 {txt}Log likelihood  = {res}-910.09283{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0001
 
-{txt}{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 12}arm {c |}
-{space 13}B  {c |}{col 17}{res}{space 2}     1.42{col 29}{space 2}     0.31{col 40}{space 1}    1.61{col 49}{space 3} 0.11{col 57}{space 4}     0.93{col 70}{space 3}     2.18
-{txt}{space 15} {c |}
-{space 6}strat_var {c |}
-{space 8}8d9c30  {c |}{col 17}{res}{space 2}     1.45{col 29}{space 2}     0.56{col 40}{space 1}    0.95{col 49}{space 3} 0.34{col 57}{space 4}     0.68{col 70}{space 3}     3.09
-{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     3.60{col 29}{space 2}     1.85{col 40}{space 1}    2.49{col 49}{space 3} 0.01{col 57}{space 4}     1.31{col 70}{space 3}     9.88
-{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     1.28{col 29}{space 2}     0.46{col 40}{space 1}    0.70{col 49}{space 3} 0.49{col 57}{space 4}     0.64{col 70}{space 3}     2.57
-{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     1.79{col 29}{space 2}     0.66{col 40}{space 1}    1.59{col 49}{space 3} 0.11{col 57}{space 4}     0.87{col 70}{space 3}     3.67
-{txt}{space 15} {c |}
-1.lab_available {c |}{col 17}{res}{space 2}     1.55{col 29}{space 2}     0.40{col 40}{space 1}    1.70{col 49}{space 3} 0.09{col 57}{space 4}     0.94{col 70}{space 3}     2.57
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     2.55{col 29}{space 2}     0.85{col 40}{space 1}    2.81{col 49}{space 3} 0.01{col 57}{space 4}     1.33{col 70}{space 3}     4.92
-{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     0.52{col 29}{space 2}     0.29{col 40}{space 1}   -1.17{col 49}{space 3} 0.24{col 57}{space 4}     0.18{col 70}{space 3}     1.55
-{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.48{col 29}{space 2}     0.23{col 40}{space 1}    2.56{col 49}{space 3} 0.01{col 57}{space 4}     1.10{col 70}{space 3}     1.99
-{txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.86{col 29}{space 2}     0.33{col 40}{space 1}   -0.40{col 49}{space 3} 0.69{col 57}{space 4}     0.41{col 70}{space 3}     1.82
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}/lnsig2u {c |}{col 17}{res}{space 2}    -0.28{col 29}{space 2}     0.24{col 57}{space 4}    -0.75{col 70}{space 3}     0.19
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-        sigma_u {c |}{col 17}{res}{space 2}     0.87{col 29}{space 2}     0.10{col 57}{space 4}     0.69{col 70}{space 3}     1.10
-{txt}            rho {c |}{col 17}{res}{space 2}     0.19{col 29}{space 2}     0.04{col 57}{space 4}     0.13{col 70}{space 3}     0.27
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}B  {c |}{col 15}{res}{space 2}     1.42{col 27}{space 2}     0.31{col 38}{space 1}    1.61{col 47}{space 3} 0.11{col 55}{space 4}     0.93{col 68}{space 3}     2.18
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.45{col 27}{space 2}     0.56{col 38}{space 1}    0.95{col 47}{space 3} 0.34{col 55}{space 4}     0.68{col 68}{space 3}     3.09
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     3.60{col 27}{space 2}     1.85{col 38}{space 1}    2.49{col 47}{space 3} 0.01{col 55}{space 4}     1.31{col 68}{space 3}     9.88
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.28{col 27}{space 2}     0.46{col 38}{space 1}    0.70{col 47}{space 3} 0.49{col 55}{space 4}     0.64{col 68}{space 3}     2.57
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.79{col 27}{space 2}     0.66{col 38}{space 1}    1.59{col 47}{space 3} 0.11{col 55}{space 4}     0.87{col 68}{space 3}     3.67
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     2.55{col 27}{space 2}     0.85{col 38}{space 1}    2.81{col 47}{space 3} 0.01{col 55}{space 4}     1.33{col 68}{space 3}     4.92
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.55{col 27}{space 2}     0.40{col 38}{space 1}    1.70{col 47}{space 3} 0.09{col 55}{space 4}     0.94{col 68}{space 3}     2.57
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.52{col 27}{space 2}     0.29{col 38}{space 1}   -1.17{col 47}{space 3} 0.24{col 55}{space 4}     0.18{col 68}{space 3}     1.55
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     1.48{col 27}{space 2}     0.23{col 38}{space 1}    2.56{col 47}{space 3} 0.01{col 55}{space 4}     1.10{col 68}{space 3}     1.99
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.86{col 27}{space 2}     0.33{col 38}{space 1}   -0.40{col 47}{space 3} 0.69{col 55}{space 4}     0.41{col 68}{space 3}     1.82
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -0.28{col 27}{space 2}     0.24{col 55}{space 4}    -0.75{col 68}{space 3}     0.19
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.10{col 55}{space 4}     0.69{col 68}{space 3}     1.10
+{txt}          rho {c |}{col 15}{res}{space 2}     0.19{col 27}{space 2}     0.04{col 55}{space 4}     0.13{col 68}{space 3}     0.27
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}90.00{col 56}{txt}Prob >= chibar2 = {res}0.000
@@ -771,8 +803,180 @@ Iteration 3:{space 3}log likelihood = {res:-910.09283}
 {com}. 
 . // TODO: Reinstate
 . // // Make figures
-. // do figures/figures
+. // do figures/imputation
+. do figures/margins
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. set graphics off
+{txt}
+{com}. 
+. local outcome attendance // TODO: Iterate over the global process_outcomes
+{txt}
+{com}.                          // TODO: Make a margins plot for each constraint var
 . 
+. // Define the names and number of variables over which to make marginsplots.
+. local margin_vars = ustrtrim(usubinstr("$adj_var_names", "strat_var", "", .))
+{txt}
+{com}. local n_plots = wordcount("`margin_vars'")
+{txt}
+{com}. 
+. // Define titles to use for the plots.
+. local mpo "Marginal probability of"
+{txt}
+{com}. local attendance_title      "`mpo' ANC attendance"
+{txt}
+{com}. local hypertension_title    "`mpo' hypertension screening and management"
+{txt}
+{com}. local diabetes_title        "`mpo' diabetes screening and management"
+{txt}
+{com}. local malpresentation_title "`mpo' malpresentation screening and management"
+{txt}
+{com}. 
+. frame `outcome' {c -(}
+.   estimates restore `outcome'_estimates
+{txt}(results {stata estimates replay attendance_estimates:attendance_estimates} are active now)
+{com}. 
+.   foreach var of local margin_vars {c -(}
+{txt}  2{com}.     if "`var'" == "cluster_size" {c -(}
+{txt}  3{com}.       margins i.arm, at(cluster_size = (0.1(0.5)2.1))
+{txt}  4{com}.     {c )-}
+{txt}  5{com}.     else {c -(}
+{txt}  6{com}.       margins i.arm#`var'
+{txt}  7{com}.     {c )-}
+{txt}  8{com}. 
+.     local var_label : variable label `var'
+{txt}  9{com}.     marginsplot, yscale(range(0 1)) ylabel(#5) ytitle("")   ///
+>                  title("`var_label'", span)                        ///
+>                  legend(cols(1) region(color(white)))              ///
+>                  graphregion(color(white))                         ///
+>                  plotregion(color(white))                          ///
+>                  bgcolor(white)                                    ///
+>                  name(`var', replace)
+{txt} 10{com}.   {c )-}
+{res}
+{txt}Predictive margins{col 49}Number of obs{col 67}= {res}    21,703
+{txt}{col 1}Model VCE{col 14}: {res}Robust
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:Expression}:{space 1}{res:Pr(y=1), predict(pr)}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:1._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 9}.1}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:2._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 9}.6}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:3._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 8}1.1}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:4._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 8}1.6}{p_end}
+{p2colreset}{...}
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:5._at}:{space 1}{res:{txt:cluster_size}{space 4}{txt:=} {space 8}2.1}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}     Margin{col 26}   Std. Err.{col 38}      z{col 46}   P>|z|{col 54}     [95% Con{col 67}f. Interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}_at#arm {c |}
+{space 8}1#E  {c |}{col 14}{res}{space 2}     0.37{col 26}{space 2}     0.02{col 37}{space 1}   17.56{col 46}{space 3} 0.00{col 54}{space 4}     0.33{col 67}{space 3}     0.41
+{txt}{space 8}1#F  {c |}{col 14}{res}{space 2}     0.40{col 26}{space 2}     0.02{col 37}{space 1}   23.66{col 46}{space 3} 0.00{col 54}{space 4}     0.36{col 67}{space 3}     0.43
+{txt}{space 8}2#E  {c |}{col 14}{res}{space 2}     0.41{col 26}{space 2}     0.01{col 37}{space 1}   29.78{col 46}{space 3} 0.00{col 54}{space 4}     0.38{col 67}{space 3}     0.43
+{txt}{space 8}2#F  {c |}{col 14}{res}{space 2}     0.44{col 26}{space 2}     0.01{col 37}{space 1}   31.28{col 46}{space 3} 0.00{col 54}{space 4}     0.41{col 67}{space 3}     0.46
+{txt}{space 8}3#E  {c |}{col 14}{res}{space 2}     0.44{col 26}{space 2}     0.01{col 37}{space 1}   32.20{col 46}{space 3} 0.00{col 54}{space 4}     0.42{col 67}{space 3}     0.47
+{txt}{space 8}3#F  {c |}{col 14}{res}{space 2}     0.47{col 26}{space 2}     0.02{col 37}{space 1}   23.94{col 46}{space 3} 0.00{col 54}{space 4}     0.43{col 67}{space 3}     0.51
+{txt}{space 8}4#E  {c |}{col 14}{res}{space 2}     0.48{col 26}{space 2}     0.02{col 37}{space 1}   21.83{col 46}{space 3} 0.00{col 54}{space 4}     0.44{col 67}{space 3}     0.52
+{txt}{space 8}4#F  {c |}{col 14}{res}{space 2}     0.51{col 26}{space 2}     0.03{col 37}{space 1}   17.21{col 46}{space 3} 0.00{col 54}{space 4}     0.45{col 67}{space 3}     0.57
+{txt}{space 8}5#E  {c |}{col 14}{res}{space 2}     0.52{col 26}{space 2}     0.03{col 37}{space 1}   15.84{col 46}{space 3} 0.00{col 54}{space 4}     0.46{col 67}{space 3}     0.58
+{txt}{space 8}5#F  {c |}{col 14}{res}{space 2}     0.55{col 26}{space 2}     0.04{col 37}{space 1}   13.55{col 46}{space 3} 0.00{col 54}{space 4}     0.47{col 67}{space 3}     0.63
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{text}{p 2 6 2}Variables that uniquely identify margins: cluster_size arm{p_end}
+{res}
+{txt}Predictive margins{col 49}Number of obs{col 67}= {res}    21,703
+{txt}{col 1}Model VCE{col 14}: {res}Robust
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:Expression}:{space 1}{res:Pr(y=1), predict(pr)}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 18}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 19}{c |}{col 31} Delta-method
+{col 19}{c |}     Margin{col 31}   Std. Err.{col 43}      z{col 51}   P>|z|{col 59}     [95% Con{col 72}f. Interval]
+{hline 18}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+arm#lab_available {c |}
+{space 8}E#No lab  {c |}{col 19}{res}{space 2}     0.42{col 31}{space 2}     0.02{col 42}{space 1}   23.38{col 51}{space 3} 0.00{col 59}{space 4}     0.39{col 72}{space 3}     0.46
+{txt}{space 11}E#Lab  {c |}{col 19}{res}{space 2}     0.42{col 31}{space 2}     0.02{col 42}{space 1}   27.65{col 51}{space 3} 0.00{col 59}{space 4}     0.39{col 72}{space 3}     0.45
+{txt}{space 8}F#No lab  {c |}{col 19}{res}{space 2}     0.45{col 31}{space 2}     0.02{col 42}{space 1}   22.49{col 51}{space 3} 0.00{col 59}{space 4}     0.41{col 72}{space 3}     0.49
+{txt}{space 11}F#Lab  {c |}{col 19}{res}{space 2}     0.45{col 31}{space 2}     0.02{col 42}{space 1}   25.19{col 51}{space 3} 0.00{col 59}{space 4}     0.41{col 72}{space 3}     0.48
+{txt}{hline 18}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{text}{p 2 6 2}Variables that uniquely identify margins: arm lab_available{p_end}
+{res}
+{txt}Predictive margins{col 49}Number of obs{col 67}= {res}    21,703
+{txt}{col 1}Model VCE{col 14}: {res}Robust
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:Expression}:{space 1}{res:Pr(y=1), predict(pr)}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 17}{c |}{col 29} Delta-method
+{col 17}{c |}     Margin{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
+{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+arm#age_over_40 {c |}
+{space 3}E#≤40 years  {c |}{col 17}{res}{space 2}     0.42{col 29}{space 2}     0.01{col 40}{space 1}   34.09{col 49}{space 3} 0.00{col 57}{space 4}     0.40{col 70}{space 3}     0.45
+{txt}{space 3}E#>40 years  {c |}{col 17}{res}{space 2}     0.30{col 29}{space 2}     0.05{col 40}{space 1}    5.87{col 49}{space 3} 0.00{col 57}{space 4}     0.20{col 70}{space 3}     0.40
+{txt}{space 3}F#≤40 years  {c |}{col 17}{res}{space 2}     0.45{col 29}{space 2}     0.02{col 40}{space 1}   29.37{col 49}{space 3} 0.00{col 57}{space 4}     0.42{col 70}{space 3}     0.48
+{txt}{space 3}F#>40 years  {c |}{col 17}{res}{space 2}     0.33{col 29}{space 2}     0.05{col 40}{space 1}    6.29{col 49}{space 3} 0.00{col 57}{space 4}     0.23{col 70}{space 3}     0.43
+{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{text}{p 2 6 2}Variables that uniquely identify margins: arm age_over_40{p_end}
+{res}
+{txt}Predictive margins{col 49}Number of obs{col 67}= {res}    21,703
+{txt}{col 1}Model VCE{col 14}: {res}Robust
+
+{txt}{p2colset 1 14 16 2}{...}
+{p2col:Expression}:{space 1}{res:Pr(y=1), predict(pr)}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 17}{c |}{col 29} Delta-method
+{col 17}{c |}     Margin{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
+{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+arm#primiparous {c |}
+{space 1}E#Multiparous  {c |}{col 17}{res}{space 2}     0.42{col 29}{space 2}     0.01{col 40}{space 1}   32.24{col 49}{space 3} 0.00{col 57}{space 4}     0.40{col 70}{space 3}     0.45
+{txt}{space 1}E#Primiparous  {c |}{col 17}{res}{space 2}     0.42{col 29}{space 2}     0.01{col 40}{space 1}   30.79{col 49}{space 3} 0.00{col 57}{space 4}     0.39{col 70}{space 3}     0.44
+{txt}{space 1}F#Multiparous  {c |}{col 17}{res}{space 2}     0.45{col 29}{space 2}     0.01{col 40}{space 1}   30.09{col 49}{space 3} 0.00{col 57}{space 4}     0.42{col 70}{space 3}     0.48
+{txt}{space 1}F#Primiparous  {c |}{col 17}{res}{space 2}     0.44{col 29}{space 2}     0.02{col 40}{space 1}   23.87{col 49}{space 3} 0.00{col 57}{space 4}     0.41{col 70}{space 3}     0.48
+{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{text}{p 2 6 2}Variables that uniquely identify margins: arm primiparous{p_end}
+{res}{com}. 
+.   graph combine `margin_vars', cols(`n_plots')           ///
+>                                title(``outcome'_title')  ///
+>                                graphregion(color(white)) ///
+>                                plotregion(color(white))
+{res}{com}.   graph export "products/Margins.pdf", replace
+{txt}(file products/Margins.pdf written in PDF format)
+{com}. {c )-}
+{txt}
+{com}. 
+. set graphics on
+{txt}
+{com}. 
+{txt}end of do-file
+
+{com}. 
 . // TODO: Make Spider diagram for each process outcome
 . // (see https://folkehelse.sharepoint.com/:i:/r/sites/1461/Restricted%20Documents/4.Research/Analysis,%20Sample%20Size,%20Randomizatio/eRegQual/radar_chart_eRegQual.png?csf=1&web=1&e=JeKbbU)
 . 
@@ -975,31 +1179,37 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    87.65
 {txt}Log pseudolikelihood  = {res}-13697.697{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
 
-{txt}{ralign 81:(Std. Err. adjusted for {res:119} clusters in clusterid)}
-{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 17}{c |}{col 29}    Robust
-{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 12}arm {c |}
-{space 13}F  {c |}{col 17}{res}{space 2}     1.18{col 29}{space 2}     0.13{col 40}{space 1}    1.46{col 49}{space 3} 0.15{col 57}{space 4}     0.95{col 70}{space 3}     1.47
-{txt}{space 15} {c |}
-{space 6}strat_var {c |}
-{space 8}8d9c30  {c |}{col 17}{res}{space 2}     0.59{col 29}{space 2}     0.11{col 40}{space 1}   -2.93{col 49}{space 3} 0.00{col 57}{space 4}     0.41{col 70}{space 3}     0.84
-{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     1.38{col 29}{space 2}     0.26{col 40}{space 1}    1.72{col 49}{space 3} 0.09{col 57}{space 4}     0.96{col 70}{space 3}     1.98
-{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     1.19{col 29}{space 2}     0.20{col 40}{space 1}    1.04{col 49}{space 3} 0.30{col 57}{space 4}     0.86{col 70}{space 3}     1.67
-{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     1.75{col 29}{space 2}     0.30{col 40}{space 1}    3.24{col 49}{space 3} 0.00{col 57}{space 4}     1.25{col 70}{space 3}     2.47
-{txt}{space 15} {c |}
-1.lab_available {c |}{col 17}{res}{space 2}     1.00{col 29}{space 2}     0.12{col 40}{space 1}   -0.03{col 49}{space 3} 0.97{col 57}{space 4}     0.78{col 70}{space 3}     1.27
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     1.52{col 29}{space 2}     0.20{col 40}{space 1}    3.19{col 49}{space 3} 0.00{col 57}{space 4}     1.18{col 70}{space 3}     1.98
-{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     0.49{col 29}{space 2}     0.16{col 40}{space 1}   -2.21{col 49}{space 3} 0.03{col 57}{space 4}     0.26{col 70}{space 3}     0.92
-{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     0.96{col 29}{space 2}     0.06{col 40}{space 1}   -0.64{col 49}{space 3} 0.53{col 57}{space 4}     0.85{col 70}{space 3}     1.08
-{txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.43{col 29}{space 2}     0.08{col 40}{space 1}   -4.31{col 49}{space 3} 0.00{col 57}{space 4}     0.29{col 70}{space 3}     0.63
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}/lnsig2u {c |}{col 17}{res}{space 2}     0.61{col 29}{space 2}     0.08{col 57}{space 4}     0.45{col 70}{space 3}     0.76
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-        sigma_u {c |}{col 17}{res}{space 2}     1.35{col 29}{space 2}     0.05{col 57}{space 4}     1.25{col 70}{space 3}     1.46
-{txt}            rho {c |}{col 17}{res}{space 2}     0.36{col 29}{space 2}     0.02{col 57}{space 4}     0.32{col 70}{space 3}     0.39
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{ralign 79:(Std. Err. adjusted for {res:119} clusters in clusterid)}
+{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 15}{c |}{col 27}    Robust
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}F  {c |}{col 15}{res}{space 2}     1.18{col 27}{space 2}     0.13{col 38}{space 1}    1.46{col 47}{space 3} 0.15{col 55}{space 4}     0.95{col 68}{space 3}     1.47
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.59{col 27}{space 2}     0.11{col 38}{space 1}   -2.93{col 47}{space 3} 0.00{col 55}{space 4}     0.41{col 68}{space 3}     0.84
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.26{col 38}{space 1}    1.72{col 47}{space 3} 0.09{col 55}{space 4}     0.96{col 68}{space 3}     1.98
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.20{col 38}{space 1}    1.04{col 47}{space 3} 0.30{col 55}{space 4}     0.86{col 68}{space 3}     1.67
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.75{col 27}{space 2}     0.30{col 38}{space 1}    3.24{col 47}{space 3} 0.00{col 55}{space 4}     1.25{col 68}{space 3}     2.47
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     1.52{col 27}{space 2}     0.20{col 38}{space 1}    3.19{col 47}{space 3} 0.00{col 55}{space 4}     1.18{col 68}{space 3}     1.98
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.12{col 38}{space 1}   -0.03{col 47}{space 3} 0.97{col 55}{space 4}     0.78{col 68}{space 3}     1.27
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.49{col 27}{space 2}     0.16{col 38}{space 1}   -2.21{col 47}{space 3} 0.03{col 55}{space 4}     0.26{col 68}{space 3}     0.92
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.06{col 38}{space 1}   -0.64{col 47}{space 3} 0.53{col 55}{space 4}     0.85{col 68}{space 3}     1.08
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.43{col 27}{space 2}     0.08{col 38}{space 1}   -4.31{col 47}{space 3} 0.00{col 55}{space 4}     0.29{col 68}{space 3}     0.63
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}     0.61{col 27}{space 2}     0.08{col 55}{space 4}     0.45{col 68}{space 3}     0.76
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     1.35{col 27}{space 2}     0.05{col 55}{space 4}     1.25{col 68}{space 3}     1.46
+{txt}          rho {c |}{col 15}{res}{space 2}     0.36{col 27}{space 2}     0.02{col 55}{space 4}     0.32{col 68}{space 3}     0.39
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {res}
@@ -1020,31 +1230,37 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    59.80
 {txt}Log pseudolikelihood  = {res}-2760.2644{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
 
-{txt}{ralign 81:(Std. Err. adjusted for {res:119} clusters in clusterid)}
-{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 17}{c |}{col 29}    Robust
-{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 12}arm {c |}
-{space 13}J  {c |}{col 17}{res}{space 2}     0.60{col 29}{space 2}     0.07{col 40}{space 1}   -4.24{col 49}{space 3} 0.00{col 57}{space 4}     0.48{col 70}{space 3}     0.76
-{txt}{space 15} {c |}
-{space 6}strat_var {c |}
-{space 8}8d9c30  {c |}{col 17}{res}{space 2}     1.16{col 29}{space 2}     0.24{col 40}{space 1}    0.73{col 49}{space 3} 0.46{col 57}{space 4}     0.78{col 70}{space 3}     1.74
-{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     1.51{col 29}{space 2}     0.27{col 40}{space 1}    2.34{col 49}{space 3} 0.02{col 57}{space 4}     1.07{col 70}{space 3}     2.13
-{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     1.21{col 29}{space 2}     0.22{col 40}{space 1}    1.01{col 49}{space 3} 0.31{col 57}{space 4}     0.84{col 70}{space 3}     1.74
-{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     1.74{col 29}{space 2}     0.31{col 40}{space 1}    3.11{col 49}{space 3} 0.00{col 57}{space 4}     1.23{col 70}{space 3}     2.47
-{txt}{space 15} {c |}
-1.lab_available {c |}{col 17}{res}{space 2}     1.15{col 29}{space 2}     0.15{col 40}{space 1}    1.11{col 49}{space 3} 0.27{col 57}{space 4}     0.90{col 70}{space 3}     1.47
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     0.94{col 29}{space 2}     0.10{col 40}{space 1}   -0.58{col 49}{space 3} 0.56{col 57}{space 4}     0.76{col 70}{space 3}     1.16
-{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     0.50{col 29}{space 2}     0.15{col 40}{space 1}   -2.34{col 49}{space 3} 0.02{col 57}{space 4}     0.28{col 70}{space 3}     0.89
-{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.02{col 29}{space 2}     0.11{col 40}{space 1}    0.16{col 49}{space 3} 0.87{col 57}{space 4}     0.83{col 70}{space 3}     1.25
-{txt}{space 10}_cons {c |}{col 17}{res}{space 2}    30.86{col 29}{space 2}     7.28{col 40}{space 1}   14.54{col 49}{space 3} 0.00{col 57}{space 4}    19.44{col 70}{space 3}    48.99
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}/lnsig2u {c |}{col 17}{res}{space 2}    -0.17{col 29}{space 2}     0.26{col 57}{space 4}    -0.68{col 70}{space 3}     0.34
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-        sigma_u {c |}{col 17}{res}{space 2}     0.92{col 29}{space 2}     0.12{col 57}{space 4}     0.71{col 70}{space 3}     1.19
-{txt}            rho {c |}{col 17}{res}{space 2}     0.20{col 29}{space 2}     0.04{col 57}{space 4}     0.13{col 70}{space 3}     0.30
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{ralign 79:(Std. Err. adjusted for {res:119} clusters in clusterid)}
+{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 15}{c |}{col 27}    Robust
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}J  {c |}{col 15}{res}{space 2}     0.60{col 27}{space 2}     0.07{col 38}{space 1}   -4.24{col 47}{space 3} 0.00{col 55}{space 4}     0.48{col 68}{space 3}     0.76
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.16{col 27}{space 2}     0.24{col 38}{space 1}    0.73{col 47}{space 3} 0.46{col 55}{space 4}     0.78{col 68}{space 3}     1.74
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.51{col 27}{space 2}     0.27{col 38}{space 1}    2.34{col 47}{space 3} 0.02{col 55}{space 4}     1.07{col 68}{space 3}     2.13
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.22{col 38}{space 1}    1.01{col 47}{space 3} 0.31{col 55}{space 4}     0.84{col 68}{space 3}     1.74
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.74{col 27}{space 2}     0.31{col 38}{space 1}    3.11{col 47}{space 3} 0.00{col 55}{space 4}     1.23{col 68}{space 3}     2.47
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.10{col 38}{space 1}   -0.58{col 47}{space 3} 0.56{col 55}{space 4}     0.76{col 68}{space 3}     1.16
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.15{col 27}{space 2}     0.15{col 38}{space 1}    1.11{col 47}{space 3} 0.27{col 55}{space 4}     0.90{col 68}{space 3}     1.47
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.50{col 27}{space 2}     0.15{col 38}{space 1}   -2.34{col 47}{space 3} 0.02{col 55}{space 4}     0.28{col 68}{space 3}     0.89
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     1.02{col 27}{space 2}     0.11{col 38}{space 1}    0.16{col 47}{space 3} 0.87{col 55}{space 4}     0.83{col 68}{space 3}     1.25
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}    30.86{col 27}{space 2}     7.28{col 38}{space 1}   14.54{col 47}{space 3} 0.00{col 55}{space 4}    19.44{col 68}{space 3}    48.99
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -0.17{col 27}{space 2}     0.26{col 55}{space 4}    -0.68{col 68}{space 3}     0.34
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.92{col 27}{space 2}     0.12{col 55}{space 4}     0.71{col 68}{space 3}     1.19
+{txt}          rho {c |}{col 15}{res}{space 2}     0.20{col 27}{space 2}     0.04{col 55}{space 4}     0.13{col 68}{space 3}     0.30
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {res}
@@ -1065,31 +1281,37 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    76.16
 {txt}Log pseudolikelihood  = {res}-5920.4824{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0000
 
-{txt}{ralign 81:(Std. Err. adjusted for {res:119} clusters in clusterid)}
-{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 17}{c |}{col 29}    Robust
-{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 12}arm {c |}
-{space 13}L  {c |}{col 17}{res}{space 2}     1.46{col 29}{space 2}     0.18{col 40}{space 1}    3.13{col 49}{space 3} 0.00{col 57}{space 4}     1.15{col 70}{space 3}     1.85
-{txt}{space 15} {c |}
-{space 6}strat_var {c |}
-{space 8}8d9c30  {c |}{col 17}{res}{space 2}     0.68{col 29}{space 2}     0.13{col 40}{space 1}   -2.10{col 49}{space 3} 0.04{col 57}{space 4}     0.47{col 70}{space 3}     0.97
-{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     0.57{col 29}{space 2}     0.13{col 40}{space 1}   -2.42{col 49}{space 3} 0.02{col 57}{space 4}     0.36{col 70}{space 3}     0.90
-{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     0.49{col 29}{space 2}     0.10{col 40}{space 1}   -3.37{col 49}{space 3} 0.00{col 57}{space 4}     0.33{col 70}{space 3}     0.74
-{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     0.72{col 29}{space 2}     0.11{col 40}{space 1}   -2.10{col 49}{space 3} 0.04{col 57}{space 4}     0.53{col 70}{space 3}     0.98
-{txt}{space 15} {c |}
-1.lab_available {c |}{col 17}{res}{space 2}     1.97{col 29}{space 2}     0.29{col 40}{space 1}    4.54{col 49}{space 3} 0.00{col 57}{space 4}     1.47{col 70}{space 3}     2.63
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     1.40{col 29}{space 2}     0.20{col 40}{space 1}    2.28{col 49}{space 3} 0.02{col 57}{space 4}     1.05{col 70}{space 3}     1.86
-{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     1.07{col 29}{space 2}     0.25{col 40}{space 1}    0.27{col 49}{space 3} 0.79{col 57}{space 4}     0.67{col 70}{space 3}     1.70
-{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.06{col 29}{space 2}     0.05{col 40}{space 1}    1.20{col 49}{space 3} 0.23{col 57}{space 4}     0.96{col 70}{space 3}     1.17
-{txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.15{col 29}{space 2}     0.03{col 40}{space 1}  -10.31{col 49}{space 3} 0.00{col 57}{space 4}     0.11{col 70}{space 3}     0.22
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}/lnsig2u {c |}{col 17}{res}{space 2}   -14.34{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-        sigma_u {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
-{txt}            rho {c |}{col 17}{res}{space 2}     0.00{col 29}{space 2}        .{col 57}{space 4}        .{col 70}{space 3}        .
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{ralign 79:(Std. Err. adjusted for {res:119} clusters in clusterid)}
+{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 15}{c |}{col 27}    Robust
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}L  {c |}{col 15}{res}{space 2}     1.46{col 27}{space 2}     0.18{col 38}{space 1}    3.13{col 47}{space 3} 0.00{col 55}{space 4}     1.15{col 68}{space 3}     1.85
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.13{col 38}{space 1}   -2.10{col 47}{space 3} 0.04{col 55}{space 4}     0.47{col 68}{space 3}     0.97
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.57{col 27}{space 2}     0.13{col 38}{space 1}   -2.42{col 47}{space 3} 0.02{col 55}{space 4}     0.36{col 68}{space 3}     0.90
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.49{col 27}{space 2}     0.10{col 38}{space 1}   -3.37{col 47}{space 3} 0.00{col 55}{space 4}     0.33{col 68}{space 3}     0.74
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.72{col 27}{space 2}     0.11{col 38}{space 1}   -2.10{col 47}{space 3} 0.04{col 55}{space 4}     0.53{col 68}{space 3}     0.98
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     1.40{col 27}{space 2}     0.20{col 38}{space 1}    2.28{col 47}{space 3} 0.02{col 55}{space 4}     1.05{col 68}{space 3}     1.86
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.97{col 27}{space 2}     0.29{col 38}{space 1}    4.54{col 47}{space 3} 0.00{col 55}{space 4}     1.47{col 68}{space 3}     2.63
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.25{col 38}{space 1}    0.27{col 47}{space 3} 0.79{col 55}{space 4}     0.67{col 68}{space 3}     1.70
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.05{col 38}{space 1}    1.20{col 47}{space 3} 0.23{col 55}{space 4}     0.96{col 68}{space 3}     1.17
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.03{col 38}{space 1}  -10.31{col 47}{space 3} 0.00{col 55}{space 4}     0.11{col 68}{space 3}     0.22
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -14.34{col 27}{space 2}        .{col 55}{space 4}        .{col 68}{space 3}        .
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}        .{col 55}{space 4}        .{col 68}{space 3}        .
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}        .{col 55}{space 4}        .{col 68}{space 3}        .
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {res}
@@ -1110,29 +1332,35 @@ Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}   
 {txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    35.08
 {txt}Log likelihood  = {res}-910.09283{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0001
 
-{txt}{hline 16}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}              y{col 17}{c |} Odds Ratio{col 29}   Std. Err.{col 41}      z{col 49}   P>|z|{col 57}     [95% Con{col 70}f. Interval]
-{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 12}arm {c |}
-{space 13}B  {c |}{col 17}{res}{space 2}     1.42{col 29}{space 2}     0.31{col 40}{space 1}    1.61{col 49}{space 3} 0.11{col 57}{space 4}     0.93{col 70}{space 3}     2.18
-{txt}{space 15} {c |}
-{space 6}strat_var {c |}
-{space 8}8d9c30  {c |}{col 17}{res}{space 2}     1.45{col 29}{space 2}     0.56{col 40}{space 1}    0.95{col 49}{space 3} 0.34{col 57}{space 4}     0.68{col 70}{space 3}     3.09
-{txt}{space 8}9d5ed6  {c |}{col 17}{res}{space 2}     3.60{col 29}{space 2}     1.85{col 40}{space 1}    2.49{col 49}{space 3} 0.01{col 57}{space 4}     1.31{col 70}{space 3}     9.88
-{txt}{space 8}e1e1d3  {c |}{col 17}{res}{space 2}     1.28{col 29}{space 2}     0.46{col 40}{space 1}    0.70{col 49}{space 3} 0.49{col 57}{space 4}     0.64{col 70}{space 3}     2.57
-{txt}{space 8}ff4457  {c |}{col 17}{res}{space 2}     1.79{col 29}{space 2}     0.66{col 40}{space 1}    1.59{col 49}{space 3} 0.11{col 57}{space 4}     0.87{col 70}{space 3}     3.67
-{txt}{space 15} {c |}
-1.lab_available {c |}{col 17}{res}{space 2}     1.55{col 29}{space 2}     0.40{col 40}{space 1}    1.70{col 49}{space 3} 0.09{col 57}{space 4}     0.94{col 70}{space 3}     2.57
-{txt}{space 3}cluster_size {c |}{col 17}{res}{space 2}     2.55{col 29}{space 2}     0.85{col 40}{space 1}    2.81{col 49}{space 3} 0.01{col 57}{space 4}     1.33{col 70}{space 3}     4.92
-{txt}{space 2}1.age_over_40 {c |}{col 17}{res}{space 2}     0.52{col 29}{space 2}     0.29{col 40}{space 1}   -1.17{col 49}{space 3} 0.24{col 57}{space 4}     0.18{col 70}{space 3}     1.55
-{txt}{space 2}1.primiparous {c |}{col 17}{res}{space 2}     1.48{col 29}{space 2}     0.23{col 40}{space 1}    2.56{col 49}{space 3} 0.01{col 57}{space 4}     1.10{col 70}{space 3}     1.99
-{txt}{space 10}_cons {c |}{col 17}{res}{space 2}     0.86{col 29}{space 2}     0.33{col 40}{space 1}   -0.40{col 49}{space 3} 0.69{col 57}{space 4}     0.41{col 70}{space 3}     1.82
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 7}/lnsig2u {c |}{col 17}{res}{space 2}    -0.28{col 29}{space 2}     0.24{col 57}{space 4}    -0.75{col 70}{space 3}     0.19
-{txt}{hline 16}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-        sigma_u {c |}{col 17}{res}{space 2}     0.87{col 29}{space 2}     0.10{col 57}{space 4}     0.69{col 70}{space 3}     1.10
-{txt}            rho {c |}{col 17}{res}{space 2}     0.19{col 29}{space 2}     0.04{col 57}{space 4}     0.13{col 70}{space 3}     0.27
-{txt}{hline 16}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}B  {c |}{col 15}{res}{space 2}     1.42{col 27}{space 2}     0.31{col 38}{space 1}    1.61{col 47}{space 3} 0.11{col 55}{space 4}     0.93{col 68}{space 3}     2.18
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.45{col 27}{space 2}     0.56{col 38}{space 1}    0.95{col 47}{space 3} 0.34{col 55}{space 4}     0.68{col 68}{space 3}     3.09
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     3.60{col 27}{space 2}     1.85{col 38}{space 1}    2.49{col 47}{space 3} 0.01{col 55}{space 4}     1.31{col 68}{space 3}     9.88
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.28{col 27}{space 2}     0.46{col 38}{space 1}    0.70{col 47}{space 3} 0.49{col 55}{space 4}     0.64{col 68}{space 3}     2.57
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.79{col 27}{space 2}     0.66{col 38}{space 1}    1.59{col 47}{space 3} 0.11{col 55}{space 4}     0.87{col 68}{space 3}     3.67
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     2.55{col 27}{space 2}     0.85{col 38}{space 1}    2.81{col 47}{space 3} 0.01{col 55}{space 4}     1.33{col 68}{space 3}     4.92
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.55{col 27}{space 2}     0.40{col 38}{space 1}    1.70{col 47}{space 3} 0.09{col 55}{space 4}     0.94{col 68}{space 3}     2.57
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.52{col 27}{space 2}     0.29{col 38}{space 1}   -1.17{col 47}{space 3} 0.24{col 55}{space 4}     0.18{col 68}{space 3}     1.55
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     1.48{col 27}{space 2}     0.23{col 38}{space 1}    2.56{col 47}{space 3} 0.01{col 55}{space 4}     1.10{col 68}{space 3}     1.99
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.86{col 27}{space 2}     0.33{col 38}{space 1}   -0.40{col 47}{space 3} 0.69{col 55}{space 4}     0.41{col 68}{space 3}     1.82
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -0.28{col 27}{space 2}     0.24{col 55}{space 4}    -0.75{col 68}{space 3}     0.19
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.10{col 55}{space 4}     0.69{col 68}{space 3}     1.10
+{txt}          rho {c |}{col 15}{res}{space 2}     0.19{col 27}{space 2}     0.04{col 55}{space 4}     0.13{col 68}{space 3}     0.27
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}90.00{col 56}{txt}Prob >= chibar2 = {res}0.000
