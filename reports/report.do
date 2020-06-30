@@ -155,14 +155,23 @@ foreach outcome of global process_outcomes {
     putdocx table tbl_`tbl_num' = etable, title("`title'")
     putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
     putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
-    local n_rows  20
+    local n_rows  26
     local n_start 6
-    if "`outcome'" == "malpresentation" local n_rows  19
+    if "`outcome'" == "malpresentation" local n_rows  25
     if "`outcome'" == "malpresentation" local n_start 5
     forvalues i = `n_rows'(-1)`n_start' { // Drop rows not of interest.
       putdocx table tbl_`tbl_num'(`i', .), drop
     }
   }
+}
+
+`newpara'
+The following figures show marginal predictive probabilities for each of the 
+process outcomes.
+putdocx textblock end
+
+foreach outcome of global process_outcomes {
+  putdocx image "${`outcome'_margins_fname}.png", linebreak
 }
 
 // References
