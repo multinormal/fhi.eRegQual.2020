@@ -44,8 +44,8 @@ frame original {
   label variable                      y5 "Large for gestational age"
 
   // Apply labels to the outcomes.
-  label define yes_no 0 "No" 1 "Yes"
-  label values y* yes_no
+  label define yes_no_label 0 "No" 1 "Yes"
+  label values y* yes_no_label
 
   // Age.
   replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
@@ -69,7 +69,24 @@ frame original {
 
   // Lab availability.
   label variable lab_available "Lab available"
+  label define lab_available_label 1 "Lab" 0 "No lab"
+  label values lab_available lab_available_label
   global regulars $regulars lab_available
+  
+  // Generate an indicator for whether each woman is primiparous.
+  rename bookprimi primiparous
+  label variable primiparous   "Parity"
+  label define primiparous_label 1 "Primiparous" 0 "Multiparous"
+  label values primiparous primiparous_label
+  global imputeds $imputeds primiparous
+  
+  // Compute the cluster size from the trial data. We use the trial data for
+  // simplicity and have verified that these agree with the "baseline" data on
+  // trial size. We divide by 100 because cluster sizes range from about 10 to
+  // about 220, and we want to get regression coefficients that are non-null
+  // within two decimal places!
+  by clusterid, sort: generate cluster_size = _N / 100
+  global regulars $regulars cluster_size
 
   // Ultrasound available.
   label variable us_available "US available"
@@ -87,4 +104,3 @@ frame original {
   // Keep only the variables of interest.
   keep y* $imputeds $regulars TrialOne_adverse_pregoutc
 }
-

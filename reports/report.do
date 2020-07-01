@@ -43,38 +43,38 @@ putdocx textblock end
 `heading'
 putdocx text ("Methods")
 
-//// TODO: Reinstate
-//// `newpara'
-//// Because outcome data were missing for about a third of participants (see 
-//// results), we used Little's tests (Little 1988) of the null hypotheses that 
-//// missing values of the constituent outcomes were jointly missing completely at 
-//// random (MCAR) and covariate-dependent missing (CDM). We then used multiple 
-//// imputation via chained equations (van Buuren 2007) to create and analyze 
-//// <<dd_docx_display: $m_imputations>> multiply-imputed datasets. We imputed each 
-//// of the constituent outcomes using the auxiliary variables age, BMI, years of 
-//// education, average monthly household income (transformed to the log scale due 
-//// to the skewed distribution of income), and variables that indicated whether a 
-//// laboratory or ultrasound were available at the clinics; the variables included 
-//// in the analysis described below were also included. We were not able to include 
-//// auxiliary variables that indicated previous pregnancy with pre-eclampsia or 
-//// previous history of GDM due to collinearity. We evaluated the convergence of the 
-//// imputation algorithm by inspecting trace plots and evaluated imputed data by 
-//// inspecting kernel density and bar plots comparing the distributions of imputed 
-//// and complete case data.
-//// putdocx textblock end
-//// 
-//// `newpara'
-//// For each imputed data set, we computed the composite outcome from the imputed 
-//// constituent outcome data. An adverse pregnancy outcome was defined to have 
-//// occurred if at least one of the constituent outcomes occurred, and not to have 
-//// occurred if none of the constituent outcomes occurred. For each imputed data 
-//// set and outcome, we estimated a risk ratio to compare treatment to control 
-//// and used  generalized estimating equations (GEE; binomial errors and log 
-//// link) to account for the cluster-randomized design. We combined estimates 
-//// for each outcome using Rubin's rules (Rubin 2004). For comparison, we also 
-//// performed a complete case analysis under the MCAR assumption. We estimated 
-//// the intraclass correlation coefficient (ICC) using the complete cases.
-//// putdocx textblock end
+`newpara'
+Because outcome data were missing for about a third of participants (see 
+results), we used Little's tests (Little 1988) of the null hypotheses that 
+missing values of the constituent outcomes were jointly missing completely at 
+random (MCAR) and covariate-dependent missing (CDM). We then used multiple 
+imputation via chained equations (van Buuren 2007) to create and analyze 
+<<dd_docx_display: $m_imputations>> multiply-imputed datasets. We imputed each 
+of the constituent outcomes using the auxiliary variables age, BMI, years of 
+education, average monthly household income (transformed to the log scale due 
+to the skewed distribution of income), variables used as constraints in the 
+randomization (cluster size, lab availability, and parity), and a variable 
+that indicated ultrasound availability; the variables included in the analysis 
+described below were also included. We were not able to include auxiliary 
+variables that indicated previous pregnancy with pre-eclampsia or previous 
+history of GDM due to collinearity. We evaluated convergence of the imputation 
+algorithm by inspecting trace plots and evaluated imputed data by inspecting 
+kernel density and bar plots comparing the distributions of imputed and 
+complete case data.
+putdocx textblock end
+
+`newpara'
+For each imputed data set, we computed the composite outcome from the imputed 
+constituent outcome data. An adverse pregnancy outcome was defined to have 
+occurred if at least one of the constituent outcomes occurred, and not to have 
+occurred if none of the constituent outcomes occurred. For each imputed data 
+set and outcome, we estimated an odds ratio to compare treatment to control 
+using logistic regression, and accounted for the cluster-randomized design using 
+random effects. We combined estimates  for each outcome using Rubin's rules 
+(Rubin 2004). For comparison, we also performed a complete case analysis under 
+the MCAR assumption. We estimated the intraclass correlation coefficient (ICC) 
+using the complete cases.
+putdocx textblock end
 
 `newpara'
 We used logistic regression to estimate the relative odds of each of the process 
@@ -110,49 +110,46 @@ putdocx textblock end
 `heading'
 putdocx text ("Results")
 
-//// TODO: Reinstate
-//// `subhead'
-//// putdocx text ("Adverse pregnancy outcomes")
+`subhead'
+putdocx text ("Adverse pregnancy outcomes")
 
 // Verify some assumptions in this section.
-//// TODO: Reinstate
-//// assert ${p_mcar} > 0.05
-//// assert ${p_cdm}  > 0.05
+assert ${p_mcar} > 0.05
+assert ${p_cdm}  > 0.05
 
-//// TODO: Reinstate
-//// `newpara'
-//// Outcome data were missing for between 
-//// <<dd_docx_display: string(${pc_min_miss}, "`pc_fmt'")>>% and 
-//// <<dd_docx_display: string(${pc_max_miss}, "`pc_fmt'")>>% of the constituent 
-//// outcomes, and <<dd_docx_display: string(${pc_miss_y}, "`pc_fmt'")>>% of the 
-//// composite outcome. We were unable to reject the MCAR and CDM hypotheses 
-//// (P=<<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P=
-//// <<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively). Distributions 
-//// of the original and the first five imputed data sets are shown in Appendix 2. 
-//// Table 1 shows the result of the adverse pregnancy outcome analysis. The risk 
-//// ratio was estimated to be <<dd_docx_display: string(${rr_b_y}, "`e_fmt'")>> 
-//// (95% CI <<dd_docx_display: string(${rr_ll_y}, "`e_fmt'")>> to 
-//// <<dd_docx_display: string(${rr_ul_y}, "`e_fmt'")>>, P = 
-//// <<dd_docx_display: string(${rr_p_y}, "`p_fmt'")>>). This compares to the 
-//// complete case risk ratio of <<dd_docx_display: string(${cc_rr_b}, "`e_fmt'")>> 
-//// (95% CI <<dd_docx_display: string(${cc_rr_ll}, "`e_fmt'")>> to 
-//// <<dd_docx_display: string(${cc_rr_ul}, "`e_fmt'")>>, P = 
-//// <<dd_docx_display: string(${cc_rr_p}, "`p_fmt'")>>). Tables 2–6 show results for 
-//// the constituent outcomes. The ICC was estimated to be close to zero and no 
-//// greater than <<dd_docx_display: string(${icc_ub}, "%5.3f")>> (upper bound of 
-//// 95% CI).
-//// putdocx textblock end
-//// 
-//// frame imputed {
-////   foreach var of varlist y y1-y5 {
-////     local ++tbl_num
-////     local var_label : variable label `var'
-////     local title "Table `tbl_num'. `var_label' (multiply-imputed result)"
-////     estimates replay `var'_estimates, eform
-////     putdocx table tbl_`tbl_num' = etable, title("`title'")
-////     putdocx table tbl_`tbl_num'(2, 2) = ("Risk Ratio"), halign(right)
-////   }
-//// }
+`newpara'
+Outcome data were missing for between 
+<<dd_docx_display: string(${pc_min_miss}, "`pc_fmt'")>>% and 
+<<dd_docx_display: string(${pc_max_miss}, "`pc_fmt'")>>% of the constituent 
+outcomes, and <<dd_docx_display: string(${pc_miss_y}, "`pc_fmt'")>>% of the 
+composite outcome. We were unable to reject the MCAR and CDM hypotheses 
+(P=<<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P=
+<<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively). Distributions 
+of the original and the first five imputed data sets are shown in Appendix 2. 
+Table 1 shows the result of the adverse pregnancy outcome analysis. The odds 
+ratio was estimated to be <<dd_docx_display: string(${rr_b_y}, "`e_fmt'")>> 
+(95% CI <<dd_docx_display: string(${rr_ll_y}, "`e_fmt'")>> to 
+<<dd_docx_display: string(${rr_ul_y}, "`e_fmt'")>>, P = 
+<<dd_docx_display: string(${rr_p_y}, "`p_fmt'")>>). This compares to the 
+complete case odds ratio of <<dd_docx_display: string(${cc_or_b}, "`e_fmt'")>> 
+(95% CI <<dd_docx_display: string(${cc_or_ll}, "`e_fmt'")>> to 
+<<dd_docx_display: string(${cc_or_ul}, "`e_fmt'")>>, P = 
+<<dd_docx_display: string(${cc_or_p}, "`p_fmt'")>>). Tables 2–6 show results for 
+the constituent outcomes. The ICC was estimated to be close to zero and no 
+greater than <<dd_docx_display: string(${icc_ub}, "%5.3f")>> (upper bound of 
+95% CI).
+putdocx textblock end
+
+frame imputed {
+  foreach var of varlist y y1-y5 {
+    local ++tbl_num
+    local var_label : variable label `var'
+    local title "Table `tbl_num'. `var_label' (multiply-imputed result)"
+    estimates replay `var'_estimates, eform
+    putdocx table tbl_`tbl_num' = etable, title("`title'")
+    putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+  }
+}
 
 `subhead'
 putdocx text ("Process outcomes")
@@ -243,20 +240,18 @@ predictive probabilities show the required information more clearly and provide
 confidence intervals.
 putdocx textblock end
 
-//// TODO: Reinstate
-//// `heading'
-//// putdocx text ("Appendix 2 — Imputation")
+`heading'
+putdocx text ("Appendix 2 — Imputation")
 
-//// TODO: Reinstate
-//// `newpara'
-//// The following figures show the distributions of the original and a selection of 
-//// the imputed data.
-//// putdocx textblock end
-//// 
-//// foreach var of newlist y1-y5 y $imputeds { // newlist as vars only exist in (other) frames.
-////   display "${`var'_plot_fname}"
-////   putdocx image "${`var'_plot_fname}.png", linebreak
-//// }
+`newpara'
+The following figures show the distributions of the original and a selection of 
+the imputed data.
+putdocx textblock end
+
+foreach var of newlist y1-y5 y $imputeds { // newlist as vars only exist in (other) frames.
+  display "${`var'_plot_fname}"
+  putdocx image "${`var'_plot_fname}.png", linebreak
+}
 
 `heading'
 putdocx text ("Appendix 3 — Full Process Outcome Results")

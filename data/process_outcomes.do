@@ -43,11 +43,9 @@ foreach outcome of global process_outcomes {
 
     // Generate an indicator for whether each woman is aged > 40 years.
     generate age_over_40 = age > 40
-    label values age_over_40 yes_no_label
     
     // Generate an indicator for whether each woman is primiparous.
     rename bookprimi primiparous
-    label values primiparous yes_no_label
 
     // Keep only the variables of interest.
     keep y arm pregnancy visit clusterid $adj_var_names
@@ -86,7 +84,5 @@ foreach outcome of global process_outcomes {
 
     // TODO: If you generate an OR for this analysis, switch the birth outcomes
     // to OR, too. Make sure you update the report text if you change the link.
-
-    // TODO: Probably report OR and assumed and corresponding risks.
   }
 }

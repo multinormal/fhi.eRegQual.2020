@@ -1,7 +1,8 @@
 version 16.1
 
 // The number of imputations to perform.
-global m_imputations 50 // Very slightly narrower CI if m=100.
+// TODO: Set back to 50.
+global m_imputations 10 // Very slightly narrower CI if m=100.
 
 // Define the names of the process outcomes.
 global process_outcomes attendance hypertension diabetes malpresentation
