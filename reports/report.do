@@ -4,6 +4,7 @@ args filename
 
 // Some locals to make this file a little more readable.
 local heading putdocx paragraph, style(Heading1)
+local subhead putdocx paragraph, style(Heading2)
 local newpara putdocx textblock begin, halign(both)
 local putdocx textblock end putdocx textblock end
 
@@ -34,9 +35,8 @@ putdocx textblock end
 putdocx text ("Introduction")
 
 `newpara'
-This document presents the methods used to analyze the adverse pregnancy outcome 
-and process outcome data for the eRegQual trial and presents the corresponding 
-results.
+This document presents the methods used to analyze the adverse pregnancy and 
+process outcome data for the eRegQual trial and presents the results.
 putdocx textblock end
 
 // Methods section
@@ -83,7 +83,10 @@ For outcomes measured at multiple time points, we modelled clustering within
 each pregnancy using random-effects, and computed cluster-robust standard errors 
 to account for the cluster-randomized design. For outcomes measured at only one 
 time point within each pregnancy, we accounted for the cluster-randomized design 
-using random effects. No data were missing for these analyses.
+using random effects. For each of the process outcomes, we plotted marginal 
+predictive probabilities of attendance or successful screening and management 
+with respect to cluster size, laboratory availability, age, and parity. No data 
+were missing for the process outcome analyses.
 putdocx textblock end
 
 // TODO: Make sure that the adjustments desribed below are applied to all 
@@ -106,6 +109,10 @@ putdocx textblock end
 `heading'
 putdocx text ("Results")
 
+//// TODO: Reinstate
+//// `subhead'
+//// putdocx text ("Adverse pregnancy outcomes")
+
 // Verify some assumptions in this section.
 //// TODO: Reinstate
 //// assert ${p_mcar} > 0.05
@@ -120,7 +127,7 @@ putdocx text ("Results")
 //// composite outcome. We were unable to reject the MCAR and CDM hypotheses 
 //// (P=<<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P=
 //// <<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively). Distributions 
-//// of the original and the first five imputed data sets are shown in the Appendix. 
+//// of the original and the first five imputed data sets are shown in Appendix 1. 
 //// Table 1 shows the result of the adverse pregnancy outcome analysis. The risk 
 //// ratio was estimated to be <<dd_docx_display: string(${rr_b_y}, "`e_fmt'")>> 
 //// (95% CI <<dd_docx_display: string(${rr_ll_y}, "`e_fmt'")>> to 
@@ -145,6 +152,9 @@ putdocx text ("Results")
 ////     putdocx table tbl_`tbl_num'(2, 2) = ("Risk Ratio"), halign(right)
 ////   }
 //// }
+
+`subhead'
+putdocx text ("Process outcomes")
 
 foreach outcome of global process_outcomes {
   frame `outcome' {
@@ -208,10 +218,10 @@ Rubin, D. B. (2004). Multiple imputation for nonresponse in surveys (Vol. 81).
 John Wiley & Sons.
 putdocx textblock end
 
-// Appendix
+// Appendices
 //// TODO: Reinstate
 //// `heading'
-//// putdocx text ("Appendix")
+//// putdocx text ("Appendix 1 — Imputation")
 
 //// TODO: Reinstate
 //// `newpara'
@@ -223,6 +233,25 @@ putdocx textblock end
 ////   display "${`var'_plot_fname}"
 ////   putdocx image "${`var'_plot_fname}.png", linebreak
 //// }
+
+`heading'
+putdocx text ("Appendix 2 — Full Process Outcome Results")
+
+`newpara'
+The following tables show the full regression results for the process outcomes.
+putdocx textblock end
+
+foreach outcome of global process_outcomes {
+  frame `outcome' {
+    local ++tbl_num  
+    local var_label : variable label y
+    local title "Table `tbl_num'. `var_label'"
+    estimates replay `outcome'_estimates, or
+    putdocx table tbl_`tbl_num' = etable, title("`title'")
+    putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+    putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
+  }
+}
 
 // Save the report to the specified filename.
 putdocx save `"`filename'"', replace
