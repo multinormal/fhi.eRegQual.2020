@@ -101,9 +101,9 @@ analyzed in the arms to which they were randomized and — with the exception of
 the complete case analyses for the adverse pregnancy analysis — all participants 
 were included in the analyses. We computed 95% confidence intervals and used the 
 significance criterion P<0.05 throughout. Statistical analyses were performed 
-using Stata 16 (StataCorp LLC, College Station, Texas, USA). We masked the 
-treatment allocation from the statistician during analysis. Protocol deviations 
-are documented in Appendix 1.
+using Stata 16 (StataCorp LLC, College Station, Texas, USA). The statistician 
+was not involved in data collection and was blinded to treatment allocation 
+during analysis. Protocol deviations are documented in Appendix 1.
 putdocx textblock end
 
 // Results section
