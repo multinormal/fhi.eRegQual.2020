@@ -4,6 +4,7 @@ args filename
 
 // Some locals to make this file a little more readable.
 local heading putdocx paragraph, style(Heading1)
+local subhead putdocx paragraph, style(Heading2)
 local newpara putdocx textblock begin, halign(both)
 local putdocx textblock end putdocx textblock end
 
@@ -34,9 +35,8 @@ putdocx textblock end
 putdocx text ("Introduction")
 
 `newpara'
-This document presents the methods used to analyze the adverse pregnancy outcome 
-and process outcome data for the eRegQual trial and presents the corresponding 
-results.
+This document presents the methods used to analyze the adverse pregnancy and 
+process outcome data for the eRegQual trial and presents the results.
 putdocx textblock end
 
 // Methods section
@@ -77,13 +77,16 @@ putdocx text ("Methods")
 //// putdocx textblock end
 
 `newpara'
-We used logistic regression to estimate the relative odds of success 
-for each of the process outcomes under the treatment versus control conditions. 
-For outcomes measured at multiple time points, we modelled clustering within 
-each pregnancy using random-effects, and computed cluster-robust standard errors 
-to account for the cluster-randomized design. For outcomes measured at only one 
-time point within each pregnancy, we accounted for the cluster-randomized design 
-using random effects. No data were missing for these analyses.
+We used logistic regression to estimate the relative odds of each of the process 
+outcomes under the treatment versus control conditions. For outcomes measured at 
+multiple time points, we modelled clustering within each pregnancy using 
+random-effects, and computed cluster-robust standard errors to account for the 
+cluster-randomized design. For outcomes measured at only one time point within 
+each pregnancy, we accounted for the cluster-randomized design using random 
+effects. For each of the process outcomes, we plotted marginal predictive 
+probabilities of attendance or successful screening and management with respect 
+to cluster size, laboratory availability, age, and parity. No data were missing 
+for the process outcome analyses.
 putdocx textblock end
 
 // TODO: Make sure that the adjustments desribed below are applied to all 
@@ -98,13 +101,18 @@ analyzed in the arms to which they were randomized and — with the exception of
 the complete case analyses for the adverse pregnancy analysis — all participants 
 were included in the analyses. We computed 95% confidence intervals and used the 
 significance criterion P<0.05 throughout. Statistical analyses were performed 
-using Stata 16 (StataCorp LLC, College Station, Texas, USA). We masked the 
-treatment allocation from the statistician during analysis.
+using Stata 16 (StataCorp LLC, College Station, Texas, USA). The statistician 
+was not involved in data collection and was blinded to treatment allocation 
+during analysis. Protocol deviations are documented in Appendix 1.
 putdocx textblock end
 
 // Results section
 `heading'
 putdocx text ("Results")
+
+//// TODO: Reinstate
+//// `subhead'
+//// putdocx text ("Adverse pregnancy outcomes")
 
 // Verify some assumptions in this section.
 //// TODO: Reinstate
@@ -120,7 +128,7 @@ putdocx text ("Results")
 //// composite outcome. We were unable to reject the MCAR and CDM hypotheses 
 //// (P=<<dd_docx_display: string(${p_mcar}, "`p_fmt'")>> and P=
 //// <<dd_docx_display: string(${p_cdm}, "`p_fmt'")>>, respectively). Distributions 
-//// of the original and the first five imputed data sets are shown in the Appendix. 
+//// of the original and the first five imputed data sets are shown in Appendix 2. 
 //// Table 1 shows the result of the adverse pregnancy outcome analysis. The risk 
 //// ratio was estimated to be <<dd_docx_display: string(${rr_b_y}, "`e_fmt'")>> 
 //// (95% CI <<dd_docx_display: string(${rr_ll_y}, "`e_fmt'")>> to 
@@ -146,6 +154,9 @@ putdocx text ("Results")
 ////   }
 //// }
 
+`subhead'
+putdocx text ("Process outcomes")
+
 foreach outcome of global process_outcomes {
   frame `outcome' {
     local ++tbl_num  
@@ -166,8 +177,8 @@ foreach outcome of global process_outcomes {
 }
 
 `newpara'
-The following figures show marginal predictive probabilities for each of the 
-process outcomes.
+The following figures show marginal predictive probabilities for each process 
+outcome.
 putdocx textblock end
 
 foreach outcome of global process_outcomes {
@@ -208,10 +219,33 @@ Rubin, D. B. (2004). Multiple imputation for nonresponse in surveys (Vol. 81).
 John Wiley & Sons.
 putdocx textblock end
 
-// Appendix
+// Appendices
+
+`heading'
+putdocx text ("Appendix 1 — Protocol Deviations")
+
+`newpara'
+We planned to use generalized estimating equations (GEEs) to account for the 
+cluster-randomized design but used random-effect logistic regression 
+because it was necessary to analyze the process outcome data in which outcomes 
+are clustered within pregnancy (over time) and within clinic. Stata's XTGEE 
+command can compute robust standard errors that account for clustering within 
+pregnancy, but not additionally at the clinic level. We chose to use a common 
+model for all analyses, rather than use GEEs for some outcomes and logistic 
+regressions for others. We planned to report risk ratios, but report odds ratios 
+as provided by logistic regression. We did not plan to adjust for the 
+stratification variable or the variables used as constraints in the 
+randomization, but have done so based on guidance from the European Medicines 
+Agency and research that was not available when the protocol was being 
+developed. We planned to visually explore differences in process outcomes 
+between clusters using spider graphs but judged that plots of marginal 
+predictive probabilities show the required information more clearly and provide 
+confidence intervals.
+putdocx textblock end
+
 //// TODO: Reinstate
 //// `heading'
-//// putdocx text ("Appendix")
+//// putdocx text ("Appendix 2 — Imputation")
 
 //// TODO: Reinstate
 //// `newpara'
@@ -223,6 +257,25 @@ putdocx textblock end
 ////   display "${`var'_plot_fname}"
 ////   putdocx image "${`var'_plot_fname}.png", linebreak
 //// }
+
+`heading'
+putdocx text ("Appendix 3 — Full Process Outcome Results")
+
+`newpara'
+The following tables show the full regression results for the process outcomes.
+putdocx textblock end
+
+foreach outcome of global process_outcomes {
+  frame `outcome' {
+    local ++tbl_num  
+    local var_label : variable label y
+    local title "Table `tbl_num'. `var_label'"
+    estimates replay `outcome'_estimates, or
+    putdocx table tbl_`tbl_num' = etable, title("`title'")
+    putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+    putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
+  }
+}
 
 // Save the report to the specified filename.
 putdocx save `"`filename'"', replace
