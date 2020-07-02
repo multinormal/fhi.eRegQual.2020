@@ -149,31 +149,48 @@ frame imputed {
     local title "Table `tbl_num'. `var_label' (multiply-imputed result)"
     estimates replay `var'_estimates, eform
     putdocx table tbl_`tbl_num' = etable, title("`title'")
+    putdocx table tbl_`tbl_num'(2, 1) = (" ") // Remove outcome var name.
     putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+    local n_rows  23
+    local n_start 5
+    if "`var'" == "y2" local n_rows  16
+    if "`var'" == "y2" local n_start 5
+    forvalues i = `n_rows'(-1)`n_start' { // Drop rows not of interest.
+      putdocx table tbl_`tbl_num'(`i', .), drop
+    }
   }
 }
 
 `subhead'
-putdocx text ("Process outcomes")
+putdocx text ("Process outcomes — tables")
+
+`newpara'
+The following tables show odds ratios comparing treatment to control for each 
+process outcome. Full regression results are presented in Appendix 3.
+putdocx textblock end
 
 foreach outcome of global process_outcomes {
   frame `outcome' {
     local ++tbl_num  
     local var_label : variable label y
-    local title "Table `tbl_num'. `var_label'"
+    local title "Table `tbl_num'. `var_label' screening & management"
     estimates replay `outcome'_estimates, or
     putdocx table tbl_`tbl_num' = etable, title("`title'")
+    putdocx table tbl_`tbl_num'(2, 1) = (" ") // Remove outcome var name.
     putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
     putdocx table tbl_`tbl_num'(3, 2) = (""), halign(right) // Was "Coef."
-    local n_rows  26
+    local n_rows  24
     local n_start 6
-    if "`outcome'" == "malpresentation" local n_rows  25
+    if "`outcome'" == "malpresentation" local n_rows  23
     if "`outcome'" == "malpresentation" local n_start 5
     forvalues i = `n_rows'(-1)`n_start' { // Drop rows not of interest.
       putdocx table tbl_`tbl_num'(`i', .), drop
     }
   }
 }
+
+`subhead'
+putdocx text ("Process outcomes — figures")
 
 `newpara'
 The following figures show marginal predictive probabilities for each process 
@@ -256,9 +273,30 @@ foreach var of newlist y1-y5 y $imputeds { // newlist as vars only exist in (oth
 }
 
 `heading'
-putdocx text ("Appendix 3 — Full Process Outcome Results")
+putdocx text ("Appendix 3 — Full Regression Results")
+
+`subhead'
+putdocx text ("Health outcomes")
 
 `newpara'
+The following tables show the full regression results for the health outcomes.
+putdocx textblock end
+
+frame imputed {
+  foreach var of varlist y y1-y5 {
+    local ++tbl_num
+    local var_label : variable label `var'
+    local title "Table `tbl_num'. `var_label' (multiply-imputed result)"
+    estimates replay `var'_estimates, eform
+    putdocx table tbl_`tbl_num' = etable, title("`title'")
+    putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+  }
+}
+
+`subhead'
+putdocx text ("Process outcomes")
+`newpara'
+
 The following tables show the full regression results for the process outcomes.
 putdocx textblock end
 
@@ -266,7 +304,7 @@ foreach outcome of global process_outcomes {
   frame `outcome' {
     local ++tbl_num  
     local var_label : variable label y
-    local title "Table `tbl_num'. `var_label'"
+    local title "Table `tbl_num'. `var_label' screening & management"
     estimates replay `outcome'_estimates, or
     putdocx table tbl_`tbl_num' = etable, title("`title'")
     putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
