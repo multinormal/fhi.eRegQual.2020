@@ -8,6 +8,7 @@ local attendance_margins_title      "`mpo' ANC attendance"
 local hypertension_margins_title    "`mpo' hypertension" "screening & management"
 local diabetes_margins_title        "`mpo' diabetes" "screening & management"
 local malpresentation_margins_title "`mpo' malpresentation" "screening & management"
+local anemia_margins_title          "`mpo' anemia" "screening & management"
 
 // Define the names and number of variables over which to make marginsplots.
 local margin_vars = ustrtrim(usubinstr("$adj_var_names", "strat_var", "", .))
