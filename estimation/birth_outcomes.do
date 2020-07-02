@@ -39,9 +39,17 @@ frame `imputed' {
     // can exist between the stratification variable and the dependent variable.
     // See the assert below, which specifies when this happens.
 
-  foreach var of varlist y y1-y5 { 
-    // Estimate population averaged effects.
-    mi estimate, `mi_opts': `model'
+  foreach var of varlist y y1-y5 {
+    local this_model "`model'"
+    if "`var'" == "y2" {
+      // For this variable, the stratification variable predicts outcome
+      // perfectly for one of the districts in some imputations, resulting in 
+      // it being dropped from analysis in some analyses of imputed data sets,
+      // resulting in an error in mi estimate.
+      local this_model = ustrtrim(usubinstr("`this_model'", "i.strat_var", "", .))
+    }
+
+    mi estimate, `mi_opts': `this_model'
     estimates store `var'_estimates
 
     // Verify that the anticipated imputations were used.
