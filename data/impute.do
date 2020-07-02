@@ -12,20 +12,18 @@ frame imputed {
 
   // Perform imputation. Due to collinearity between the constituent outcome
   // variables y1-y5, these variables are exluded as predictors for one another.
-  // This is achieved by specifying the noimputed option, followed by the include
-  // option that explicityly lists the imputed variables to include in the
-  // imputation model. Specifying the omit option did not work as expected. It was
-  // not possible to include other variables in the model for the constituent
-  // outcome variables, also due to collinearity.
-  local adj_vars = "$adj_vars"
-  local adj_vars = ustrtrim(usubinstr("`adj_vars'", "i.age_over_40", "", .))
-    // Remove age_over_40 as we compute it below from imputed age.
-  local adj_vars = ustrtrim(usubinstr("`adj_vars'", "i.primiparous", "", .))
-    // Remove primiparous as it needs to be imputed.
-  mi impute chained (regress)                                       $imputeds ///
-                    (logit, noimputed include(`imputeds' `adj_vars')) y1-y5   ///
-                    = i.arm i.lab_available i.us_available , /// c.cluster_size,    ///
-                    augment add($m_imputations) 
+  // It was not possible to include the stratification variable due to perfect
+  // prediction (possibly too many variables in the models?)
+  mi impute chained                                                    ///
+    (regress)                           age bmi education log_income   ///
+    (logit)                             primiparous                    ///
+    (logit, omit(i.y2 i.y3 i.y4 i.y5))  y1                             ///
+    (logit, omit(i.y1 i.y3 i.y4 i.y5))  y2                             ///
+    (logit, omit(i.y1 i.y2 i.y4 i.y5))  y3                             ///
+    (logit, omit(i.y1 i.y2 i.y3 i.y5))  y4                             ///
+    (logit, omit(i.y1 i.y2 i.y3 i.y4))  y5                             ///
+    = i.arm c.cluster_size i.us_available i.lab_available, ///
+    add($m_imputations)
 
   // Compute age over 40, which is based on age, which is imputed.
   mi passive: generate age_over_40 = age > 40
