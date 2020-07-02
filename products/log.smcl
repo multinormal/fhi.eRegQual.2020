@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 1 Jul 2020, 17:14:29
+ {txt}opened on:  {res} 2 Jul 2020, 09:38:26
 {txt}
 {com}. 
 . // Set up Stata.
@@ -119,6 +119,7 @@
 .   // Convert the stratification variable from string to integer.
 .   encode bookorgdistricthashed, generate(strat_var)
 .   label variable strat_var District
+.   fvset base 1 strat_var
 .   global regulars $regulars strat_var
 . 
 .   // Rename and label the cluster identifier variable.
@@ -299,51 +300,49 @@
 . 
 .   // Perform imputation. Due to collinearity between the constituent outcome
 .   // variables y1-y5, these variables are exluded as predictors for one another.
-.   // This is achieved by specifying the noimputed option, followed by the include
-.   // option that explicityly lists the imputed variables to include in the
-.   // imputation model. Specifying the omit option did not work as expected. It was
-.   // not possible to include other variables in the model for the constituent
-.   // outcome variables, also due to collinearity.
-.   local adj_vars = "$adj_vars"
-.   local adj_vars = ustrtrim(usubinstr("`adj_vars'", "i.age_over_40", "", .))
-.     // Remove age_over_40 as we compute it below from imputed age.
-.   local adj_vars = ustrtrim(usubinstr("`adj_vars'", "i.primiparous", "", .))
-.     // Remove primiparous as it needs to be imputed.
-.   mi impute chained (regress)                                       $imputeds ///
->                     (logit, noimputed include(`imputeds' `adj_vars')) y1-y5   ///
->                     = i.arm i.lab_available i.us_available , /// c.cluster_size,    ///
->                     augment add($m_imputations) 
+.   // It was not possible to include the stratification variable due to perfect
+.   // prediction (possibly too many variables in the models?)
+.   mi impute chained                                                    ///
+>     (regress)                           age bmi education log_income   ///
+>     (logit)                             primiparous                    ///
+>     (logit, omit(i.y2 i.y3 i.y4 i.y5))  y1                             ///
+>     (logit, omit(i.y1 i.y3 i.y4 i.y5))  y2                             ///
+>     (logit, omit(i.y1 i.y2 i.y4 i.y5))  y3                             ///
+>     (logit, omit(i.y1 i.y2 i.y3 i.y5))  y4                             ///
+>     (logit, omit(i.y1 i.y2 i.y3 i.y4))  y5                             ///
+>     = i.arm c.cluster_size i.us_available i.lab_available, ///
+>     add($m_imputations)
 {res}
 {txt}Conditional models:
 {p 15 21 2}
-{bf:age}: regress age primiparous education log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{bf:age}: regress age i.primiparous education log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 7 21 2}
-{bf:primiparous}: regress primiparous age education log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{bf:primiparous}: logit primiparous age education log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 9 21 2}
-{bf:education}: regress education age primiparous log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{bf:education}: regress education age i.primiparous log_income i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 8 21 2}
-{bf:log_income}: regress log_income age primiparous education i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{bf:log_income}: regress log_income age i.primiparous education i.y3 i.y5 i.y4 bmi i.y1 i.y2 ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 16 21 2}
-{bf:y3}: logit y3 i.strat_var cluster_size i.lab_available ib1.arm i.us_available , augment
+{bf:y3}: logit y3 age i.primiparous education log_income bmi ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 16 21 2}
-{bf:y5}: logit y5 i.strat_var cluster_size i.lab_available ib1.arm i.us_available , augment
+{bf:y5}: logit y5 age i.primiparous education log_income bmi ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 16 21 2}
-{bf:y4}: logit y4 i.strat_var cluster_size i.lab_available ib1.arm i.us_available , augment
+{bf:y4}: logit y4 age i.primiparous education log_income bmi ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 15 21 2}
-{bf:bmi}: regress bmi age primiparous education log_income i.y3 i.y5 i.y4 i.y1 i.y2 ib1.arm i.lab_available i.us_available
+{bf:bmi}: regress bmi age i.primiparous education log_income i.y3 i.y5 i.y4 i.y1 i.y2 ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 16 21 2}
-{bf:y1}: logit y1 i.strat_var cluster_size i.lab_available ib1.arm i.us_available , augment
+{bf:y1}: logit y1 age i.primiparous education log_income bmi ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 {p 16 21 2}
-{bf:y2}: logit y2 i.strat_var cluster_size i.lab_available ib1.arm i.us_available , augment
+{bf:y2}: logit y2 age i.primiparous education log_income bmi ib1.arm cluster_size i.us_available i.lab_available
 {p_end}
 
 {res}{txt}Performing chained iterations ...
@@ -359,9 +358,9 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}      10
 {txt}{p 15 15 2}{bf:bmi}: linear regression{p_end}
 {txt}{p 9 15 2}{bf:education}: linear regression{p_end}
 {txt}{p 8 15 2}{bf:log_income}: linear regression{p_end}
-{txt}{p 7 15 2}{bf:primiparous}: linear regression{p_end}
+{txt}{p 7 15 2}{bf:primiparous}: logistic regression{p_end}
 {txt}{p 16 15 2}{bf:y1}: logistic regression{p_end}
-{txt}{p 16 15 2}{bf:y2}: augmented logistic regression{p_end}
+{txt}{p 16 15 2}{bf:y2}: logistic regression{p_end}
 {txt}{p 16 15 2}{bf:y3}: logistic regression{p_end}
 {txt}{p 16 15 2}{bf:y4}: logistic regression{p_end}
 {txt}{p 16 15 2}{bf:y5}: logistic regression{p_end}
@@ -464,48 +463,48 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}      10
 {res}{txt}{it:m}=0:
 (2,818 real changes made)
 {res}{txt}{it:m}=1:
-(4,758 real changes made)
+(4,757 real changes made)
 {res}{txt}{it:m}=2:
-(4,756 real changes made)
+(4,740 real changes made)
 {res}{txt}{it:m}=3:
-(4,750 real changes made)
+(4,727 real changes made)
 {res}{txt}{it:m}=4:
-(4,773 real changes made)
+(4,761 real changes made)
 {res}{txt}{it:m}=5:
-(4,774 real changes made)
+(4,763 real changes made)
 {res}{txt}{it:m}=6:
-(4,786 real changes made)
-{res}{txt}{it:m}=7:
-(4,758 real changes made)
-{res}{txt}{it:m}=8:
 (4,756 real changes made)
-{res}{txt}{it:m}=9:
+{res}{txt}{it:m}=7:
 (4,750 real changes made)
+{res}{txt}{it:m}=8:
+(4,732 real changes made)
+{res}{txt}{it:m}=9:
+(4,741 real changes made)
 {res}{txt}{it:m}=10:
-(4,749 real changes made)
+(4,758 real changes made)
 {res}{com}.   mi passive: replace  y = 1 if `one_true'
 {res}{txt}{it:m}=0:
 (1,396 real changes made)
 {res}{txt}{it:m}=1:
-(1,609 real changes made)
+(1,610 real changes made)
 {res}{txt}{it:m}=2:
-(1,611 real changes made)
+(1,627 real changes made)
 {res}{txt}{it:m}=3:
-(1,617 real changes made)
+(1,640 real changes made)
 {res}{txt}{it:m}=4:
-(1,594 real changes made)
+(1,606 real changes made)
 {res}{txt}{it:m}=5:
-(1,593 real changes made)
+(1,604 real changes made)
 {res}{txt}{it:m}=6:
-(1,581 real changes made)
-{res}{txt}{it:m}=7:
-(1,609 real changes made)
-{res}{txt}{it:m}=8:
 (1,611 real changes made)
-{res}{txt}{it:m}=9:
+{res}{txt}{it:m}=7:
 (1,617 real changes made)
+{res}{txt}{it:m}=8:
+(1,635 real changes made)
+{res}{txt}{it:m}=9:
+(1,626 real changes made)
 {res}{txt}{it:m}=10:
-(1,618 real changes made)
+(1,609 real changes made)
 {res}{com}.   label variable y "Adverse pregnancy outcome"
 . 
 .   // Verify that we can correctly recompute the composite outcome using the
@@ -630,7 +629,7 @@ success_attendance_1 success_attendance_2 ... success_attendance_5{txt}->{res}su
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}   >500          1        6367
+     pregnancy {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}   >500          2        6366
          visit {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}      5          1           5
      clusterid {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}    119          1         120
    primiparous {c |}{space 10}{space 10}{res}    21,703{txt}  {c |}      2          0           1
@@ -727,7 +726,7 @@ Number of obs.                 {res}    6367   {txt}->{res}    6367
 {col 16}{c |}{col 49}{c |} Unique
 {col 7}Variable {c |}{col 22}Obs=.{col 32}Obs>.{col 42}Obs<.{col 49}{c |} values{col 65}Min{col 77}Max
   {hline 13}{c +}{hline 32}{c +}{hline 30}
-     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500          6        6367
+     pregnancy {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}   >500         16        6366
          visit {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      1          1           1
      clusterid {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}    116          1         120
    primiparous {c |}{space 10}{space 10}{res}     1,940{txt}  {c |}      2          0           1
@@ -962,921 +961,972 @@ Total{res}{col 23} 933.53773{col 34} 4,213{col 43} .22158503
 {p_end}
 {res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
 {com}. 
-.   local mi_opts    or errorok
-.     // The errorok option are neeeded because, by chance, collinearity
-.     // can exist between the stratification variable and the dependent variable.
-.     // See the assert below, which specifies when this happens.
-. 
-.   foreach var of varlist y y1-y5 {c -(} 
-{txt}  2{com}.     // Estimate population averaged effects.
-.     mi estimate, `mi_opts': `model'
-{txt}  3{com}.     estimates store `var'_estimates
-{txt}  4{com}. 
-.     // Verify that the anticipated imputations were used.
-.     if ("`var'" != "y2") assert e(M_mi) == $m_imputations
-{txt}  5{com}.     if ("`var'" == "y2") assert e(M_mi) >=  0.7 * $m_imputations
-{txt}  6{com}.     
-.     // Make globals containing key results.
-.     matrix result      = r(table)
-{txt}  7{com}.     global rr_b_`var'  = result["b",      "`var':2.arm"]
-{txt}  8{com}.     global rr_ll_`var' = result["ll",     "`var':2.arm"]
-{txt}  9{com}.     global rr_ul_`var' = result["ul",     "`var':2.arm"]
-{txt} 10{com}.     global rr_p_`var'  = result["pvalue", "`var':2.arm"]
-{txt} 11{com}.   {c )-}
-{res}{err}no imputations to compute between-imputation variance
-{txt}{search r(2000), local:r(2000);}
-{com}. {c )-}
-{txt}{search r(2000), local:r(2000);}
-
-end of do-file
-{search r(2000), local:r(2000);}
-
-end of do-file
-
-{search r(2000), local:r(2000);}
-
-{com}. do estimation/birth_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Specify the model.
-. local model xtlogit \`var' i.arm $adj_vars
-{txt}
-{com}. 
-. // Compute the complete case estimate.
-. tempname original
-{txt}
-{com}. frame copy imputed `original'
-{txt}
-{com}. frame `original' {c -(}
-.   // Fit the model.
-.   mi extract 0, clear
-.   xtset clusterid
-{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}.   local var y
-.   `model', or
-
-{txt}Fitting comparison model:
-
-{res}{txt}Iteration 0:{space 3}log likelihood = {res:-2639.2383}  
-Iteration 1:{space 3}log likelihood = {res:-2627.8275}  
-Iteration 2:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Fitting full model:
-
-tau = {res} 0.0     {txt}log likelihood = {res}-2627.8022
-{txt}tau = {res} 0.1     {txt}log likelihood = {res}-2642.2346
-
-{txt}Iteration 0:{space 3}log likelihood = {res:-2642.2358}  
-Iteration 1:{space 3}log likelihood = {res:-2629.6146}  
-Iteration 2:{space 3}log likelihood = {res:-2628.1703}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8763}  
-Iteration 4:{space 3}log likelihood = {res:-2627.8198}  
-Iteration 5:{space 3}log likelihood = {res:-2627.8063}  
-Iteration 6:{space 3}log likelihood = {res: -2627.803}  
-Iteration 7:{space 3}log likelihood = {res:-2627.8023}  
-Iteration 8:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 9:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     4,157
-{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
-
-{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
-{col 63}min{col 67}={col 69}{res}         6
-{txt}{col 63}avg{col 67}={col 69}{res}      34.9
-{txt}{col 63}max{col 67}={col 69}{res}       139
-
-{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
-
-{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    22.58
-{txt}Log likelihood  = {res}-2627.8022{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0072
-
-{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
-{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 10}arm {c |}
-{space 11}D  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.07{col 38}{space 1}   -0.29{col 47}{space 3} 0.77{col 55}{space 4}     0.86{col 68}{space 3}     1.12
-{txt}{space 13} {c |}
-{space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.29{col 27}{space 2}     0.15{col 38}{space 1}    2.16{col 47}{space 3} 0.03{col 55}{space 4}     1.02{col 68}{space 3}     1.63
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.92{col 27}{space 2}     0.14{col 38}{space 1}   -0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.68{col 68}{space 3}     1.25
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.13{col 38}{space 1}    0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.84{col 68}{space 3}     1.35
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.16{col 38}{space 1}    2.77{col 47}{space 3} 0.01{col 55}{space 4}     1.10{col 68}{space 3}     1.74
-{txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.84{col 27}{space 2}     0.07{col 38}{space 1}   -2.11{col 47}{space 3} 0.03{col 55}{space 4}     0.71{col 68}{space 3}     0.99
-{txt}{space 13} {c |}
-lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.17{col 27}{space 2}     0.09{col 38}{space 1}    1.95{col 47}{space 3} 0.05{col 55}{space 4}     1.00{col 68}{space 3}     1.37
-{txt}{space 13} {c |}
-{space 2}age_over_40 {c |}
-{space 3}>40 years  {c |}{col 15}{res}{space 2}     1.61{col 27}{space 2}     0.38{col 38}{space 1}    2.02{col 47}{space 3} 0.04{col 55}{space 4}     1.01{col 68}{space 3}     2.57
-{txt}{space 13} {c |}
-{space 2}primiparous {c |}
-{space 1}Primiparous  {c |}{col 15}{res}{space 2}     0.93{col 27}{space 2}     0.07{col 38}{space 1}   -0.96{col 47}{space 3} 0.34{col 55}{space 4}     0.79{col 68}{space 3}     1.08
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.44{col 27}{space 2}     0.06{col 38}{space 1}   -6.55{col 47}{space 3} 0.00{col 55}{space 4}     0.35{col 68}{space 3}     0.57
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -14.02{col 27}{space 2}    21.55{col 55}{space 4}   -56.26{col 68}{space 3}    28.23
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3} 1.35e+06
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
-{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.00{col 56}{txt}Prob >= chibar2 = {res}1.000
-{com}.   estimates store complete_case_estimates
-. 
-.   // Make globals containing key results.
-.   matrix result   = r(table)
-.   global cc_or_b  = result["b",      "`var':2.arm"]
-.   global cc_or_ll = result["ll",     "`var':2.arm"]
-.   global cc_or_ul = result["ul",     "`var':2.arm"]
-.   global cc_or_p  = result["pvalue", "`var':2.arm"]
-. 
-.   // Estimate ICC.
-.   loneway `var' clusterid
-
-         {txt}One-way Analysis of Variance for y: Adverse pregnancy outcome
-
-                                             Number of obs = {res}       4,214
-                                                 {txt}R-squared = {res}      0.0276
-
-{txt}{col 5}Source{col 27}SS{col 38}df{col 46}MS{col 60}F{col 66}Prob > F
-{hline 73}
-Between clusterid{res}{col 23} 25.750506{col 34}   118{col 43} .21822463{col 54}     0.98{col 68}0.5307
-{txt}Within clusterid{res}{col 23} 907.78723{col 34} 4,095{col 43} .22168186
-{txt}{hline 73}
-Total{res}{col 23} 933.53773{col 34} 4,213{col 43} .22158503
-
-{txt}{col 10}Intraclass{col 27}Asy.{col 39}
-{col 10}correlation{col 27}S.E.{col 38}[95% Conf. Interval]
-         {hline 48}
-          {res}  0.00000{txt}*  {res}  0.00374       0.00000     0.00734
-
-{txt}{col 10}Estimated SD of clusterid effect{res}{col 49}        .
-{txt}{col 10}Estimated SD within clusterid{res}{col 49}  .470831
-{txt}{col 10}Est. reliability of a clusterid mean{res}{col 49}  0.00000{txt}*
-{col 15}(evaluated at n={res}35.27{txt})
-
-(*) Truncated at zero.
-{com}.   global icc    = r(rho)
-.   global icc_lb = r(lb)
-.   global icc_ub = r(ub)
-. {c )-}
-{txt}
-{com}. 
-. // Compute the multiply-imputed estimates.
-. tempname imputed
-{txt}
-{com}. frame copy imputed `imputed'
-{txt}
-{com}. frame `imputed' {c -(}
-.   mi xtset clusterid
-{res}{txt}{p}
-(passive variables
-{res}__000000 __000001
-{txt}unregistered because not in {it:m}=0)
-{p_end}
-{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}. 
-.   local mi_opts    or errorok
-.     // The errorok option are neeeded because, by chance, collinearity
-.     // can exist between the stratification variable and the dependent variable.
-.     // See the assert below, which specifies when this happens.
-. 
-.   foreach var of varlist y y1-y5 {c -(} 
-{txt}  2{com}.     // Estimate population averaged effects.
-.     mi estimate, `mi_opts': `model'
-{txt}  3{com}.     estimates store `var'_estimates
-{txt}  4{com}. 
-.     // Verify that the anticipated imputations were used.
-.     if ("`var'" != "y2") assert e(M_mi) == $m_imputations
-{txt}  5{com}.     if ("`var'" == "y2") assert e(M_mi) >=  0.7 * $m_imputations
-{txt}  6{com}.     
-.     // Make globals containing key results.
-.     matrix result      = r(table)
-{txt}  7{com}.     global rr_b_`var'  = result["b",      "`var':2.arm"]
-{txt}  8{com}.     global rr_ll_`var' = result["ll",     "`var':2.arm"]
-{txt}  9{com}.     global rr_ul_`var' = result["ul",     "`var':2.arm"]
-{txt} 10{com}.     global rr_p_`var'  = result["pvalue", "`var':2.arm"]
-{txt} 11{com}.   {c )-}
-{res}{err}no imputations to compute between-imputation variance
-{txt}{search r(2000), local:r(2000);}
-{com}. {c )-}
-{txt}{search r(2000), local:r(2000);}
-
-end of do-file
-
-{search r(2000), local:r(2000);}
-
-{com}. do estimation/birth_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Specify the model.
-. local model xtlogit \`var' i.arm $adj_vars
-{txt}
-{com}. 
-. // Compute the complete case estimate.
-. tempname original
-{txt}
-{com}. frame copy imputed `original'
-{txt}
-{com}. frame `original' {c -(}
-.   // Fit the model.
-.   mi extract 0, clear
-.   xtset clusterid
-{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}.   local var y
-.   `model', or
-
-{txt}Fitting comparison model:
-
-{res}{txt}Iteration 0:{space 3}log likelihood = {res:-2639.2383}  
-Iteration 1:{space 3}log likelihood = {res:-2627.8275}  
-Iteration 2:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Fitting full model:
-
-tau = {res} 0.0     {txt}log likelihood = {res}-2627.8022
-{txt}tau = {res} 0.1     {txt}log likelihood = {res}-2642.2346
-
-{txt}Iteration 0:{space 3}log likelihood = {res:-2642.2358}  
-Iteration 1:{space 3}log likelihood = {res:-2629.6146}  
-Iteration 2:{space 3}log likelihood = {res:-2628.1703}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8763}  
-Iteration 4:{space 3}log likelihood = {res:-2627.8198}  
-Iteration 5:{space 3}log likelihood = {res:-2627.8063}  
-Iteration 6:{space 3}log likelihood = {res: -2627.803}  
-Iteration 7:{space 3}log likelihood = {res:-2627.8023}  
-Iteration 8:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 9:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     4,157
-{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
-
-{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
-{col 63}min{col 67}={col 69}{res}         6
-{txt}{col 63}avg{col 67}={col 69}{res}      34.9
-{txt}{col 63}max{col 67}={col 69}{res}       139
-
-{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
-
-{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    22.58
-{txt}Log likelihood  = {res}-2627.8022{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0072
-
-{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
-{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 10}arm {c |}
-{space 11}D  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.07{col 38}{space 1}   -0.29{col 47}{space 3} 0.77{col 55}{space 4}     0.86{col 68}{space 3}     1.12
-{txt}{space 13} {c |}
-{space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.29{col 27}{space 2}     0.15{col 38}{space 1}    2.16{col 47}{space 3} 0.03{col 55}{space 4}     1.02{col 68}{space 3}     1.63
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.92{col 27}{space 2}     0.14{col 38}{space 1}   -0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.68{col 68}{space 3}     1.25
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.13{col 38}{space 1}    0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.84{col 68}{space 3}     1.35
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.16{col 38}{space 1}    2.77{col 47}{space 3} 0.01{col 55}{space 4}     1.10{col 68}{space 3}     1.74
-{txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.84{col 27}{space 2}     0.07{col 38}{space 1}   -2.11{col 47}{space 3} 0.03{col 55}{space 4}     0.71{col 68}{space 3}     0.99
-{txt}{space 13} {c |}
-lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.17{col 27}{space 2}     0.09{col 38}{space 1}    1.95{col 47}{space 3} 0.05{col 55}{space 4}     1.00{col 68}{space 3}     1.37
-{txt}{space 13} {c |}
-{space 2}age_over_40 {c |}
-{space 3}>40 years  {c |}{col 15}{res}{space 2}     1.61{col 27}{space 2}     0.38{col 38}{space 1}    2.02{col 47}{space 3} 0.04{col 55}{space 4}     1.01{col 68}{space 3}     2.57
-{txt}{space 13} {c |}
-{space 2}primiparous {c |}
-{space 1}Primiparous  {c |}{col 15}{res}{space 2}     0.93{col 27}{space 2}     0.07{col 38}{space 1}   -0.96{col 47}{space 3} 0.34{col 55}{space 4}     0.79{col 68}{space 3}     1.08
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.44{col 27}{space 2}     0.06{col 38}{space 1}   -6.55{col 47}{space 3} 0.00{col 55}{space 4}     0.35{col 68}{space 3}     0.57
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -14.02{col 27}{space 2}    21.55{col 55}{space 4}   -56.26{col 68}{space 3}    28.23
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3} 1.35e+06
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
-{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.00{col 56}{txt}Prob >= chibar2 = {res}1.000
-{com}.   estimates store complete_case_estimates
-. 
-.   // Make globals containing key results.
-.   matrix result   = r(table)
-.   global cc_or_b  = result["b",      "`var':2.arm"]
-.   global cc_or_ll = result["ll",     "`var':2.arm"]
-.   global cc_or_ul = result["ul",     "`var':2.arm"]
-.   global cc_or_p  = result["pvalue", "`var':2.arm"]
-. 
-.   // Estimate ICC.
-.   loneway `var' clusterid
-
-         {txt}One-way Analysis of Variance for y: Adverse pregnancy outcome
-
-                                             Number of obs = {res}       4,214
-                                                 {txt}R-squared = {res}      0.0276
-
-{txt}{col 5}Source{col 27}SS{col 38}df{col 46}MS{col 60}F{col 66}Prob > F
-{hline 73}
-Between clusterid{res}{col 23} 25.750506{col 34}   118{col 43} .21822463{col 54}     0.98{col 68}0.5307
-{txt}Within clusterid{res}{col 23} 907.78723{col 34} 4,095{col 43} .22168186
-{txt}{hline 73}
-Total{res}{col 23} 933.53773{col 34} 4,213{col 43} .22158503
-
-{txt}{col 10}Intraclass{col 27}Asy.{col 39}
-{col 10}correlation{col 27}S.E.{col 38}[95% Conf. Interval]
-         {hline 48}
-          {res}  0.00000{txt}*  {res}  0.00374       0.00000     0.00734
-
-{txt}{col 10}Estimated SD of clusterid effect{res}{col 49}        .
-{txt}{col 10}Estimated SD within clusterid{res}{col 49}  .470831
-{txt}{col 10}Est. reliability of a clusterid mean{res}{col 49}  0.00000{txt}*
-{col 15}(evaluated at n={res}35.27{txt})
-
-(*) Truncated at zero.
-{com}.   global icc    = r(rho)
-.   global icc_lb = r(lb)
-.   global icc_ub = r(ub)
-. {c )-}
-{txt}
-{com}. 
-. display "Got here"
-{res}Got here
-{txt}
-{com}. 
-. // Compute the multiply-imputed estimates.
-. tempname imputed
-{txt}
-{com}. frame copy imputed `imputed'
-{txt}
-{com}. frame `imputed' {c -(}
-.   mi xtset clusterid
-{res}{txt}{p}
-(passive variables
-{res}__000000 __000001
-{txt}unregistered because not in {it:m}=0)
-{p_end}
-{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}. 
-.   local mi_opts    or errorok
-.     // The errorok option are neeeded because, by chance, collinearity
-.     // can exist between the stratification variable and the dependent variable.
-.     // See the assert below, which specifies when this happens.
-. 
-.   foreach var of varlist y y1-y5 {c -(} 
-{txt}  2{com}.     // Estimate population averaged effects.
-.     mi estimate, `mi_opts': `model'
-{txt}  3{com}.     estimates store `var'_estimates
-{txt}  4{com}. 
-.     // Verify that the anticipated imputations were used.
-.     if ("`var'" != "y2") assert e(M_mi) == $m_imputations
-{txt}  5{com}.     if ("`var'" == "y2") assert e(M_mi) >=  0.7 * $m_imputations
-{txt}  6{com}.     
-.     // Make globals containing key results.
-.     matrix result      = r(table)
-{txt}  7{com}.     global rr_b_`var'  = result["b",      "`var':2.arm"]
-{txt}  8{com}.     global rr_ll_`var' = result["ll",     "`var':2.arm"]
-{txt}  9{com}.     global rr_ul_`var' = result["ul",     "`var':2.arm"]
-{txt} 10{com}.     global rr_p_`var'  = result["pvalue", "`var':2.arm"]
-{txt} 11{com}.   {c )-}
-{res}{err}no imputations to compute between-imputation variance
-{txt}{search r(2000), local:r(2000);}
-{com}. {c )-}
-{txt}{search r(2000), local:r(2000);}
-
-end of do-file
-
-{search r(2000), local:r(2000);}
-
-{com}. do estimation/birth_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Specify the model.
-. local model xtlogit \`var' i.arm $adj_vars
-{txt}
-{com}. 
-. // Compute the complete case estimate.
-. tempname original
-{txt}
-{com}. frame copy imputed `original'
-{txt}
-{com}. frame `original' {c -(}
-.   // Fit the model.
-.   mi extract 0, clear
-.   xtset clusterid
-{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}.   local var y
-.   `model', or
-
-{txt}Fitting comparison model:
-
-{res}{txt}Iteration 0:{space 3}log likelihood = {res:-2639.2383}  
-Iteration 1:{space 3}log likelihood = {res:-2627.8275}  
-Iteration 2:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Fitting full model:
-
-tau = {res} 0.0     {txt}log likelihood = {res}-2627.8022
-{txt}tau = {res} 0.1     {txt}log likelihood = {res}-2642.2346
-
-{txt}Iteration 0:{space 3}log likelihood = {res:-2642.2358}  
-Iteration 1:{space 3}log likelihood = {res:-2629.6146}  
-Iteration 2:{space 3}log likelihood = {res:-2628.1703}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8763}  
-Iteration 4:{space 3}log likelihood = {res:-2627.8198}  
-Iteration 5:{space 3}log likelihood = {res:-2627.8063}  
-Iteration 6:{space 3}log likelihood = {res: -2627.803}  
-Iteration 7:{space 3}log likelihood = {res:-2627.8023}  
-Iteration 8:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 9:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     4,157
-{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
-
-{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
-{col 63}min{col 67}={col 69}{res}         6
-{txt}{col 63}avg{col 67}={col 69}{res}      34.9
-{txt}{col 63}max{col 67}={col 69}{res}       139
-
-{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
-
-{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    22.58
-{txt}Log likelihood  = {res}-2627.8022{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0072
-
-{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
-{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 10}arm {c |}
-{space 11}D  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.07{col 38}{space 1}   -0.29{col 47}{space 3} 0.77{col 55}{space 4}     0.86{col 68}{space 3}     1.12
-{txt}{space 13} {c |}
-{space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.29{col 27}{space 2}     0.15{col 38}{space 1}    2.16{col 47}{space 3} 0.03{col 55}{space 4}     1.02{col 68}{space 3}     1.63
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.92{col 27}{space 2}     0.14{col 38}{space 1}   -0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.68{col 68}{space 3}     1.25
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.13{col 38}{space 1}    0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.84{col 68}{space 3}     1.35
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.16{col 38}{space 1}    2.77{col 47}{space 3} 0.01{col 55}{space 4}     1.10{col 68}{space 3}     1.74
-{txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.84{col 27}{space 2}     0.07{col 38}{space 1}   -2.11{col 47}{space 3} 0.03{col 55}{space 4}     0.71{col 68}{space 3}     0.99
-{txt}{space 13} {c |}
-lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.17{col 27}{space 2}     0.09{col 38}{space 1}    1.95{col 47}{space 3} 0.05{col 55}{space 4}     1.00{col 68}{space 3}     1.37
-{txt}{space 13} {c |}
-{space 2}age_over_40 {c |}
-{space 3}>40 years  {c |}{col 15}{res}{space 2}     1.61{col 27}{space 2}     0.38{col 38}{space 1}    2.02{col 47}{space 3} 0.04{col 55}{space 4}     1.01{col 68}{space 3}     2.57
-{txt}{space 13} {c |}
-{space 2}primiparous {c |}
-{space 1}Primiparous  {c |}{col 15}{res}{space 2}     0.93{col 27}{space 2}     0.07{col 38}{space 1}   -0.96{col 47}{space 3} 0.34{col 55}{space 4}     0.79{col 68}{space 3}     1.08
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.44{col 27}{space 2}     0.06{col 38}{space 1}   -6.55{col 47}{space 3} 0.00{col 55}{space 4}     0.35{col 68}{space 3}     0.57
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -14.02{col 27}{space 2}    21.55{col 55}{space 4}   -56.26{col 68}{space 3}    28.23
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3} 1.35e+06
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
-{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.00{col 56}{txt}Prob >= chibar2 = {res}1.000
-{com}.   estimates store complete_case_estimates
-. 
-.   // Make globals containing key results.
-.   matrix result   = r(table)
-.   global cc_or_b  = result["b",      "`var':2.arm"]
-.   global cc_or_ll = result["ll",     "`var':2.arm"]
-.   global cc_or_ul = result["ul",     "`var':2.arm"]
-.   global cc_or_p  = result["pvalue", "`var':2.arm"]
-. 
-.   // Estimate ICC.
-.   loneway `var' clusterid
-
-         {txt}One-way Analysis of Variance for y: Adverse pregnancy outcome
-
-                                             Number of obs = {res}       4,214
-                                                 {txt}R-squared = {res}      0.0276
-
-{txt}{col 5}Source{col 27}SS{col 38}df{col 46}MS{col 60}F{col 66}Prob > F
-{hline 73}
-Between clusterid{res}{col 23} 25.750506{col 34}   118{col 43} .21822463{col 54}     0.98{col 68}0.5307
-{txt}Within clusterid{res}{col 23} 907.78723{col 34} 4,095{col 43} .22168186
-{txt}{hline 73}
-Total{res}{col 23} 933.53773{col 34} 4,213{col 43} .22158503
-
-{txt}{col 10}Intraclass{col 27}Asy.{col 39}
-{col 10}correlation{col 27}S.E.{col 38}[95% Conf. Interval]
-         {hline 48}
-          {res}  0.00000{txt}*  {res}  0.00374       0.00000     0.00734
-
-{txt}{col 10}Estimated SD of clusterid effect{res}{col 49}        .
-{txt}{col 10}Estimated SD within clusterid{res}{col 49}  .470831
-{txt}{col 10}Est. reliability of a clusterid mean{res}{col 49}  0.00000{txt}*
-{col 15}(evaluated at n={res}35.27{txt})
-
-(*) Truncated at zero.
-{com}.   global icc    = r(rho)
-.   global icc_lb = r(lb)
-.   global icc_ub = r(ub)
-. {c )-}
-{txt}
-{com}. 
-. // Compute the multiply-imputed estimates.
-. tempname imputed
-{txt}
-{com}. frame copy imputed `imputed'
-{txt}
-{com}. frame `imputed' {c -(}
-.   mi xtset clusterid
-{res}{txt}{p}
-(passive variables
-{res}__000000 __000001
-{txt}unregistered because not in {it:m}=0)
-{p_end}
-{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}. 
-.   local mi_opts    or errorok
-.     // The errorok option are neeeded because, by chance, collinearity
-.     // can exist between the stratification variable and the dependent variable.
-.     // See the assert below, which specifies when this happens.
-. 
-.   foreach var of varlist y y1-y5 {c -(} 
-{txt}  2{com}.     // Estimate population averaged effects.
-.     mi estimate, `mi_opts': `model'
-{txt}  3{com}.     estimates store `var'_estimates
-{txt}  4{com}. 
-.     display "Got here"
-{txt}  5{com}. 
-.     // Verify that the anticipated imputations were used.
-.     if ("`var'" != "y2") assert e(M_mi) == $m_imputations
-{txt}  6{com}.     if ("`var'" == "y2") assert e(M_mi) >=  0.7 * $m_imputations
-{txt}  7{com}.     
-.     // Make globals containing key results.
-.     matrix result      = r(table)
-{txt}  8{com}.     global rr_b_`var'  = result["b",      "`var':2.arm"]
-{txt}  9{com}.     global rr_ll_`var' = result["ll",     "`var':2.arm"]
-{txt} 10{com}.     global rr_ul_`var' = result["ul",     "`var':2.arm"]
-{txt} 11{com}.     global rr_p_`var'  = result["pvalue", "`var':2.arm"]
-{txt} 12{com}.   {c )-}
-{res}{err}no imputations to compute between-imputation variance
-{txt}{search r(2000), local:r(2000);}
-{com}. {c )-}
-{txt}{search r(2000), local:r(2000);}
-
-end of do-file
-
-{search r(2000), local:r(2000);}
-
-{com}. do estimation/birth_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Specify the model.
-. local model xtlogit \`var' i.arm $adj_vars
-{txt}
-{com}. 
-. // Compute the complete case estimate.
-. tempname original
-{txt}
-{com}. frame copy imputed `original'
-{txt}
-{com}. frame `original' {c -(}
-.   // Fit the model.
-.   mi extract 0, clear
-.   xtset clusterid
-{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}.   local var y
-.   `model', or
-
-{txt}Fitting comparison model:
-
-{res}{txt}Iteration 0:{space 3}log likelihood = {res:-2639.2383}  
-Iteration 1:{space 3}log likelihood = {res:-2627.8275}  
-Iteration 2:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Fitting full model:
-
-tau = {res} 0.0     {txt}log likelihood = {res}-2627.8022
-{txt}tau = {res} 0.1     {txt}log likelihood = {res}-2642.2346
-
-{txt}Iteration 0:{space 3}log likelihood = {res:-2642.2358}  
-Iteration 1:{space 3}log likelihood = {res:-2629.6146}  
-Iteration 2:{space 3}log likelihood = {res:-2628.1703}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8763}  
-Iteration 4:{space 3}log likelihood = {res:-2627.8198}  
-Iteration 5:{space 3}log likelihood = {res:-2627.8063}  
-Iteration 6:{space 3}log likelihood = {res: -2627.803}  
-Iteration 7:{space 3}log likelihood = {res:-2627.8023}  
-Iteration 8:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 9:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     4,157
-{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
-
-{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
-{col 63}min{col 67}={col 69}{res}         6
-{txt}{col 63}avg{col 67}={col 69}{res}      34.9
-{txt}{col 63}max{col 67}={col 69}{res}       139
-
-{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
-
-{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    22.58
-{txt}Log likelihood  = {res}-2627.8022{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0072
-
-{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
-{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 10}arm {c |}
-{space 11}D  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.07{col 38}{space 1}   -0.29{col 47}{space 3} 0.77{col 55}{space 4}     0.86{col 68}{space 3}     1.12
-{txt}{space 13} {c |}
-{space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.29{col 27}{space 2}     0.15{col 38}{space 1}    2.16{col 47}{space 3} 0.03{col 55}{space 4}     1.02{col 68}{space 3}     1.63
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.92{col 27}{space 2}     0.14{col 38}{space 1}   -0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.68{col 68}{space 3}     1.25
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.13{col 38}{space 1}    0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.84{col 68}{space 3}     1.35
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.16{col 38}{space 1}    2.77{col 47}{space 3} 0.01{col 55}{space 4}     1.10{col 68}{space 3}     1.74
-{txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.84{col 27}{space 2}     0.07{col 38}{space 1}   -2.11{col 47}{space 3} 0.03{col 55}{space 4}     0.71{col 68}{space 3}     0.99
-{txt}{space 13} {c |}
-lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.17{col 27}{space 2}     0.09{col 38}{space 1}    1.95{col 47}{space 3} 0.05{col 55}{space 4}     1.00{col 68}{space 3}     1.37
-{txt}{space 13} {c |}
-{space 2}age_over_40 {c |}
-{space 3}>40 years  {c |}{col 15}{res}{space 2}     1.61{col 27}{space 2}     0.38{col 38}{space 1}    2.02{col 47}{space 3} 0.04{col 55}{space 4}     1.01{col 68}{space 3}     2.57
-{txt}{space 13} {c |}
-{space 2}primiparous {c |}
-{space 1}Primiparous  {c |}{col 15}{res}{space 2}     0.93{col 27}{space 2}     0.07{col 38}{space 1}   -0.96{col 47}{space 3} 0.34{col 55}{space 4}     0.79{col 68}{space 3}     1.08
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.44{col 27}{space 2}     0.06{col 38}{space 1}   -6.55{col 47}{space 3} 0.00{col 55}{space 4}     0.35{col 68}{space 3}     0.57
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -14.02{col 27}{space 2}    21.55{col 55}{space 4}   -56.26{col 68}{space 3}    28.23
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3} 1.35e+06
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
-{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.00{col 56}{txt}Prob >= chibar2 = {res}1.000
-{com}.   estimates store complete_case_estimates
-. 
-.   // Make globals containing key results.
-.   matrix result   = r(table)
-.   global cc_or_b  = result["b",      "`var':2.arm"]
-.   global cc_or_ll = result["ll",     "`var':2.arm"]
-.   global cc_or_ul = result["ul",     "`var':2.arm"]
-.   global cc_or_p  = result["pvalue", "`var':2.arm"]
-. 
-.   // Estimate ICC.
-.   loneway `var' clusterid
-
-         {txt}One-way Analysis of Variance for y: Adverse pregnancy outcome
-
-                                             Number of obs = {res}       4,214
-                                                 {txt}R-squared = {res}      0.0276
-
-{txt}{col 5}Source{col 27}SS{col 38}df{col 46}MS{col 60}F{col 66}Prob > F
-{hline 73}
-Between clusterid{res}{col 23} 25.750506{col 34}   118{col 43} .21822463{col 54}     0.98{col 68}0.5307
-{txt}Within clusterid{res}{col 23} 907.78723{col 34} 4,095{col 43} .22168186
-{txt}{hline 73}
-Total{res}{col 23} 933.53773{col 34} 4,213{col 43} .22158503
-
-{txt}{col 10}Intraclass{col 27}Asy.{col 39}
-{col 10}correlation{col 27}S.E.{col 38}[95% Conf. Interval]
-         {hline 48}
-          {res}  0.00000{txt}*  {res}  0.00374       0.00000     0.00734
-
-{txt}{col 10}Estimated SD of clusterid effect{res}{col 49}        .
-{txt}{col 10}Estimated SD within clusterid{res}{col 49}  .470831
-{txt}{col 10}Est. reliability of a clusterid mean{res}{col 49}  0.00000{txt}*
-{col 15}(evaluated at n={res}35.27{txt})
-
-(*) Truncated at zero.
-{com}.   global icc    = r(rho)
-.   global icc_lb = r(lb)
-.   global icc_ub = r(ub)
-. {c )-}
-{txt}
-{com}. 
-. // Compute the multiply-imputed estimates.
-. tempname imputed
-{txt}
-{com}. frame copy imputed `imputed'
-{txt}
-{com}. frame `imputed' {c -(}
-.   mi xtset clusterid
-{res}{txt}{p}
-(passive variables
-{res}__000000 __000001
-{txt}unregistered because not in {it:m}=0)
-{p_end}
-{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}. 
-.   local mi_opts    or errorok
-.     // The errorok option are neeeded because, by chance, collinearity
-.     // can exist between the stratification variable and the dependent variable.
-.     // See the assert below, which specifies when this happens.
-. 
-.   foreach var of varlist y y1-y5 {c -(} 
-{txt}  2{com}.     // Estimate population averaged effects.
-.     mi estimate, `mi_opts': `model'
-{txt}  3{com}.     display "Got here"
-{txt}  4{com}.     estimates store `var'_estimates
-{txt}  5{com}. 
-.     // Verify that the anticipated imputations were used.
-.     if ("`var'" != "y2") assert e(M_mi) == $m_imputations
-{txt}  6{com}.     if ("`var'" == "y2") assert e(M_mi) >=  0.7 * $m_imputations
-{txt}  7{com}.     
-.     // Make globals containing key results.
-.     matrix result      = r(table)
-{txt}  8{com}.     global rr_b_`var'  = result["b",      "`var':2.arm"]
-{txt}  9{com}.     global rr_ll_`var' = result["ll",     "`var':2.arm"]
-{txt} 10{com}.     global rr_ul_`var' = result["ul",     "`var':2.arm"]
-{txt} 11{com}.     global rr_p_`var'  = result["pvalue", "`var':2.arm"]
-{txt} 12{com}.   {c )-}
-{res}{err}no imputations to compute between-imputation variance
-{txt}{search r(2000), local:r(2000);}
-{com}. {c )-}
-{txt}{search r(2000), local:r(2000);}
-
-end of do-file
-
-{search r(2000), local:r(2000);}
-
-{com}. do estimation/birth_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Specify the model.
-. local model xtlogit \`var' i.arm $adj_vars
-{txt}
-{com}. 
-. // Compute the complete case estimate.
-. tempname original
-{txt}
-{com}. frame copy imputed `original'
-{txt}
-{com}. frame `original' {c -(}
-.   // Fit the model.
-.   mi extract 0, clear
-.   xtset clusterid
-{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}.   local var y
-.   `model', or
-
-{txt}Fitting comparison model:
-
-{res}{txt}Iteration 0:{space 3}log likelihood = {res:-2639.2383}  
-Iteration 1:{space 3}log likelihood = {res:-2627.8275}  
-Iteration 2:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Fitting full model:
-
-tau = {res} 0.0     {txt}log likelihood = {res}-2627.8022
-{txt}tau = {res} 0.1     {txt}log likelihood = {res}-2642.2346
-
-{txt}Iteration 0:{space 3}log likelihood = {res:-2642.2358}  
-Iteration 1:{space 3}log likelihood = {res:-2629.6146}  
-Iteration 2:{space 3}log likelihood = {res:-2628.1703}  
-Iteration 3:{space 3}log likelihood = {res:-2627.8763}  
-Iteration 4:{space 3}log likelihood = {res:-2627.8198}  
-Iteration 5:{space 3}log likelihood = {res:-2627.8063}  
-Iteration 6:{space 3}log likelihood = {res: -2627.803}  
-Iteration 7:{space 3}log likelihood = {res:-2627.8023}  
-Iteration 8:{space 3}log likelihood = {res:-2627.8022}  
-Iteration 9:{space 3}log likelihood = {res:-2627.8022}  
-{res}
-{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     4,157
-{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
-
-{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
-{col 63}min{col 67}={col 69}{res}         6
-{txt}{col 63}avg{col 67}={col 69}{res}      34.9
-{txt}{col 63}max{col 67}={col 69}{res}       139
-
-{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
-
-{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    22.58
-{txt}Log likelihood  = {res}-2627.8022{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0072
-
-{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
-{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 10}arm {c |}
-{space 11}D  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.07{col 38}{space 1}   -0.29{col 47}{space 3} 0.77{col 55}{space 4}     0.86{col 68}{space 3}     1.12
-{txt}{space 13} {c |}
-{space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.29{col 27}{space 2}     0.15{col 38}{space 1}    2.16{col 47}{space 3} 0.03{col 55}{space 4}     1.02{col 68}{space 3}     1.63
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.92{col 27}{space 2}     0.14{col 38}{space 1}   -0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.68{col 68}{space 3}     1.25
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.13{col 38}{space 1}    0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.84{col 68}{space 3}     1.35
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.16{col 38}{space 1}    2.77{col 47}{space 3} 0.01{col 55}{space 4}     1.10{col 68}{space 3}     1.74
-{txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.84{col 27}{space 2}     0.07{col 38}{space 1}   -2.11{col 47}{space 3} 0.03{col 55}{space 4}     0.71{col 68}{space 3}     0.99
-{txt}{space 13} {c |}
-lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.17{col 27}{space 2}     0.09{col 38}{space 1}    1.95{col 47}{space 3} 0.05{col 55}{space 4}     1.00{col 68}{space 3}     1.37
-{txt}{space 13} {c |}
-{space 2}age_over_40 {c |}
-{space 3}>40 years  {c |}{col 15}{res}{space 2}     1.61{col 27}{space 2}     0.38{col 38}{space 1}    2.02{col 47}{space 3} 0.04{col 55}{space 4}     1.01{col 68}{space 3}     2.57
-{txt}{space 13} {c |}
-{space 2}primiparous {c |}
-{space 1}Primiparous  {c |}{col 15}{res}{space 2}     0.93{col 27}{space 2}     0.07{col 38}{space 1}   -0.96{col 47}{space 3} 0.34{col 55}{space 4}     0.79{col 68}{space 3}     1.08
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.44{col 27}{space 2}     0.06{col 38}{space 1}   -6.55{col 47}{space 3} 0.00{col 55}{space 4}     0.35{col 68}{space 3}     0.57
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -14.02{col 27}{space 2}    21.55{col 55}{space 4}   -56.26{col 68}{space 3}    28.23
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3} 1.35e+06
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
-{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.00{col 56}{txt}Prob >= chibar2 = {res}1.000
-{com}.   estimates store complete_case_estimates
-. 
-.   // Make globals containing key results.
-.   matrix result   = r(table)
-.   global cc_or_b  = result["b",      "`var':2.arm"]
-.   global cc_or_ll = result["ll",     "`var':2.arm"]
-.   global cc_or_ul = result["ul",     "`var':2.arm"]
-.   global cc_or_p  = result["pvalue", "`var':2.arm"]
-. 
-.   // Estimate ICC.
-.   loneway `var' clusterid
-
-         {txt}One-way Analysis of Variance for y: Adverse pregnancy outcome
-
-                                             Number of obs = {res}       4,214
-                                                 {txt}R-squared = {res}      0.0276
-
-{txt}{col 5}Source{col 27}SS{col 38}df{col 46}MS{col 60}F{col 66}Prob > F
-{hline 73}
-Between clusterid{res}{col 23} 25.750506{col 34}   118{col 43} .21822463{col 54}     0.98{col 68}0.5307
-{txt}Within clusterid{res}{col 23} 907.78723{col 34} 4,095{col 43} .22168186
-{txt}{hline 73}
-Total{res}{col 23} 933.53773{col 34} 4,213{col 43} .22158503
-
-{txt}{col 10}Intraclass{col 27}Asy.{col 39}
-{col 10}correlation{col 27}S.E.{col 38}[95% Conf. Interval]
-         {hline 48}
-          {res}  0.00000{txt}*  {res}  0.00374       0.00000     0.00734
-
-{txt}{col 10}Estimated SD of clusterid effect{res}{col 49}        .
-{txt}{col 10}Estimated SD within clusterid{res}{col 49}  .470831
-{txt}{col 10}Est. reliability of a clusterid mean{res}{col 49}  0.00000{txt}*
-{col 15}(evaluated at n={res}35.27{txt})
-
-(*) Truncated at zero.
-{com}.   global icc    = r(rho)
-.   global icc_lb = r(lb)
-.   global icc_ub = r(ub)
-. {c )-}
-{txt}
-{com}. 
-. // Compute the multiply-imputed estimates.
-. tempname imputed
-{txt}
-{com}. frame copy imputed `imputed'
-{txt}
-{com}. frame `imputed' {c -(}
-.   mi xtset clusterid
-{res}{txt}{p}
-(passive variables
-{res}__000000 __000001
-{txt}unregistered because not in {it:m}=0)
-{p_end}
-{res}{txt}{col 8}panel variable:  {res}clusterid (unbalanced)
-{com}. 
-.   local mi_opts or errorok
+.   local mi_opts or errorok noisily
 .     // The errorok option is neeeded because, by chance, collinearity
 .     // can exist between the stratification variable and the dependent variable.
 .     // See the assert below, which specifies when this happens.
 . 
 .   foreach var of varlist y y1-y5 {c -(} 
 {txt}  2{com}.     // Estimate population averaged effects.
-.     display "Got here"
-{txt}  3{com}.     mi estimate, `mi_opts': `model'
-{txt}  4{com}.     estimates store `var'_estimates
-{txt}  5{com}. 
+.     mi estimate, `mi_opts': `model'
+{txt}  3{com}.     estimates store `var'_estimates
+{txt}  4{com}. 
 .     // Verify that the anticipated imputations were used.
 .     if ("`var'" != "y2") assert e(M_mi) == $m_imputations
-{txt}  6{com}.     if ("`var'" == "y2") assert e(M_mi) >=  0.7 * $m_imputations
-{txt}  7{com}.     
+{txt}  5{com}.     if ("`var'" == "y2") assert e(M_mi) >=  0.7 * $m_imputations
+{txt}  6{com}.     
 .     // Make globals containing key results.
 .     matrix result      = r(table)
-{txt}  8{com}.     global rr_b_`var'  = result["b",      "`var':2.arm"]
-{txt}  9{com}.     global rr_ll_`var' = result["ll",     "`var':2.arm"]
-{txt} 10{com}.     global rr_ul_`var' = result["ul",     "`var':2.arm"]
-{txt} 11{com}.     global rr_p_`var'  = result["pvalue", "`var':2.arm"]
-{txt} 12{com}.   {c )-}
-Got here
-{res}{err}no imputations to compute between-imputation variance
-{txt}{search r(2000), local:r(2000);}
+{txt}  7{com}.     global rr_b_`var'  = result["b",      "`var':2.arm"]
+{txt}  8{com}.     global rr_ll_`var' = result["ll",     "`var':2.arm"]
+{txt}  9{com}.     global rr_ul_`var' = result["ul",     "`var':2.arm"]
+{txt} 10{com}.     global rr_p_`var'  = result["pvalue", "`var':2.arm"]
+{txt} 11{com}.   {c )-}
+{res}
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=1)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3600.2984}  
+Iteration 1:{space 3}log likelihood = {res: -3583.582}  
+Iteration 2:{space 3}log likelihood = {res:-3583.2618}  
+Iteration 3:{space 3}log likelihood = {res:-3583.2617}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3583.2617
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3598.5321
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3598.5418}  
+Iteration 1:{space 3}log likelihood = {res:-3585.0134}  
+Iteration 2:{space 3}log likelihood = {res:-3583.4669}  
+Iteration 3:{space 3}log likelihood = {res:-3583.3155}  
+Iteration 4:{space 3}log likelihood = {res:-3583.2753}  
+Iteration 5:{space 3}log likelihood = {res: -3583.264}  
+Iteration 6:{space 3}log likelihood = {res:-3583.2621}  
+Iteration 7:{space 3}log likelihood = {res:-3583.2619}  
+Iteration 8:{space 3}log likelihood = {res:-3583.2619}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    33.99
+{txt}Log likelihood  = {res}-3583.2619{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0001
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.06{col 38}{space 1}    0.23{col 47}{space 3} 0.82{col 55}{space 4}    -0.10{col 68}{space 3}     0.13
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.10{col 38}{space 1}    1.47{col 47}{space 3} 0.14{col 55}{space 4}    -0.05{col 68}{space 3}     0.35
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.18{col 27}{space 2}     0.14{col 38}{space 1}   -1.34{col 47}{space 3} 0.18{col 55}{space 4}    -0.45{col 68}{space 3}     0.08
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.10{col 38}{space 1}    0.36{col 47}{space 3} 0.72{col 55}{space 4}    -0.16{col 68}{space 3}     0.23
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.18{col 27}{space 2}     0.10{col 38}{space 1}    1.75{col 47}{space 3} 0.08{col 55}{space 4}    -0.02{col 68}{space 3}     0.37
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.20{col 27}{space 2}     0.07{col 38}{space 1}   -2.64{col 47}{space 3} 0.01{col 55}{space 4}    -0.34{col 68}{space 3}    -0.05
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.13{col 27}{space 2}     0.07{col 38}{space 1}    1.84{col 47}{space 3} 0.07{col 55}{space 4}    -0.01{col 68}{space 3}     0.27
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.88{col 27}{space 2}     0.22{col 38}{space 1}    3.90{col 47}{space 3} 0.00{col 55}{space 4}     0.44{col 68}{space 3}     1.32
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.07{col 27}{space 2}     0.07{col 38}{space 1}   -1.05{col 47}{space 3} 0.30{col 55}{space 4}    -0.21{col 68}{space 3}     0.07
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.10{col 27}{space 2}     0.11{col 38}{space 1}  -10.40{col 47}{space 3} 0.00{col 55}{space 4}    -1.30{col 68}{space 3}    -0.89
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -11.82{col 27}{space 2}    15.23{col 55}{space 4}   -41.66{col 68}{space 3}    18.03
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.02{col 55}{space 4}     0.00{col 68}{space 3}  8209.45
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}4.0e-04{col 56}{txt}Prob >= chibar2 = {res}0.492
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=2)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3618.5961}  
+Iteration 1:{space 3}log likelihood = {res: -3605.237}  
+Iteration 2:{space 3}log likelihood = {res:-3605.0248}  
+Iteration 3:{space 3}log likelihood = {res:-3605.0248}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3605.0248
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3620.4525
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3620.4429}  
+Iteration 1:{space 3}log likelihood = {res:-3606.9886}  
+Iteration 2:{space 3}log likelihood = {res:-3605.3506}  
+Iteration 3:{space 3}log likelihood = {res:-3605.0989}  
+Iteration 4:{space 3}log likelihood = {res:-3605.0425}  
+Iteration 5:{space 3}log likelihood = {res: -3605.029}  
+Iteration 6:{space 3}log likelihood = {res:-3605.0257}  
+Iteration 7:{space 3}log likelihood = {res:-3605.0252}  
+Iteration 8:{space 3}log likelihood = {res:-3605.0251}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    27.37
+{txt}Log likelihood  = {res}-3605.0251{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0012
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.06{col 38}{space 1}    0.25{col 47}{space 3} 0.80{col 55}{space 4}    -0.10{col 68}{space 3}     0.13
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.12{col 27}{space 2}     0.10{col 38}{space 1}    1.18{col 47}{space 3} 0.24{col 55}{space 4}    -0.08{col 68}{space 3}     0.32
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.15{col 27}{space 2}     0.13{col 38}{space 1}   -1.15{col 47}{space 3} 0.25{col 55}{space 4}    -0.41{col 68}{space 3}     0.11
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}    -0.01{col 27}{space 2}     0.10{col 38}{space 1}   -0.08{col 47}{space 3} 0.93{col 55}{space 4}    -0.21{col 68}{space 3}     0.19
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.11{col 27}{space 2}     0.10{col 38}{space 1}    1.13{col 47}{space 3} 0.26{col 55}{space 4}    -0.08{col 68}{space 3}     0.31
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.17{col 27}{space 2}     0.07{col 38}{space 1}   -2.35{col 47}{space 3} 0.02{col 55}{space 4}    -0.32{col 68}{space 3}    -0.03
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.14{col 27}{space 2}     0.07{col 38}{space 1}    2.00{col 47}{space 3} 0.05{col 55}{space 4}     0.00{col 68}{space 3}     0.28
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.80{col 27}{space 2}     0.23{col 38}{space 1}    3.50{col 47}{space 3} 0.00{col 55}{space 4}     0.35{col 68}{space 3}     1.24
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.11{col 27}{space 2}     0.07{col 38}{space 1}   -1.61{col 47}{space 3} 0.11{col 55}{space 4}    -0.25{col 68}{space 3}     0.02
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.06{col 27}{space 2}     0.10{col 38}{space 1}  -10.16{col 47}{space 3} 0.00{col 55}{space 4}    -1.27{col 68}{space 3}    -0.86
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -12.21{col 27}{space 2}    10.27{col 55}{space 4}   -32.34{col 68}{space 3}     7.92
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3}    52.44
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}7.1e-04{col 56}{txt}Prob >= chibar2 = {res}0.489
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=3)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3632.4273}  
+Iteration 1:{space 3}log likelihood = {res:  -3619.35}  
+Iteration 2:{space 3}log likelihood = {res:-3619.2306}  
+Iteration 3:{space 3}log likelihood = {res:-3619.2305}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3619.2305
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3633.5972
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3633.5987}  
+Iteration 1:{space 3}log likelihood = {res:-3621.1302}  
+Iteration 2:{space 3}log likelihood = {res:-3619.6026}  
+Iteration 3:{space 3}log likelihood = {res:-3619.3076}  
+Iteration 4:{space 3}log likelihood = {res:-3619.2466}  
+Iteration 5:{space 3}log likelihood = {res:-3619.2333}  
+Iteration 6:{space 3}log likelihood = {res:-3619.2307}  
+Iteration 7:{space 3}log likelihood = {res:-3619.2302}  
+Iteration 8:{space 3}log likelihood = {res:-3619.2302}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    26.36
+{txt}Log likelihood  = {res}-3619.2302{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0018
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}    -0.00{col 27}{space 2}     0.06{col 38}{space 1}   -0.01{col 47}{space 3} 0.99{col 55}{space 4}    -0.11{col 68}{space 3}     0.11
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.19{col 27}{space 2}     0.10{col 38}{space 1}    1.83{col 47}{space 3} 0.07{col 55}{space 4}    -0.01{col 68}{space 3}     0.38
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.06{col 27}{space 2}     0.13{col 38}{space 1}   -0.44{col 47}{space 3} 0.66{col 55}{space 4}    -0.32{col 68}{space 3}     0.20
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.10{col 38}{space 1}    0.39{col 47}{space 3} 0.70{col 55}{space 4}    -0.16{col 68}{space 3}     0.24
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.10{col 38}{space 1}    2.18{col 47}{space 3} 0.03{col 55}{space 4}     0.02{col 68}{space 3}     0.42
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.19{col 27}{space 2}     0.07{col 38}{space 1}   -2.57{col 47}{space 3} 0.01{col 55}{space 4}    -0.33{col 68}{space 3}    -0.04
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.14{col 27}{space 2}     0.07{col 38}{space 1}    1.97{col 47}{space 3} 0.05{col 55}{space 4}     0.00{col 68}{space 3}     0.27
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.65{col 27}{space 2}     0.23{col 38}{space 1}    2.85{col 47}{space 3} 0.00{col 55}{space 4}     0.20{col 68}{space 3}     1.10
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.12{col 27}{space 2}     0.07{col 38}{space 1}   -1.75{col 47}{space 3} 0.08{col 55}{space 4}    -0.26{col 68}{space 3}     0.01
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.09{col 27}{space 2}     0.11{col 38}{space 1}  -10.37{col 47}{space 3} 0.00{col 55}{space 4}    -1.30{col 68}{space 3}    -0.89
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -8.06{col 27}{space 2}    11.31{col 55}{space 4}   -30.22{col 68}{space 3}    14.11
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.02{col 27}{space 2}     0.10{col 55}{space 4}     0.00{col 68}{space 3}  1158.32
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}6.9e-04{col 56}{txt}Prob >= chibar2 = {res}0.490
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=4)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3595.9582}  
+Iteration 1:{space 3}log likelihood = {res:-3583.0809}  
+Iteration 2:{space 3}log likelihood = {res:-3582.9838}  
+Iteration 3:{space 3}log likelihood = {res:-3582.9837}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3582.9837
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3598.2617
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3598.2523}  
+Iteration 1:{space 3}log likelihood = {res:-3585.0863}  
+Iteration 2:{space 3}log likelihood = {res:-3583.2272}  
+Iteration 3:{space 3}log likelihood = {res:-3583.0521}  
+Iteration 4:{space 3}log likelihood = {res:-3583.0012}  
+Iteration 5:{space 3}log likelihood = {res:-3582.9877}  
+Iteration 6:{space 3}log likelihood = {res:-3582.9847}  
+Iteration 7:{space 3}log likelihood = {res:-3582.9843}  
+Iteration 8:{space 3}log likelihood = {res:-3582.9842}  
+Iteration 9:{space 3}log likelihood = {res:-3582.9842}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    25.48
+{txt}Log likelihood  = {res}-3582.9842{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0025
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}     0.03{col 27}{space 2}     0.06{col 38}{space 1}    0.50{col 47}{space 3} 0.62{col 55}{space 4}    -0.08{col 68}{space 3}     0.14
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.19{col 27}{space 2}     0.10{col 38}{space 1}    1.84{col 47}{space 3} 0.07{col 55}{space 4}    -0.01{col 68}{space 3}     0.39
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.14{col 27}{space 2}     0.14{col 38}{space 1}   -1.01{col 47}{space 3} 0.31{col 55}{space 4}    -0.40{col 68}{space 3}     0.13
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.12{col 27}{space 2}     0.10{col 38}{space 1}    1.20{col 47}{space 3} 0.23{col 55}{space 4}    -0.08{col 68}{space 3}     0.32
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.10{col 38}{space 1}    2.16{col 47}{space 3} 0.03{col 55}{space 4}     0.02{col 68}{space 3}     0.42
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.17{col 27}{space 2}     0.07{col 38}{space 1}   -2.25{col 47}{space 3} 0.02{col 55}{space 4}    -0.31{col 68}{space 3}    -0.02
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.12{col 27}{space 2}     0.07{col 38}{space 1}    1.72{col 47}{space 3} 0.09{col 55}{space 4}    -0.02{col 68}{space 3}     0.26
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.55{col 27}{space 2}     0.23{col 38}{space 1}    2.36{col 47}{space 3} 0.02{col 55}{space 4}     0.09{col 68}{space 3}     1.01
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.12{col 27}{space 2}     0.07{col 38}{space 1}   -1.63{col 47}{space 3} 0.10{col 55}{space 4}    -0.26{col 68}{space 3}     0.02
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.16{col 27}{space 2}     0.11{col 38}{space 1}  -10.89{col 47}{space 3} 0.00{col 55}{space 4}    -1.36{col 68}{space 3}    -0.95
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -11.47{col 27}{space 2}    10.66{col 55}{space 4}   -32.37{col 68}{space 3}     9.42
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.02{col 55}{space 4}     0.00{col 68}{space 3}   111.25
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}9.4e-04{col 56}{txt}Prob >= chibar2 = {res}0.488
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=5)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3593.7831}  
+Iteration 1:{space 3}log likelihood = {res:-3582.9345}  
+Iteration 2:{space 3}log likelihood = {res:-3582.8518}  
+Iteration 3:{space 3}log likelihood = {res:-3582.8518}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3582.8518
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3595.9812
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3595.9922}  
+Iteration 1:{space 3}log likelihood = {res:-3584.4879}  
+Iteration 2:{space 3}log likelihood = {res:-3583.1102}  
+Iteration 3:{space 3}log likelihood = {res:-3582.8715}  
+Iteration 4:{space 3}log likelihood = {res:-3582.8339}  
+Iteration 5:{space 3}log likelihood = {res:-3582.8296}  
+Iteration 6:{space 3}log likelihood = {res:-3582.8295}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    21.36
+{txt}Log likelihood  = {res}-3582.8295{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0111
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.06{col 38}{space 1}    0.06{col 47}{space 3} 0.95{col 55}{space 4}    -0.11{col 68}{space 3}     0.12
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.10{col 27}{space 2}     0.10{col 38}{space 1}    1.02{col 47}{space 3} 0.31{col 55}{space 4}    -0.10{col 68}{space 3}     0.31
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.17{col 27}{space 2}     0.14{col 38}{space 1}   -1.22{col 47}{space 3} 0.22{col 55}{space 4}    -0.43{col 68}{space 3}     0.10
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}    -0.07{col 27}{space 2}     0.10{col 38}{space 1}   -0.66{col 47}{space 3} 0.51{col 55}{space 4}    -0.27{col 68}{space 3}     0.13
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.10{col 38}{space 1}    1.49{col 47}{space 3} 0.14{col 55}{space 4}    -0.05{col 68}{space 3}     0.35
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.15{col 27}{space 2}     0.08{col 38}{space 1}   -1.97{col 47}{space 3} 0.05{col 55}{space 4}    -0.30{col 68}{space 3}    -0.00
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.19{col 27}{space 2}     0.07{col 38}{space 1}    2.61{col 47}{space 3} 0.01{col 55}{space 4}     0.05{col 68}{space 3}     0.33
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.60{col 27}{space 2}     0.23{col 38}{space 1}    2.58{col 47}{space 3} 0.01{col 55}{space 4}     0.14{col 68}{space 3}     1.05
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.06{col 27}{space 2}     0.07{col 38}{space 1}   -0.91{col 47}{space 3} 0.36{col 55}{space 4}    -0.20{col 68}{space 3}     0.07
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.12{col 27}{space 2}     0.11{col 38}{space 1}  -10.46{col 47}{space 3} 0.00{col 55}{space 4}    -1.33{col 68}{space 3}    -0.91
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -6.13{col 27}{space 2}     4.86{col 55}{space 4}   -15.66{col 68}{space 3}     3.39
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.05{col 27}{space 2}     0.11{col 55}{space 4}     0.00{col 68}{space 3}     5.46
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.90
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.04{col 56}{txt}Prob >= chibar2 = {res}0.416
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=6)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3601.3814}  
+Iteration 1:{space 3}log likelihood = {res:-3589.2635}  
+Iteration 2:{space 3}log likelihood = {res:-3589.1331}  
+Iteration 3:{space 3}log likelihood = {res:-3589.1331}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3589.1331
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3605.0953
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3605.1103}  
+Iteration 1:{space 3}log likelihood = {res:-3591.2653}  
+Iteration 2:{space 3}log likelihood = {res:-3589.3964}  
+Iteration 3:{space 3}log likelihood = {res:-3589.2051}  
+Iteration 4:{space 3}log likelihood = {res:-3589.1525}  
+Iteration 5:{space 3}log likelihood = {res:-3589.1373}  
+Iteration 6:{space 3}log likelihood = {res:-3589.1341}  
+Iteration 7:{space 3}log likelihood = {res:-3589.1336}  
+Iteration 8:{space 3}log likelihood = {res:-3589.1336}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    24.77
+{txt}Log likelihood  = {res}-3589.1336{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0032
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}    -0.00{col 27}{space 2}     0.06{col 38}{space 1}   -0.02{col 47}{space 3} 0.99{col 55}{space 4}    -0.12{col 68}{space 3}     0.11
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.16{col 27}{space 2}     0.10{col 38}{space 1}    1.58{col 47}{space 3} 0.11{col 55}{space 4}    -0.04{col 68}{space 3}     0.36
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.06{col 27}{space 2}     0.13{col 38}{space 1}   -0.42{col 47}{space 3} 0.68{col 55}{space 4}    -0.31{col 68}{space 3}     0.20
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}    -0.03{col 27}{space 2}     0.10{col 38}{space 1}   -0.28{col 47}{space 3} 0.78{col 55}{space 4}    -0.23{col 68}{space 3}     0.17
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.18{col 27}{space 2}     0.10{col 38}{space 1}    1.81{col 47}{space 3} 0.07{col 55}{space 4}    -0.01{col 68}{space 3}     0.38
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.18{col 27}{space 2}     0.07{col 38}{space 1}   -2.42{col 47}{space 3} 0.02{col 55}{space 4}    -0.32{col 68}{space 3}    -0.03
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.07{col 38}{space 1}    2.21{col 47}{space 3} 0.03{col 55}{space 4}     0.02{col 68}{space 3}     0.29
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.23{col 38}{space 1}    2.96{col 47}{space 3} 0.00{col 55}{space 4}     0.23{col 68}{space 3}     1.13
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.11{col 27}{space 2}     0.07{col 38}{space 1}   -1.59{col 47}{space 3} 0.11{col 55}{space 4}    -0.25{col 68}{space 3}     0.03
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.11{col 27}{space 2}     0.11{col 38}{space 1}  -10.51{col 47}{space 3} 0.00{col 55}{space 4}    -1.31{col 68}{space 3}    -0.90
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -11.72{col 27}{space 2}     8.31{col 55}{space 4}   -28.00{col 68}{space 3}     4.56
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3}     9.76
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.97
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}9.0e-04{col 56}{txt}Prob >= chibar2 = {res}0.488
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=7)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3607.8617}  
+Iteration 1:{space 3}log likelihood = {res:-3596.8499}  
+Iteration 2:{space 3}log likelihood = {res:-3596.7463}  
+Iteration 3:{space 3}log likelihood = {res:-3596.7463}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3596.7463
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3608.6677
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3608.6682}  
+Iteration 1:{space 3}log likelihood = {res:-3597.9951}  
+Iteration 2:{space 3}log likelihood = {res:-3596.7585}  
+Iteration 3:{space 3}log likelihood = {res:-3596.6078}  
+Iteration 4:{space 3}log likelihood = {res: -3596.598}  
+Iteration 5:{space 3}log likelihood = {res:-3596.5978}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    21.19
+{txt}Log likelihood  = {res}-3596.5978{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0118
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}    -0.00{col 27}{space 2}     0.06{col 38}{space 1}   -0.01{col 47}{space 3} 0.99{col 55}{space 4}    -0.12{col 68}{space 3}     0.12
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.23{col 27}{space 2}     0.11{col 38}{space 1}    2.21{col 47}{space 3} 0.03{col 55}{space 4}     0.03{col 68}{space 3}     0.44
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.07{col 27}{space 2}     0.14{col 38}{space 1}   -0.52{col 47}{space 3} 0.60{col 55}{space 4}    -0.35{col 68}{space 3}     0.20
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.10{col 27}{space 2}     0.11{col 38}{space 1}    0.92{col 47}{space 3} 0.36{col 55}{space 4}    -0.11{col 68}{space 3}     0.30
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.20{col 27}{space 2}     0.11{col 38}{space 1}    1.87{col 47}{space 3} 0.06{col 55}{space 4}    -0.01{col 68}{space 3}     0.40
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.15{col 27}{space 2}     0.08{col 38}{space 1}   -1.96{col 47}{space 3} 0.05{col 55}{space 4}    -0.30{col 68}{space 3}     0.00
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.12{col 27}{space 2}     0.07{col 38}{space 1}    1.62{col 47}{space 3} 0.11{col 55}{space 4}    -0.02{col 68}{space 3}     0.26
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.63{col 27}{space 2}     0.23{col 38}{space 1}    2.75{col 47}{space 3} 0.01{col 55}{space 4}     0.18{col 68}{space 3}     1.09
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.08{col 27}{space 2}     0.07{col 38}{space 1}   -1.12{col 47}{space 3} 0.26{col 55}{space 4}    -0.22{col 68}{space 3}     0.06
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.16{col 27}{space 2}     0.11{col 38}{space 1}  -10.46{col 47}{space 3} 0.00{col 55}{space 4}    -1.38{col 68}{space 3}    -0.94
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.15{col 27}{space 2}     1.97{col 55}{space 4}    -9.00{col 68}{space 3}    -1.30
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.08{col 27}{space 2}     0.07{col 55}{space 4}     0.01{col 68}{space 3}     0.52
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.08
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.30{col 56}{txt}Prob >= chibar2 = {res}0.293
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=8)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3627.1241}  
+Iteration 1:{space 3}log likelihood = {res:-3617.8164}  
+Iteration 2:{space 3}log likelihood = {res:-3617.7233}  
+Iteration 3:{space 3}log likelihood = {res:-3617.7233}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3617.7233
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3631.3047
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3631.3121}  
+Iteration 1:{space 3}log likelihood = {res:-3619.6132}  
+Iteration 2:{space 3}log likelihood = {res:-3618.0402}  
+Iteration 3:{space 3}log likelihood = {res:-3617.7663}  
+Iteration 4:{space 3}log likelihood = {res:-3617.7213}  
+Iteration 5:{space 3}log likelihood = {res:-3617.7167}  
+Iteration 6:{space 3}log likelihood = {res:-3617.7164}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    18.52
+{txt}Log likelihood  = {res}-3617.7164{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0296
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}    -0.00{col 27}{space 2}     0.06{col 38}{space 1}   -0.03{col 47}{space 3} 0.98{col 55}{space 4}    -0.12{col 68}{space 3}     0.11
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.18{col 27}{space 2}     0.10{col 38}{space 1}    1.76{col 47}{space 3} 0.08{col 55}{space 4}    -0.02{col 68}{space 3}     0.38
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.09{col 27}{space 2}     0.14{col 38}{space 1}   -0.66{col 47}{space 3} 0.51{col 55}{space 4}    -0.36{col 68}{space 3}     0.18
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.05{col 27}{space 2}     0.10{col 38}{space 1}    0.47{col 47}{space 3} 0.64{col 55}{space 4}    -0.15{col 68}{space 3}     0.25
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.18{col 27}{space 2}     0.10{col 38}{space 1}    1.82{col 47}{space 3} 0.07{col 55}{space 4}    -0.01{col 68}{space 3}     0.38
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.12{col 27}{space 2}     0.07{col 38}{space 1}   -1.58{col 47}{space 3} 0.11{col 55}{space 4}    -0.26{col 68}{space 3}     0.03
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.13{col 27}{space 2}     0.07{col 38}{space 1}    1.90{col 47}{space 3} 0.06{col 55}{space 4}    -0.00{col 68}{space 3}     0.27
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.65{col 27}{space 2}     0.23{col 38}{space 1}    2.79{col 47}{space 3} 0.01{col 55}{space 4}     0.19{col 68}{space 3}     1.10
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.05{col 27}{space 2}     0.07{col 38}{space 1}   -0.75{col 47}{space 3} 0.45{col 55}{space 4}    -0.19{col 68}{space 3}     0.09
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.15{col 27}{space 2}     0.11{col 38}{space 1}  -10.83{col 47}{space 3} 0.00{col 55}{space 4}    -1.36{col 68}{space 3}    -0.94
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -6.71{col 27}{space 2}     8.52{col 55}{space 4}   -23.41{col 68}{space 3}     9.98
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.03{col 27}{space 2}     0.15{col 55}{space 4}     0.00{col 68}{space 3}   147.30
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.01{col 56}{txt}Prob >= chibar2 = {res}0.453
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=9)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3617.5263}  
+Iteration 1:{space 3}log likelihood = {res:-3610.5218}  
+Iteration 2:{space 3}log likelihood = {res:-3610.5009}  
+Iteration 3:{space 3}log likelihood = {res:-3610.5009}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-3610.5009
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3627.4341
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3627.4381}  
+Iteration 1:{space 3}log likelihood = {res:-3613.0968}  
+Iteration 2:{space 3}log likelihood = {res:-3610.8388}  
+Iteration 3:{space 3}log likelihood = {res:-3610.5846}  
+Iteration 4:{space 3}log likelihood = {res:-3610.5215}  
+Iteration 5:{space 3}log likelihood = {res:-3610.5058}  
+Iteration 6:{space 3}log likelihood = {res:-3610.5019}  
+Iteration 7:{space 3}log likelihood = {res:-3610.5011}  
+Iteration 8:{space 3}log likelihood = {res: -3610.501}  
+Iteration 9:{space 3}log likelihood = {res: -3610.501}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    13.73
+{txt}Log likelihood  = {res} -3610.501{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.1324
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}    -0.03{col 27}{space 2}     0.06{col 38}{space 1}   -0.57{col 47}{space 3} 0.57{col 55}{space 4}    -0.15{col 68}{space 3}     0.08
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.13{col 27}{space 2}     0.10{col 38}{space 1}    1.24{col 47}{space 3} 0.21{col 55}{space 4}    -0.07{col 68}{space 3}     0.32
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.14{col 27}{space 2}     0.13{col 38}{space 1}   -1.01{col 47}{space 3} 0.31{col 55}{space 4}    -0.40{col 68}{space 3}     0.13
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.02{col 27}{space 2}     0.10{col 38}{space 1}    0.25{col 47}{space 3} 0.81{col 55}{space 4}    -0.17{col 68}{space 3}     0.22
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.13{col 27}{space 2}     0.10{col 38}{space 1}    1.29{col 47}{space 3} 0.20{col 55}{space 4}    -0.07{col 68}{space 3}     0.32
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.17{col 27}{space 2}     0.07{col 38}{space 1}   -2.34{col 47}{space 3} 0.02{col 55}{space 4}    -0.32{col 68}{space 3}    -0.03
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.12{col 27}{space 2}     0.07{col 38}{space 1}    1.65{col 47}{space 3} 0.10{col 55}{space 4}    -0.02{col 68}{space 3}     0.25
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.26{col 27}{space 2}     0.24{col 38}{space 1}    1.06{col 47}{space 3} 0.29{col 55}{space 4}    -0.22{col 68}{space 3}     0.74
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.06{col 27}{space 2}     0.07{col 38}{space 1}   -0.88{col 47}{space 3} 0.38{col 55}{space 4}    -0.20{col 68}{space 3}     0.08
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.04{col 27}{space 2}     0.10{col 38}{space 1}   -9.98{col 47}{space 3} 0.00{col 55}{space 4}    -1.25{col 68}{space 3}    -0.84
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -13.78{col 27}{space 2}    20.69{col 55}{space 4}   -54.34{col 68}{space 3}    26.78
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3}653511.87
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}1.8e-04{col 56}{txt}Prob >= chibar2 = {res}0.495
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=10)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-3599.2146}  
+Iteration 1:{space 3}log likelihood = {res: -3584.447}  
+Iteration 2:{space 3}log likelihood = {res: -3584.187}  
+Iteration 3:{space 3}log likelihood = {res: -3584.187}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res} -3584.187
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}-3600.6182
+
+{txt}Iteration 0:{space 3}log likelihood = {res:-3600.6349}  
+Iteration 1:{space 3}log likelihood = {res:-3586.8587}  
+Iteration 2:{space 3}log likelihood = {res:-3584.8391}  
+Iteration 3:{space 3}log likelihood = {res:-3584.3324}  
+Iteration 4:{space 3}log likelihood = {res:-3584.2252}  
+Iteration 5:{space 3}log likelihood = {res:-3584.1965}  
+Iteration 6:{space 3}log likelihood = {res:-3584.1891}  
+Iteration 7:{space 3}log likelihood = {res:-3584.1875}  
+Iteration 8:{space 3}log likelihood = {res:-3584.1873}  
+Iteration 9:{space 3}log likelihood = {res:-3584.1872}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    30.43
+{txt}Log likelihood  = {res}-3584.1872{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.0004
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.06{col 38}{space 1}    0.11{col 47}{space 3} 0.91{col 55}{space 4}    -0.11{col 68}{space 3}     0.12
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.19{col 27}{space 2}     0.10{col 38}{space 1}    1.90{col 47}{space 3} 0.06{col 55}{space 4}    -0.01{col 68}{space 3}     0.39
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.08{col 27}{space 2}     0.13{col 38}{space 1}   -0.60{col 47}{space 3} 0.55{col 55}{space 4}    -0.34{col 68}{space 3}     0.18
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.10{col 38}{space 1}    0.12{col 47}{space 3} 0.91{col 55}{space 4}    -0.19{col 68}{space 3}     0.21
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.10{col 38}{space 1}    2.14{col 47}{space 3} 0.03{col 55}{space 4}     0.02{col 68}{space 3}     0.41
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.17{col 27}{space 2}     0.07{col 38}{space 1}   -2.26{col 47}{space 3} 0.02{col 55}{space 4}    -0.31{col 68}{space 3}    -0.02
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.11{col 27}{space 2}     0.07{col 38}{space 1}    1.64{col 47}{space 3} 0.10{col 55}{space 4}    -0.02{col 68}{space 3}     0.25
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.84{col 27}{space 2}     0.23{col 38}{space 1}    3.72{col 47}{space 3} 0.00{col 55}{space 4}     0.40{col 68}{space 3}     1.29
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.08{col 27}{space 2}     0.07{col 38}{space 1}   -1.13{col 47}{space 3} 0.26{col 55}{space 4}    -0.22{col 68}{space 3}     0.06
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -1.13{col 27}{space 2}     0.11{col 38}{space 1}  -10.71{col 47}{space 3} 0.00{col 55}{space 4}    -1.34{col 68}{space 3}    -0.92
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}   -12.60{col 27}{space 2}    14.85{col 55}{space 4}   -41.70{col 68}{space 3}    16.50
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3}  3818.29
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}4.3e-04{col 56}{txt}Prob >= chibar2 = {res}0.492
+
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        10
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
+{txt}Random effects u_i ~ {res:Gaussian}{col 49}Obs per group:
+{col 49}              min{col 67}= {res}         9
+{txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
+{txt}{col 49}              max{col 67}= {res}       217
+{txt}{col 49}Average RVI{col 67}= {res}    0.2079
+{txt}{col 49}Largest FMI{col 67}= {res}    0.4073
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     59.84
+{txt}{col 49}        avg{col 67}= {res}    738.64
+{txt}{col 49}        max{col 67}= {res}  1,782.77
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 2126.3{txt}){col 67}= {res}      2.04
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0320
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}D  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.06{col 38}{space 1}    0.05{col 47}{space 3} 0.96{col 55}{space 4}     0.89{col 68}{space 3}     1.13
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.18{col 27}{space 2}     0.13{col 38}{space 1}    1.49{col 47}{space 3} 0.14{col 55}{space 4}     0.95{col 68}{space 3}     1.46
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.89{col 27}{space 2}     0.13{col 38}{space 1}   -0.79{col 47}{space 3} 0.43{col 55}{space 4}     0.67{col 68}{space 3}     1.18
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.12{col 38}{space 1}    0.23{col 47}{space 3} 0.82{col 55}{space 4}     0.81{col 68}{space 3}     1.30
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.20{col 27}{space 2}     0.13{col 38}{space 1}    1.65{col 47}{space 3} 0.10{col 55}{space 4}     0.97{col 68}{space 3}     1.48
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.85{col 27}{space 2}     0.07{col 38}{space 1}   -2.13{col 47}{space 3} 0.03{col 55}{space 4}     0.73{col 68}{space 3}     0.99
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.14{col 27}{space 2}     0.09{col 38}{space 1}    1.82{col 47}{space 3} 0.07{col 55}{space 4}     0.99{col 68}{space 3}     1.32
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     1.92{col 27}{space 2}     0.57{col 38}{space 1}    2.22{col 47}{space 3} 0.03{col 55}{space 4}     1.07{col 68}{space 3}     3.47
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}     0.92{col 27}{space 2}     0.07{col 38}{space 1}   -1.16{col 47}{space 3} 0.25{col 55}{space 4}     0.79{col 68}{space 3}     1.06
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.33{col 27}{space 2}     0.04{col 38}{space 1}   -9.75{col 47}{space 3} 0.00{col 55}{space 4}     0.26{col 68}{space 3}     0.41
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -9.97{col 27}{space 2}    12.26{col 55}{space 4}   -34.01{col 68}{space 3}    14.08
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.04{col 55}{space 4}     0.00{col 68}{space 3}  1142.81
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
+{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
+{res}
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=1)
+note: 0.age_over_40 != 1 predicts failure perfectly
+      0.age_over_40 dropped and 82 obs not used
+
+note: 1.age_over_40 omitted because of collinearity
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-558.05338}  
+Iteration 1:{space 3}log likelihood = {res:-552.12989}  
+Iteration 2:{space 3}log likelihood = {res:-551.84631}  
+Iteration 3:{space 3}log likelihood = {res:-551.84525}  
+Iteration 4:{space 3}log likelihood = {res:-551.84525}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-551.84525
+{txt}tau = {res} 0.1     {txt}log likelihood = {res}   -551.48
+{txt}tau = {res} 0.2     {txt}log likelihood = {res}-552.07079
+
+{txt}Iteration 0:{space 3}log likelihood = {res:   -551.48}  
+Iteration 1:{space 3}log likelihood = {res:-551.29615}  
+Iteration 2:{space 3}log likelihood = {res:-551.29602}  
+Iteration 3:{space 3}log likelihood = {res:-551.29602}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,285
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         7
+{txt}{col 63}avg{col 67}={col 69}{res}      52.8
+{txt}{col 63}max{col 67}={col 69}{res}       216
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}8{txt}){col 67}={col 70}{res}     9.33
+{txt}Log likelihood  = {res}-551.29602{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.3149
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y1{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.21{col 38}{space 1}    1.04{col 47}{space 3} 0.30{col 55}{space 4}    -0.19{col 68}{space 3}     0.63
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.47{col 27}{space 2}     0.39{col 38}{space 1}    1.22{col 47}{space 3} 0.22{col 55}{space 4}    -0.29{col 68}{space 3}     1.24
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}    -0.30{col 27}{space 2}     0.57{col 38}{space 1}   -0.54{col 47}{space 3} 0.59{col 55}{space 4}    -1.42{col 68}{space 3}     0.81
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.28{col 27}{space 2}     0.38{col 38}{space 1}    0.73{col 47}{space 3} 0.46{col 55}{space 4}    -0.46{col 68}{space 3}     1.02
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.43{col 27}{space 2}     0.38{col 38}{space 1}    1.12{col 47}{space 3} 0.26{col 55}{space 4}    -0.32{col 68}{space 3}     1.18
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.57{col 27}{space 2}     0.31{col 38}{space 1}   -1.87{col 47}{space 3} 0.06{col 55}{space 4}    -1.17{col 68}{space 3}     0.03
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.30{col 27}{space 2}     0.25{col 38}{space 1}    1.22{col 47}{space 3} 0.22{col 55}{space 4}    -0.19{col 68}{space 3}     0.80
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.39{col 27}{space 2}     0.26{col 38}{space 1}   -1.49{col 47}{space 3} 0.14{col 55}{space 4}    -0.90{col 68}{space 3}     0.12
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -4.20{col 27}{space 2}     0.42{col 38}{space 1}  -10.03{col 47}{space 3} 0.00{col 55}{space 4}    -5.02{col 68}{space 3}    -3.38
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -1.88{col 27}{space 2}     1.08{col 55}{space 4}    -4.00{col 68}{space 3}     0.23
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.39{col 27}{space 2}     0.21{col 55}{space 4}     0.14{col 68}{space 3}     1.12
+{txt}          rho {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.05{col 55}{space 4}     0.01{col 68}{space 3}     0.28
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}1.10{col 56}{txt}Prob >= chibar2 = {res}0.147
+
+{txt}(running {bf:xtlogit} {txt}on {it:m}{txt}=2)
+
+Fitting comparison model:
+
+{res}{txt}Iteration 0:{space 3}log likelihood = {res:-579.55087}  
+Iteration 1:{space 3}log likelihood = {res:-572.27075}  
+Iteration 2:{space 3}log likelihood = {res:-571.95007}  
+Iteration 3:{space 3}log likelihood = {res:-571.94905}  
+Iteration 4:{space 3}log likelihood = {res:-571.94905}  
+{res}
+{txt}Fitting full model:
+
+tau = {res} 0.0     {txt}log likelihood = {res}-571.94905
+{txt}tau = {res} 0.1     {txt}log likelihood = {res} -572.0496
+
+{txt}Iteration 0:{space 3}log likelihood = {res: -572.0496}  
+Iteration 1:{space 3}log likelihood = {res: -571.8569}  
+Iteration 2:{space 3}log likelihood = {res:-571.84651}  
+Iteration 3:{space 3}log likelihood = {res:-571.84622}  
+Iteration 4:{space 3}log likelihood = {res:-571.84622}  
+{res}
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}={col 69}{res}     6,367
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}       119
+
+{txt}Random effects u_i ~ {res}Gaussian{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         9
+{txt}{col 63}avg{col 67}={col 69}{res}      53.5
+{txt}{col 63}max{col 67}={col 69}{res}       217
+
+{txt}Integration method: {res}mvaghermite{txt}{col 49}Integration pts.{col 67}={col 70}{res}       12
+
+{txt}{col 49}Wald chi2({res}9{txt}){col 67}={col 70}{res}    13.01
+{txt}Log likelihood  = {res}-571.84622{col 49}{txt}Prob > chi2{col 67}={res}{col 73}0.1622
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y1{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}C  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 11}D  {c |}{col 15}{res}{space 2}     0.19{col 27}{space 2}     0.20{col 38}{space 1}    0.97{col 47}{space 3} 0.33{col 55}{space 4}    -0.19{col 68}{space 3}     0.58
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}5dbc98  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.21{col 27}{space 2}     0.37{col 38}{space 1}    0.58{col 47}{space 3} 0.56{col 55}{space 4}    -0.51{col 68}{space 3}     0.93
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.16{col 27}{space 2}     0.45{col 38}{space 1}    0.36{col 47}{space 3} 0.72{col 55}{space 4}    -0.73{col 68}{space 3}     1.06
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.24{col 27}{space 2}     0.35{col 38}{space 1}    0.68{col 47}{space 3} 0.50{col 55}{space 4}    -0.45{col 68}{space 3}     0.93
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.42{col 27}{space 2}     0.35{col 38}{space 1}    1.20{col 47}{space 3} 0.23{col 55}{space 4}    -0.27{col 68}{space 3}     1.11
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -0.48{col 27}{space 2}     0.27{col 38}{space 1}   -1.79{col 47}{space 3} 0.07{col 55}{space 4}    -1.00{col 68}{space 3}     0.04
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 6}No lab  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.31{col 27}{space 2}     0.23{col 38}{space 1}    1.33{col 47}{space 3} 0.18{col 55}{space 4}    -0.15{col 68}{space 3}     0.77
+{txt}{space 13} {c |}
+{space 2}age_over_40 {c |}
+{space 3}≤40 years  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 3}>40 years  {c |}{col 15}{res}{space 2}     0.19{col 27}{space 2}     0.73{col 38}{space 1}    0.26{col 47}{space 3} 0.79{col 55}{space 4}    -1.23{col 68}{space 3}     1.61
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 1}Multiparous  {c |}{col 15}{res}{space 2}     0.00{col 27}{txt}  (empty)
+{space 1}Primiparous  {c |}{col 15}{res}{space 2}    -0.72{col 27}{space 2}     0.29{col 38}{space 1}   -2.52{col 47}{space 3} 0.01{col 55}{space 4}    -1.29{col 68}{space 3}    -0.16
+{txt}{space 13} {c |}
+{space 8}_cons {c |}{col 15}{res}{space 2}    -4.08{col 27}{space 2}     0.38{col 38}{space 1}  -10.75{col 47}{space 3} 0.00{col 55}{space 4}    -4.82{col 68}{space 3}    -3.34
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -2.77{col 27}{space 2}     2.33{col 55}{space 4}    -7.33{col 68}{space 3}     1.80
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.25{col 27}{space 2}     0.29{col 55}{space 4}     0.03{col 68}{space 3}     2.46
+{txt}          rho {c |}{col 15}{res}{space 2}     0.02{col 27}{space 2}     0.04{col 55}{space 4}     0.00{col 68}{space 3}     0.65
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{txt}LR test of rho=0: {help j_chibar##|_new:chibar2(01) = }{res}0.21{col 56}{txt}Prob >= chibar2 = {res}0.325
+{err}{bf:mi estimate}: omitted terms vary
+{p 4 4 2}The set of omitted variables or categories is not 
+consistent between {it:m}=1 and {it:m}=2; 
+this is not allowed.  To identify varying sets, you can use
+{helpb mi xeq} to run the command on individual imputations 
+or you can reissue the command with {bf:mi estimate, noisily}{p_end}
+{txt}{search r(498), local:r(498);}
 {com}. {c )-}
-{txt}{search r(2000), local:r(2000);}
+{txt}{search r(498), local:r(498);}
+
+end of do-file
+{search r(498), local:r(498);}
 
 end of do-file
 
-{search r(2000), local:r(2000);}
+{search r(498), local:r(498);}
 
 {com}. 
