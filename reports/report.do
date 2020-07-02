@@ -46,36 +46,33 @@ putdocx text ("Methods")
 // TODO: Check how the imputation was done and specify the variables used.
 
 `newpara'
-Because outcome data were missing for about a third of participants (see 
+Because health outcome data were missing for about a third of participants (see 
 results), we used Little's tests (Little 1988) of the null hypotheses that 
 missing values of the constituent outcomes were jointly missing completely at 
 random (MCAR) and covariate-dependent missing (CDM). We then used multiple 
 imputation via chained equations (van Buuren 2007) to create and analyze 
-<<dd_docx_display: $m_imputations>> multiply-imputed datasets. We imputed each 
-of the constituent outcomes using the auxiliary variables age, BMI, years of 
-education, average monthly household income (transformed to the log scale due 
-to the skewed distribution of income), variables used as constraints in the 
-randomization (cluster size, lab availability, and parity), and a variable 
-that indicated ultrasound availability; the variables included in the analysis 
-described below were also included. We were not able to include auxiliary 
-variables that indicated previous pregnancy with pre-eclampsia or previous 
-history of GDM due to collinearity. We evaluated convergence of the imputation 
-algorithm by inspecting trace plots and evaluated imputed data by inspecting 
-kernel density and bar plots comparing the distributions of imputed and 
-complete case data.
+<<dd_docx_display: $m_imputations>> multiply-imputed datasets. We imputed using 
+the auxiliary variables trial arm, years of education, average monthly household 
+income (transformed to the log scale due to the skewed distribution of income), 
+body mass index, ultrasound availability, and the variables used as constraints 
+in the randomization (cluster size, age, lab availability, and parity). We were 
+not able to include auxiliary variables that indicated previous pregnancy with 
+pre-eclampsia or previous history of GDM due to collinearity. We evaluated 
+convergence of the imputation algorithm by inspecting trace plots and evaluated 
+imputed data by inspecting kernel density and histograms comparing the 
+distributions of imputed and complete case data.
 putdocx textblock end
 
 `newpara'
-For each imputed data set, we computed the composite outcome from the imputed 
-constituent outcome data. An adverse pregnancy outcome was defined to have 
-occurred if at least one of the constituent outcomes occurred, and not to have 
-occurred if none of the constituent outcomes occurred. For each imputed data 
-set and outcome, we estimated an odds ratio to compare treatment to control 
-using logistic regression, and accounted for the cluster-randomized design using 
-random effects. We combined estimates  for each outcome using Rubin's rules 
-(Rubin 2004). For comparison, we also performed a complete case analysis under 
-the MCAR assumption. We estimated the intraclass correlation coefficient (ICC) 
-using the complete cases.
+An adverse pregnancy outcome was defined to have occurred if at least one of the 
+constituent outcomes occurred, and not to have occurred if none of the 
+constituent outcomes occurred. For each imputed data set and outcome, we 
+estimated an odds ratio to compare treatment to control using logistic 
+regression, accounting for the cluster-randomized design using random effects. 
+We combined estimates  for each outcome using Rubin's rules (Rubin 2004). For 
+comparison, we also performed a complete case analysis under the MCAR 
+assumption. We estimated the intraclass correlation coefficient (ICC) using the 
+complete cases.
 putdocx textblock end
 
 `newpara'
@@ -87,15 +84,18 @@ cluster-randomized design. For outcomes measured at only one time point within
 each pregnancy, we accounted for the cluster-randomized design using random 
 effects. For each of the process outcomes, we plotted marginal predictive 
 probabilities of attendance or successful screening and management with respect 
-to cluster size, laboratory availability, age, and parity. No data were missing 
-for the process outcome analyses.
+to cluster size, age, laboratory availability, and parity.
 putdocx textblock end
 
-// TODO: Make sure that the adjustments desribed below are applied to all 
-// analyses, including the "main" analysis that uses imputation.
+// TODO: Note that some data are misisng for the age variable. Determine how much 
+// is missing, and if it below 3% say, state that we did not impute and performed 
+// complete case analyses.
 
 `newpara'
-We adjusted for the stratification variable (CHMP 2015) and the variables used 
+We adjusted for the stratification variable (CHMP 2015) as a fixed effect in all 
+analyses except that for severe hypertension (due to chance, this relatively 
+rare outcome could be predicted perfectly by that variable for a small 
+proportion of the imputed data sets). We also adjusted for the variables used 
 to constrain randomization (Li 2017) as fixed effects in all analyses, using 
 individual- rather than cluster-level measurements where possible. We followed 
 the intention-to-treat principle for all analyses: participants were 
@@ -104,7 +104,7 @@ the complete case analyses for the adverse pregnancy analysis — all participan
 were included in the analyses. We computed 95% confidence intervals and used the 
 significance criterion P<0.05 throughout. Statistical analyses were performed 
 using Stata 16 (StataCorp LLC, College Station, Texas, USA). The statistician 
-was not involved in data collection and was blinded to treatment allocation 
+was not involved in data extraction and was blinded to treatment allocation 
 during analysis. Protocol deviations are documented in Appendix 1.
 putdocx textblock end
 
