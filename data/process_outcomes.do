@@ -40,12 +40,14 @@ foreach outcome of global process_outcomes {
 
     // Convert the stratification variable from string to integer.
     encode bookorgdistricthashed, generate(strat_var)
-
-    // Generate an indicator for whether each woman is aged > 40 years.
-    generate age_over_40 = age > 40
     
     // Generate an indicator for whether each woman is primiparous.
     rename bookprimi primiparous
+
+    // Age.
+    replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
+    label variable age "Age (years)"
+      // TODO: Some age values are missing - impute?
 
     // Keep only the variables of interest.
     keep y arm pregnancy visit clusterid $adj_var_names
@@ -58,14 +60,12 @@ foreach outcome of global process_outcomes {
     label variable strat_var     "District"
     label variable lab_available "Lab availability"
     label variable cluster_size  "Cluster size" // 100s of new enrollments
-    label variable age_over_40   "Age"          // Indicator of age > 40.
+    label variable age           "Age (years)"
     label variable primiparous   "Parity"       // Indicator of primiparity.
 
     // Label values.
     label define lab_available_label 1 "Lab" 0 "No lab"
     label values lab_available lab_available_label
-    label define age_over_40_label 1 ">40 years" 0 "≤40 years"
-    label values age_over_40 age_over_40_label
     label define primiparous_label 1 "Primiparous" 0 "Multiparous"
     label values primiparous primiparous_label
 

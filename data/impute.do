@@ -25,12 +25,6 @@ frame imputed {
     = i.arm c.cluster_size i.us_available i.lab_available, ///
     add($m_imputations)
 
-  // Compute age over 40, which is based on age, which is imputed.
-  mi passive: generate age_over_40 = age > 40
-  label variable age_over_40 "Age"
-  label define age_over_40_label 1 ">40 years" 0 "≤40 years"
-  label values age_over_40 age_over_40_label
-
   // The composite outcome is defined as follows. If:
   // * All of the outcomes are false -> composite outcome is false;
   // * At least one of the outcomes is true -> composite outcome is true;
