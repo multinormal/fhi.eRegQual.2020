@@ -43,8 +43,6 @@ putdocx textblock end
 `heading'
 putdocx text ("Methods")
 
-// TODO: Check how the imputation was done and specify the variables used.
-
 `newpara'
 Because health outcome data were missing for about a third of participants (see 
 results), we used Little's tests (Little 1988) of the null hypotheses that 
@@ -69,7 +67,7 @@ constituent outcomes occurred, and not to have occurred if none of the
 constituent outcomes occurred. For each imputed data set and outcome, we 
 estimated an odds ratio to compare treatment to control using logistic 
 regression, accounting for the cluster-randomized design using random effects. 
-We combined estimates  for each outcome using Rubin's rules (Rubin 2004). For 
+We combined estimates for each outcome using Rubin's rules (Rubin 2004). For 
 comparison, we also performed a complete case analysis under the MCAR 
 assumption. We estimated the intraclass correlation coefficient (ICC) using the 
 complete cases.
@@ -84,12 +82,12 @@ cluster-randomized design. For outcomes measured at only one time point within
 each pregnancy, we accounted for the cluster-randomized design using random 
 effects. For each of the process outcomes, we plotted marginal predictive 
 probabilities of attendance or successful screening and management with respect 
-to cluster size, age, laboratory availability, and parity.
+to cluster size, age, laboratory availability, and parity. Age was either 
+incorrectly coded or missing for no more than 
+<<dd_docx_display: string(${max_miss_age_pc}, "`pc_fmt'")>>% of women across 
+the process outcomes. Because data were missing for less than 5% of women, we 
+performed complete case analyses (Jakobsen 2017).
 putdocx textblock end
-
-// TODO: Note that some data are misisng for the age variable. Determine how much 
-// is missing, and if it below 3% say, state that we did not impute and performed 
-// complete case analyses.
 
 `newpara'
 We adjusted for the stratification variable (CHMP 2015) as a fixed effect in all 
@@ -100,12 +98,12 @@ to constrain randomization (Li 2017) as fixed effects in all analyses, using
 individual- rather than cluster-level measurements where possible. We followed 
 the intention-to-treat principle for all analyses: participants were 
 analyzed in the arms to which they were randomized and — with the exception of 
-the complete case analyses for the adverse pregnancy analysis — all participants 
-were included in the analyses. We computed 95% confidence intervals and used the 
-significance criterion P<0.05 throughout. Statistical analyses were performed 
-using Stata 16 (StataCorp LLC, College Station, Texas, USA). The statistician 
-was not involved in data extraction and was blinded to treatment allocation 
-during analysis. Protocol deviations are documented in Appendix 1.
+the complete case analyses — all participants were included in the analyses. We 
+computed 95% confidence intervals and used the significance criterion P<0.05 
+throughout. Statistical analyses were performed using Stata 16 (StataCorp LLC, 
+College Station, Texas, USA). The statistician was not involved in data 
+extraction and was blinded to treatment allocation during analysis. Protocol 
+deviations are documented in Appendix 1.
 putdocx textblock end
 
 // Results section
@@ -215,6 +213,13 @@ putdocx textblock end
 van Buuren, S. (2007). Multiple imputation of discrete and continuous data by 
 fully conditional specification. Statistical methods in medical research, 
 16(3), 219-242.
+putdocx textblock end
+
+`newpara'
+Jakobsen, J. C., Gluud, C., Wetterslev, J., & Winkel, P. (2017). When and how 
+should multiple imputation be used for handling missing data in randomised 
+clinical trials–a practical guide with flowcharts. BMC medical research 
+methodology, 17(1), 162.
 putdocx textblock end
 
 `newpara'

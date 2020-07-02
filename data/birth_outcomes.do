@@ -93,15 +93,17 @@ frame original {
   label variable us_available "US available"
   global regulars $regulars us_available
 
-  // Verify that all of the regular variables are complete, and that each of the
-  // variables to be imputed contain missing values.
-  misstable summarize $regulars
-  assert r(N_eq_dot) + r(N_gt_dot) == .
-  foreach x of varlist y1-y5 $imputeds {
-    misstable summarize `x'
-    assert r(N_eq_dot) + r(N_gt_dot) != .
-  }
-
   // Keep only the variables of interest.
   keep y* $imputeds $regulars TrialOne_adverse_pregoutc
+
+  // Verify that all of the regular variables are complete, and that each of the
+  // variables to be imputed contain missing values.
+  foreach x of global regulars {
+    misstable summarize `x'
+    assert r(N_lt_dot) == .
+  }
+  foreach x of varlist y1-y5 $imputeds {
+    misstable summarize `x'
+    assert r(N_lt_dot) < _N
+  }
 }

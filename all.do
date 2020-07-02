@@ -11,12 +11,12 @@ do setup/setup
 // Set up globals.
 do globals/globals
 
+// Import the process outcome data.
+do data/process_outcomes
+
 // Import birth outcome data and perform imputation.
 do data/birth_outcomes
 do data/impute
-
-// Import the process outcome data.
-do data/process_outcomes
 
 // Do estimation.
 do estimation/missing          // Calculate percentage of data missing.
