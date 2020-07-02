@@ -11,30 +11,22 @@ do setup/setup
 // Set up globals.
 do globals/globals
 
-// Import birth outcome data and perform imputation.
-// TODO: Reinstate
-do data/birth_outcomes
-// do data/impute
-
 // Import the process outcome data.
 do data/process_outcomes
 
-// TODO: Reinstate
-// // Do estimation.
-// do estimation/missing          // Calculate percentage of data missing.
-// do estimation/mcar             // Test the MCAR hypothesis.
-// do estimation/birth_outcomes   // Analyze the birth outcome data.
-do estimation/process_outcomes    // Analyze process outcome data.
+// Import birth outcome data and perform imputation.
+do data/birth_outcomes
+do data/impute
 
-// TODO: Reinstate
-// // Make figures
-// do figures/imputation
+// Do estimation.
+do estimation/missing          // Calculate percentage of data missing.
+do estimation/mcar             // Test the MCAR hypothesis.
+do estimation/birth_outcomes   // Analyze the birth outcome data.
+do estimation/process_outcomes // Analyze process outcome data.
+
+// Make figures
+do figures/imputation
 do figures/margins
-
-// TODO: Make Spider diagram for each process outcome
-// (see https://folkehelse.sharepoint.com/:i:/r/sites/1461/Restricted%20Documents/4.Research/Analysis,%20Sample%20Size,%20Randomizatio/eRegQual/radar_chart_eRegQual.png?csf=1&web=1&e=JeKbbU)
-
-
 
 // Obtain the git revision hash, which is used in the reports.
 tempfile git_revision_filename

@@ -12,15 +12,18 @@ frame imputed {
 
   // Perform imputation. Due to collinearity between the constituent outcome
   // variables y1-y5, these variables are exluded as predictors for one another.
-  // This is achieved by specifying the noimputed option, followed by the include
-  // option that explicityly lists the imputed variables to include in the
-  // imputation model. Specifying the omit option did not work as expected. It was
-  // not possible to include other variables in the model for the constituent
-  // outcome variables, also due to collinearity.
-  mi impute chained (regress)                                       $imputeds ///
-                    (logit, noimputed include($imputeds strat_var)) y1-y5     ///
-                    = i.arm i.lab_available i.us_available,                   ///
-                    add($m_imputations) 
+  // It was not possible to include the stratification variable due to perfect
+  // prediction (possibly too many variables in the models?)
+  mi impute chained                                                    ///
+    (regress)                           age bmi education log_income   ///
+    (logit)                             primiparous                    ///
+    (logit, omit(i.y2 i.y3 i.y4 i.y5))  y1                             ///
+    (logit, omit(i.y1 i.y3 i.y4 i.y5))  y2                             ///
+    (logit, omit(i.y1 i.y2 i.y4 i.y5))  y3                             ///
+    (logit, omit(i.y1 i.y2 i.y3 i.y5))  y4                             ///
+    (logit, omit(i.y1 i.y2 i.y3 i.y4))  y5                             ///
+    = i.arm c.cluster_size i.us_available i.lab_available, ///
+    add($m_imputations)
 
   // The composite outcome is defined as follows. If:
   // * All of the outcomes are false -> composite outcome is false;
@@ -34,6 +37,7 @@ frame imputed {
   mi passive: generate `one_true'  = ///
     (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
 
+  // Compute the composite outcome.
   mi passive: generate y = .
   mi passive: replace  y = 0 if `all_false'
   mi passive: replace  y = 1 if `one_true'

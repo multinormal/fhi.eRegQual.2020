@@ -1,5 +1,8 @@
 version 16.1
 
+// Record the maximum percentage of data missing for age for process outcomes.
+global max_miss_age_pc 0
+
 foreach outcome of global process_outcomes {
   frame create `outcome'
   frame `outcome' {
@@ -40,14 +43,13 @@ foreach outcome of global process_outcomes {
 
     // Convert the stratification variable from string to integer.
     encode bookorgdistricthashed, generate(strat_var)
-
-    // Generate an indicator for whether each woman is aged > 40 years.
-    generate age_over_40 = age > 40
-    label values age_over_40 yes_no_label
     
     // Generate an indicator for whether each woman is primiparous.
     rename bookprimi primiparous
-    label values primiparous yes_no_label
+
+    // Age.
+    replace age = . if age <= 1 // Correct some mis-coded values of the age variable.
+    label variable age "Age (years)"
 
     // Keep only the variables of interest.
     keep y arm pregnancy visit clusterid $adj_var_names
@@ -60,20 +62,30 @@ foreach outcome of global process_outcomes {
     label variable strat_var     "District"
     label variable lab_available "Lab availability"
     label variable cluster_size  "Cluster size" // 100s of new enrollments
-    label variable age_over_40   "Age"          // Indicator of age > 40.
+    label variable age           "Age (years)"
     label variable primiparous   "Parity"       // Indicator of primiparity.
 
     // Label values.
     label define lab_available_label 1 "Lab" 0 "No lab"
     label values lab_available lab_available_label
-    label define age_over_40_label 1 ">40 years" 0 "≤40 years"
-    label values age_over_40 age_over_40_label
     label define primiparous_label 1 "Primiparous" 0 "Multiparous"
     label values primiparous primiparous_label
 
-    // There should be no missing data.
-    misstable summarize, all
-    assert r(N_lt_dot) == _N
+    // There should only be missing data for the age variable.
+    describe, short varlist
+    local vars = r(varlist)
+    local vars = ustrtrim(usubinstr("`vars'", "age", "", .))
+    foreach x of local vars {
+      misstable summarize `x'
+      assert r(N_lt_dot) == .
+    }
+
+    // The age variable should contain no more than 1.257% missing data.
+    misstable summarize age
+    local miss_age_pc = 100 * (r(N_eq_dot) / (r(N_eq_dot) + r(N_lt_dot)))
+    if `miss_age_pc' > $max_miss_age_pc global max_miss_age_pc = `miss_age_pc'
+    drop if missing(age)
+    assert r(N_drop) <= 300 // Ensure we did only drop a little data!
 
     // For most of the process outcomes, we have multiple visits within
     // pregnancy; we model the cluster-randomized design in the estimation.
@@ -83,10 +95,5 @@ foreach outcome of global process_outcomes {
     // as a melogit-based analysis with cluster as the random effect.
     if "`outcome'" != "malpresentation" xtset pregnancy visit
     if "`outcome'" == "malpresentation" xtset clusterid
-
-    // TODO: If you generate an OR for this analysis, switch the birth outcomes
-    // to OR, too. Make sure you update the report text if you change the link.
-
-    // TODO: Probably report OR and assumed and corresponding risks.
   }
 }
