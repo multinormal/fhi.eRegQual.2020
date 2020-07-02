@@ -31,7 +31,8 @@ frame `this_frame' {
   label define `label_var' 0 "Original", modify
 
   // Plot the density of each of the continuous imputed variables.
-  foreach var of global imputeds {
+  local cont_imputed = ustrtrim(usubinstr("$imputeds", "primiparous", "", .))
+  foreach var of local cont_imputed {
     local pc_miss = string(${pc_miss_`var'}, "%8.1f") + "% missing"
 
     local var_label : variable label `var'
@@ -54,7 +55,7 @@ frame `this_frame' {
 
   // Plot the distribution of each of the dichotomous imputed variables.
   label values y* yes_no
-  foreach var of varlist y y1-y5 {
+  foreach var of varlist y y1-y5 primiparous {
     local pc_miss = string(${pc_miss_`var'}, "%8.1f") + "% missing"
     local var_label : variable label `var'
 
