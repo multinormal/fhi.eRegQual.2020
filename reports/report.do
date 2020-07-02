@@ -43,6 +43,8 @@ putdocx textblock end
 `heading'
 putdocx text ("Methods")
 
+// TODO: Check how the imputation was done and specify the variables used.
+
 `newpara'
 Because outcome data were missing for about a third of participants (see 
 results), we used Little's tests (Little 1988) of the null hypotheses that 
