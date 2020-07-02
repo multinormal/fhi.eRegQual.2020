@@ -24,6 +24,7 @@ frame original {
   // Convert the stratification variable from string to integer.
   encode bookorgdistricthashed, generate(strat_var)
   label variable strat_var District
+  fvset base 1 strat_var
   global regulars $regulars strat_var
 
   // Rename and label the cluster identifier variable.
