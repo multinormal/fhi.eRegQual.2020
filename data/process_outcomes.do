@@ -81,8 +81,5 @@ foreach outcome of global process_outcomes {
     // as a melogit-based analysis with cluster as the random effect.
     if "`outcome'" != "malpresentation" xtset pregnancy visit
     if "`outcome'" == "malpresentation" xtset clusterid
-
-    // TODO: If you generate an OR for this analysis, switch the birth outcomes
-    // to OR, too. Make sure you update the report text if you change the link.
   }
 }
