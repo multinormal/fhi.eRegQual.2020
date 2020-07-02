@@ -34,7 +34,7 @@ frame copy imputed `imputed'
 frame `imputed' {
   mi xtset clusterid
 
-  local mi_opts or errorok
+  local mi_opts or errorok noisily // TODO: Remove noisily when imputation works
     // The errorok option is neeeded because, by chance, collinearity
     // can exist between the stratification variable and the dependent variable.
     // See the assert below, which specifies when this happens.
