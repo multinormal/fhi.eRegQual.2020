@@ -15,6 +15,11 @@ to the `git` program. It is assumed that `git` is installed on your system
 and is on whatever search path Stata uses. The analysis will change the path
 of the `PERSONAL` directory to the `packages` directory.
 
+The data are not included in this repository. The names of the required files
+are specified in the `data/birth_outcomes.do` and `globals/globals.do` files,
+along with the expected data signatures of those files. The analysis checks
+that the data being analyzed is as expected.
+
 ## Running the analyses
 
 Once the above setup is complete, the analyses can be run by setting the
