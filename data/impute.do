@@ -42,6 +42,7 @@ frame imputed {
   mi passive: replace  y = 0 if `all_false'
   mi passive: replace  y = 1 if `one_true'
   label variable y "Adverse pregnancy outcome"
+  label values y yes_no_label
 
   // Verify that we can correctly recompute the composite outcome using the
   // original (non-imputed) data.
