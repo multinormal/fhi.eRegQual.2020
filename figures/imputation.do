@@ -48,13 +48,12 @@ frame `this_frame' {
            ylabel(none)                                            ///
            legend(label(1 "Original") label(2 "Imputed")           ///
                   region(color(white)))
-    global `var'_plot_fname "products/Imputations (cont) - `var_label'"
+    global `var'_plot_fname "products/Imputations - `var_label'"
     graph export "${`var'_plot_fname}.pdf", replace
     graph export "${`var'_plot_fname}.png", replace
   }
 
   // Plot the distribution of each of the dichotomous imputed variables.
-  label values y* yes_no
   foreach var of varlist y y1-y5 primiparous {
     local pc_miss = string(${pc_miss_`var'}, "%8.1f") + "% missing"
     local var_label : variable label `var'
@@ -68,7 +67,7 @@ frame `this_frame' {
       ytitle("`var_label' (`pc_miss')") yscale(range(0 3500))       ///
       legend(region(lcolor(white)))                                 ///
       graphregion(color(white)) plotregion(color(white)) bgcolor(white)
-    global `var'_plot_fname "products/Imputations (cont) - `var_label'"
+    global `var'_plot_fname "products/Imputations - `var_label'"
     graph export "${`var'_plot_fname}.pdf", replace
     graph export "${`var'_plot_fname}.png", replace
   }
