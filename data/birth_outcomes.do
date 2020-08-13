@@ -77,7 +77,7 @@ frame original {
   // Generate an indicator for whether each woman is primiparous.
   rename bookprimi primiparous
   label variable primiparous   "Parity"
-  label define primiparous_label 1 "Primiparous" 0 "Multiparous"
+  label define primiparous_label 1 "Primi" 0 "Multi"
   label values primiparous primiparous_label
   global imputeds $imputeds primiparous
   

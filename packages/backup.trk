@@ -1,4 +1,4 @@
-* 00000001
+* 00000002
 *! version 1.0.0
 * Do not erase or edit this file
 * It is used by Stata to track the ado and help
@@ -34,4 +34,16 @@ d
 d Distribution-Date: 20080814
 f s/splitvallabels.ado
 f s/splitvallabels.hlp
+e
+S http://www.stata-journal.com/software/sj13-4
+N st0318.pkg
+D  8 May 2020
+U 2
+d SJ13-4 st0318. Little's chi-squared test for...
+d Little's chi-squared test for MCAR or CDM
+d by Cheng Li, Northwestern University
+d Support:  chengli2014@@u.northwestern.edu
+d After installation, type help ^mcartest^
+f m/mcartest.ado
+f m/mcartest.sthlp
 e
