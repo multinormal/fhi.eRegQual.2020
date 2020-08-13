@@ -1,4 +1,4 @@
-* 00000002
+* 00000003
 *! version 1.0.0
 * Do not erase or edit this file
 * It is used by Stata to track the ado and help
@@ -46,4 +46,19 @@ d Support:  chengli2014@@u.northwestern.edu
 d After installation, type help ^mcartest^
 f m/mcartest.ado
 f m/mcartest.sthlp
+e
+S http://www.stata.com/users/vwiggins
+N grc1leg.pkg
+D 13 Aug 2020
+U 3
+d grc1leg.  Combine graphs into one graph with a common legend.
+d Program by Vince Wiggins, StataCorp <vwiggins@@stata.com>.
+d Statalist distribution, 16 June 2003.
+d 
+d Exactly like -graph combine- but shows a single common legend for all
+d combined graphs.
+d 
+d Distribution-Date: 02jun2010
+f g/grc1leg.ado
+f g/grc1leg.hlp
 e

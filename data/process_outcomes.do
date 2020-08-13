@@ -68,7 +68,7 @@ foreach outcome of global process_outcomes {
     // Label values.
     label define lab_available_label 1 "Lab" 0 "No lab"
     label values lab_available lab_available_label
-    label define primiparous_label 1 "Primiparous" 0 "Multiparous"
+    label define primiparous_label 1 "Primi" 0 "Multi"
     label values primiparous primiparous_label
 
     // There should only be missing data for the age variable.

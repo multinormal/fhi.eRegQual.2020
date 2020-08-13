@@ -23,6 +23,7 @@ do estimation/missing          // Calculate percentage of data missing.
 do estimation/mcar             // Test the MCAR hypothesis.
 do estimation/birth_outcomes   // Analyze the birth outcome data.
 do estimation/process_outcomes // Analyze process outcome data.
+do estimation/margins          // Compute marginal probabilities.
 
 // Make figures
 do figures/imputation
