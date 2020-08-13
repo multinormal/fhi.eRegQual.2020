@@ -21,6 +21,9 @@ local n_plots = wordcount("`margin_vars'")
 // Define the ticks and labels used for the vertical axes of the left-most plot.
 local y_ticks 0 "0%" 0.2 "20%" 0.4 "40%" 0.6 "60%" 0.8 "80%" 1.0 "100%"
 
+// Define the symbols for the arms.
+local symbols plot1opts(msymbol(D)) plot2opts(msymbol(O))
+
 foreach outcome of global process_outcomes {
   frame `outcome' {
     foreach var of local margin_vars {
@@ -49,6 +52,7 @@ foreach outcome of global process_outcomes {
                   graphregion(color(white))               ///
                   plotregion(color(white))                ///
                   bgcolor(white)                          ///
+                  `symbols'                               ///
                   name(`var', replace)
     }
 
