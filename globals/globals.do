@@ -23,7 +23,7 @@ global fname_hypertension    "data/raw/25June2020_eRegQual process outcomes_hype
 global fname_diabetes        "data/raw/25June2020_eRegQual process outcomes_diabetes.dta"
 global fname_malpresentation "data/raw/25June2020_eRegQual process outcomes_malpresentation.dta"
 global fname_anemia          "data/raw/02July2020_eRegQual process outcomes_anemia.dta"
-global fname_fetalgrowth     "data/raw/02July2020_eRegQual process outcomes_fetalgrowth.dta"
+global fname_fetalgrowth     "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
 
 // Define data signatures for the process outcome files.
 global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
@@ -31,4 +31,4 @@ global datasignature_hypertension        "6367:60(68365):3970041110:3735367683"
 global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
 global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
 global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
-global datasignature_fetalgrowth        "6367:142(76473):3264358426:1819903352"
+global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
