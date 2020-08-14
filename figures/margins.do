@@ -42,8 +42,12 @@ foreach outcome of global process_outcomes {
         local xscale `xscale' xlabel(15 25 35 45)
       }
       
+      // Restore the estimates for this (outcome, var) pair.
+      margin_name `outcome' `var'
+      local estimates_name = r(estimates_name)
+      estimates restore `estimates_name'
+
       // Plot the margins.
-      estimates restore `var'_margins
       local var_label : variable label `var'
       marginsplot, yscale(range(0 1)) `ylabel' ytitle("") ///
                   `xscale'                                ///
