@@ -31,11 +31,13 @@ foreach outcome of global process_outcomes {
       // on the y axis. All others will use the following "blanked" labels.
       local ylabel ylabel(0 " " 0.2 " " 0.4 " " 0.6 " " 0.8 " " 1.0 " ")
       local xscale
+      local ytitle ytitle("")
       
       if "`var'" == "cluster_size" {
         local xscale          xscale(range(0 2.25)) 
         local xscale `xscale' xlabel(0.1 "10" 1 "100" 2 "200")
         local ylabel ylabel(`y_ticks', angle(horizontal))
+        local ytitle ytitle("``outcome'_margins_title'")
       }
       if "`var'" == "age" {
         local xscale          xscale(range(10 50)) 
@@ -49,10 +51,10 @@ foreach outcome of global process_outcomes {
 
       // Plot the margins.
       local var_label : variable label `var'
-      marginsplot, yscale(range(0 1)) `ylabel' ytitle("") ///
+      marginsplot, yscale(range(0 1)) `ylabel' `ytitle'   ///
                   `xscale'                                ///
                   legend(rows(1) region(color(white)))    ///
-                  title("`var_label'", span)              ///
+                  title("")                               ///
                   graphregion(color(white))               ///
                   plotregion(color(white))                ///
                   bgcolor(white)                          ///
@@ -63,7 +65,6 @@ foreach outcome of global process_outcomes {
     // Combine and save the margins plots.
     set scheme white_background // Hack to address thin lines around plot.
     grc1leg `margin_vars', cols(`n_plots')                        ///
-                           title("``outcome'_margins_title'")     ///
                            legendfrom(cluster_size)               ///
                            graphregion(color(white) lwidth(none)) ///
                            plotregion(color(white))
