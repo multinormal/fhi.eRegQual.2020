@@ -3,29 +3,36 @@ version 16.1
 // Specify the model.
 local model xtlogit \`var' i.arm $adj_vars
 
-// Compute the complete case estimate.
+// Compute complete case estimates.
 tempname original
 frame copy imputed `original'
 frame `original' {
   // Fit the model.
   mi extract 0, clear
   xtset clusterid
-  local var y
-  `model', or
-  estimates store complete_case_estimates
 
-  // Make globals containing key results.
-  matrix result   = r(table)
-  global cc_or_b  = result["b",      "`var':2.arm"]
-  global cc_or_ll = result["ll",     "`var':2.arm"]
-  global cc_or_ul = result["ul",     "`var':2.arm"]
-  global cc_or_p  = result["pvalue", "`var':2.arm"]
+  local cc_outcomes y stillbirth
+  foreach var of local cc_outcomes {
+    `model', or
+    if "`var'" == "stillbirth" {
+      estimates store `var'_estimates
+      continue
+    }
+    estimates store complete_case_estimates
 
-  // Estimate ICC.
-  loneway `var' clusterid
-  global icc    = r(rho)
-  global icc_lb = r(lb)
-  global icc_ub = r(ub)
+    // Make globals containing key results.
+    matrix result   = r(table)
+    global cc_or_b  = result["b",      "`var':2.arm"]
+    global cc_or_ll = result["ll",     "`var':2.arm"]
+    global cc_or_ul = result["ul",     "`var':2.arm"]
+    global cc_or_p  = result["pvalue", "`var':2.arm"]
+
+    // Estimate ICC.
+    loneway `var' clusterid
+    global icc    = r(rho)
+    global icc_lb = r(lb)
+    global icc_ub = r(ub)
+  }
 }
 
 // Compute the multiply-imputed estimates.

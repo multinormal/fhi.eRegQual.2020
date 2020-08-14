@@ -80,6 +80,13 @@ frame original {
   label define primiparous_label 1 "Primi" 0 "Multi"
   label values primiparous primiparous_label
   global imputeds $imputeds primiparous
+
+  // Generate an indicator for stillbirth. Because this is a secondary outcome
+  // and data are missing for <5% of women, we will not impute.
+  rename stillbirth_reported stillbirth
+  label variable stillbirth   "Stillbirth"
+  label define stillbirth_label 1 "Stillbirth" 0 "Live birth"
+  label values stillbirth stillbirth_label
   
   // Compute the cluster size from the trial data. We use the trial data for
   // simplicity and have verified that these agree with the "baseline" data on
@@ -94,10 +101,12 @@ frame original {
   global regulars $regulars us_available
 
   // Keep only the variables of interest.
-  keep y* $imputeds $regulars TrialOne_adverse_pregoutc
+  keep y* $imputeds $regulars TrialOne_adverse_pregoutc stillbirth
 
-  // Verify that all of the regular variables are complete, and that each of the
-  // variables to be imputed contain missing values.
+  // Verify that all of the regular variables are complete, that each of the
+  // variables to be imputed contain missing values, and that the threshold on
+  // the percentage of missing data we tolerate to perform a complete case
+  // analysis applies to the stillbirth variable.
   foreach x of global regulars {
     misstable summarize `x'
     assert r(N_lt_dot) == .
@@ -106,4 +115,6 @@ frame original {
     misstable summarize `x'
     assert r(N_lt_dot) < _N
   }
+  misstable summarize stillbirth
+  assert r(N_eq_dot) / (r(N_eq_dot) + r(N_lt_dot)) < 0.05
 }

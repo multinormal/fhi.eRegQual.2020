@@ -44,21 +44,21 @@ putdocx textblock end
 putdocx text ("Methods")
 
 `newpara'
-Because health outcome data were missing for about a third of participants (see 
-results), we used Little's tests (Little 1988) of the null hypotheses that 
-missing values of the constituent outcomes were jointly missing completely at 
-random (MCAR) and covariate-dependent missing (CDM). We then used multiple 
-imputation via chained equations (van Buuren 2007) to create and analyze 
-<<dd_docx_display: $m_imputations>> multiply-imputed datasets. We imputed using 
-the auxiliary variables trial arm, years of education, average monthly household 
-income (transformed to the log scale due to the skewed distribution of income), 
-body mass index, ultrasound availability, and the variables used as constraints 
-in the randomization (cluster size, age, lab availability, and parity). We were 
-not able to include auxiliary variables that indicated previous pregnancy with 
-pre-eclampsia or previous history of GDM due to collinearity. We evaluated 
-convergence of the imputation algorithm by inspecting trace plots and evaluated 
-imputed data by inspecting kernel density and histograms comparing the 
-distributions of imputed and complete case data.
+Because constituent outcome data were missing for about a third of participants 
+(see results), we used Little's tests (Little 1988) of the null hypotheses that 
+data were jointly missing completely at random (MCAR) and covariate-dependent 
+missing (CDM). We then used multiple imputation via chained equations (van 
+Buuren 2007) to create and analyze <<dd_docx_display: $m_imputations>> 
+multiply-imputed datasets. We imputed using the auxiliary variables trial arm, 
+years of education, average monthly household income (transformed to the log 
+scale due to the skewed distribution of income), body mass index, ultrasound 
+availability, and the variables used as constraints in the randomization 
+(cluster size, age, lab availability, and parity). We were not able to include 
+auxiliary variables that indicated previous pregnancy with pre-eclampsia or 
+previous history of GDM due to collinearity. We evaluated convergence of the 
+imputation algorithm by inspecting trace plots and evaluated imputed data by 
+inspecting kernel density and histograms comparing the distributions of imputed 
+and complete case data.
 putdocx textblock end
 
 `newpara'
@@ -70,7 +70,9 @@ regression, accounting for the cluster-randomized design using random effects.
 We combined estimates for each outcome using Rubin's rules (Rubin 2004). For 
 comparison, we also performed a complete case analysis under the MCAR 
 assumption. We estimated the intraclass correlation coefficient (ICC) using the 
-complete cases.
+complete cases. Because data on stillbirth was missing for less than 
+5% of women (Jakobsen 2017), a complete case analysis was performed for this 
+outcome.
 putdocx textblock end
 
 `newpara'
@@ -85,8 +87,8 @@ probabilities of attendance or successful screening and management with respect
 to cluster size, age, laboratory availability, and parity. Age was either 
 incorrectly coded or missing for no more than 
 <<dd_docx_display: string(${max_miss_age_pc}, "`pc_fmt'")>>% of women across 
-the process outcomes. Because data were missing for less than 5% of women, we 
-performed complete case analyses (Jakobsen 2017).
+the process outcomes. Because process outcome data were missing for less than 
+5% of women, we performed complete case analyses.
 putdocx textblock end
 
 `newpara'
@@ -137,7 +139,7 @@ complete case odds ratio of <<dd_docx_display: string(${cc_or_b}, "`e_fmt'")>>
 <<dd_docx_display: string(${cc_or_p}, "`p_fmt'")>>). Tables 2–6 show results for 
 the constituent outcomes. The ICC was estimated to be close to zero and no 
 greater than <<dd_docx_display: string(${icc_ub}, "%5.3f")>> (upper bound of 
-95% CI).
+95% CI). Table 7 shows the result for the stillbirth outcome.
 putdocx textblock end
 
 frame imputed {
@@ -156,6 +158,27 @@ frame imputed {
     forvalues i = `n_rows'(-1)`n_start' { // Drop rows not of interest.
       putdocx table tbl_`tbl_num'(`i', .), drop
     }
+  }
+}
+
+tempname original
+frame copy imputed `original'
+frame `original' {
+  mi extract 0, clear
+  xtset clusterid
+  local var stillbirth
+
+  local ++tbl_num
+  local var_label : variable label `var'
+  local title "Table `tbl_num'. `var_label' (complete case result)"
+  estimates replay `var'_estimates, or
+  putdocx table tbl_`tbl_num' = etable, title("`title'")
+  putdocx table tbl_`tbl_num'(2, 1) = (" ") // Remove outcome var name.
+  putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+  local n_rows  23
+  local n_start 5
+  forvalues i = `n_rows'(-1)`n_start' { // Drop rows not of interest.
+    putdocx table tbl_`tbl_num'(`i', .), drop
   }
 }
 
@@ -246,22 +269,16 @@ putdocx textblock end
 putdocx text ("Appendix 1 — Protocol Deviations")
 
 `newpara'
-We planned to use generalized estimating equations (GEEs) to account for the 
-cluster-randomized design but used random-effect logistic regression 
-because it was necessary to analyze the process outcome data in which outcomes 
-are clustered within pregnancy (over time) and within clinic. Stata's XTGEE 
-command can compute robust standard errors that account for clustering within 
-pregnancy, but not additionally at the clinic level. We chose to use a common 
-model for all analyses, rather than use GEEs for some outcomes and logistic 
-regressions for others. We planned to report risk ratios, but report odds ratios 
-as provided by logistic regression. We did not plan to adjust for the 
-stratification variable or the variables used as constraints in the 
-randomization, but have done so based on guidance from the European Medicines 
-Agency and research that was not available when the protocol was being 
-developed. We planned to visually explore differences in process outcomes 
-between clusters using spider graphs but judged that plots of marginal 
-predictive probabilities show the required information more clearly and provide 
-confidence intervals.
+We planned to use generalized estimating equations (GEEs) but chose to use 
+mixed-effects logistic regression throughout, which simplified the analyses. We 
+planned to report risk ratios, but report odds ratios as provided by logistic 
+regression. We did not plan to adjust for the stratification variable or the 
+variables used as constraints in the randomization, but have done so based on 
+guidance from the European Medicines Agency and research that was not available 
+when the protocol was being developed. We planned to visually explore 
+differences in process outcomes between clusters using spider graphs but judged 
+that plots of marginal predictive probabilities show the required information 
+more clearly and provide confidence intervals.
 putdocx textblock end
 
 `heading'
@@ -296,6 +313,21 @@ frame imputed {
     putdocx table tbl_`tbl_num' = etable, title("`title'")
     putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
   }
+}
+
+tempname original
+frame copy imputed `original'
+frame `original' {
+  mi extract 0, clear
+  xtset clusterid
+  local var stillbirth
+
+  local ++tbl_num
+  local var_label : variable label `var'
+  local title "Table `tbl_num'. `var_label' (complete case result)"
+  estimates replay `var'_estimates, or
+  putdocx table tbl_`tbl_num' = etable, title("`title'")
+  putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
 }
 
 `subhead'
