@@ -18,7 +18,9 @@ frame original {
   // Convert the arm variable from string to integer.
   encode prettyExposure, generate(arm)
   label variable arm Arm
-  fvset base 1 arm
+  label define birth_outcome_arm_label 1 "Intervention" 2 "Control"
+  label values arm birth_outcome_arm_label
+  fvset base 2 arm
   global regulars $regulars arm
 
   // Convert the stratification variable from string to integer.

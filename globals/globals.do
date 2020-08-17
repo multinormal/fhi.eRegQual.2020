@@ -32,3 +32,12 @@ global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
 global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
 global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
 global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
+
+// Define recoding rules for the arm variables of the process outcomes; the 
+// coding of control and intervention vary by outcome. We will adopt the 
+// convention that control is coded as 1 and intervention as 2.
+global recode_attendance   recode arm (1 = 2) (2 = 1)
+global recode_hypertension recode arm (1 = 2) (2 = 1)
+foreach x in diabetes malpresentation anemia fetalgrowth {
+  global recode_`x' // No recoding necessary
+}
