@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}17 Aug 2020, 13:57:35
+ {txt}opened on:  {res}17 Aug 2020, 14:53:09
 {txt}
 {com}. 
 . // Set up Stata.
@@ -41,7 +41,7 @@
 {txt}
 {com}. 
 . // The number of imputations to perform.
-. global m_imputations 5 // TODO: REINSTATE 50 // Very slightly narrower CI if m=100.
+. global m_imputations 50 // Very slightly narrower CI if m=100.
 {txt}
 {com}. 
 . // Define the names of the process outcomes.
@@ -753,11 +753,11 @@ Contains data
 
 {res}{txt}Performing chained iterations ...
 {res}{txt}
-Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
-{txt}Chained equations{txt}{col 45}{ralign 12:added }= {res}       5
-{txt}Imputed: {it:m}=1 through {it:m}=5{txt}{col 45}{ralign 12:updated }= {res}       0
+Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}      50
+{txt}Chained equations{txt}{col 45}{ralign 12:added }= {res}      50
+{txt}Imputed: {it:m}=1 through {it:m}=50{txt}{col 45}{ralign 12:updated }= {res}       0
 
-{txt}Initialization: {res}monotone{txt}{col 45}{ralign 12:Iterations }= {res}      50
+{txt}Initialization: {res}monotone{txt}{col 45}{ralign 12:Iterations }= {res}     500
 {txt}{col 45}{ralign 12:burn-in }= {res}      10
 
 {txt}{p 15 15 2}{bf:age}: linear regression{p_end}
@@ -804,6 +804,51 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 {res}{txt}{it:m}=3:
 {res}{txt}{it:m}=4:
 {res}{txt}{it:m}=5:
+{res}{txt}{it:m}=6:
+{res}{txt}{it:m}=7:
+{res}{txt}{it:m}=8:
+{res}{txt}{it:m}=9:
+{res}{txt}{it:m}=10:
+{res}{txt}{it:m}=11:
+{res}{txt}{it:m}=12:
+{res}{txt}{it:m}=13:
+{res}{txt}{it:m}=14:
+{res}{txt}{it:m}=15:
+{res}{txt}{it:m}=16:
+{res}{txt}{it:m}=17:
+{res}{txt}{it:m}=18:
+{res}{txt}{it:m}=19:
+{res}{txt}{it:m}=20:
+{res}{txt}{it:m}=21:
+{res}{txt}{it:m}=22:
+{res}{txt}{it:m}=23:
+{res}{txt}{it:m}=24:
+{res}{txt}{it:m}=25:
+{res}{txt}{it:m}=26:
+{res}{txt}{it:m}=27:
+{res}{txt}{it:m}=28:
+{res}{txt}{it:m}=29:
+{res}{txt}{it:m}=30:
+{res}{txt}{it:m}=31:
+{res}{txt}{it:m}=32:
+{res}{txt}{it:m}=33:
+{res}{txt}{it:m}=34:
+{res}{txt}{it:m}=35:
+{res}{txt}{it:m}=36:
+{res}{txt}{it:m}=37:
+{res}{txt}{it:m}=38:
+{res}{txt}{it:m}=39:
+{res}{txt}{it:m}=40:
+{res}{txt}{it:m}=41:
+{res}{txt}{it:m}=42:
+{res}{txt}{it:m}=43:
+{res}{txt}{it:m}=44:
+{res}{txt}{it:m}=45:
+{res}{txt}{it:m}=46:
+{res}{txt}{it:m}=47:
+{res}{txt}{it:m}=48:
+{res}{txt}{it:m}=49:
+{res}{txt}{it:m}=50:
 {res}{com}.   tempvar one_true
 .   mi passive: generate `one_true'  = ///
 >     (y1 == 1) | (y2 == 1) | (y3 == 1) | (y4 == 1) | (y5 == 1)
@@ -813,6 +858,51 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 {res}{txt}{it:m}=3:
 {res}{txt}{it:m}=4:
 {res}{txt}{it:m}=5:
+{res}{txt}{it:m}=6:
+{res}{txt}{it:m}=7:
+{res}{txt}{it:m}=8:
+{res}{txt}{it:m}=9:
+{res}{txt}{it:m}=10:
+{res}{txt}{it:m}=11:
+{res}{txt}{it:m}=12:
+{res}{txt}{it:m}=13:
+{res}{txt}{it:m}=14:
+{res}{txt}{it:m}=15:
+{res}{txt}{it:m}=16:
+{res}{txt}{it:m}=17:
+{res}{txt}{it:m}=18:
+{res}{txt}{it:m}=19:
+{res}{txt}{it:m}=20:
+{res}{txt}{it:m}=21:
+{res}{txt}{it:m}=22:
+{res}{txt}{it:m}=23:
+{res}{txt}{it:m}=24:
+{res}{txt}{it:m}=25:
+{res}{txt}{it:m}=26:
+{res}{txt}{it:m}=27:
+{res}{txt}{it:m}=28:
+{res}{txt}{it:m}=29:
+{res}{txt}{it:m}=30:
+{res}{txt}{it:m}=31:
+{res}{txt}{it:m}=32:
+{res}{txt}{it:m}=33:
+{res}{txt}{it:m}=34:
+{res}{txt}{it:m}=35:
+{res}{txt}{it:m}=36:
+{res}{txt}{it:m}=37:
+{res}{txt}{it:m}=38:
+{res}{txt}{it:m}=39:
+{res}{txt}{it:m}=40:
+{res}{txt}{it:m}=41:
+{res}{txt}{it:m}=42:
+{res}{txt}{it:m}=43:
+{res}{txt}{it:m}=44:
+{res}{txt}{it:m}=45:
+{res}{txt}{it:m}=46:
+{res}{txt}{it:m}=47:
+{res}{txt}{it:m}=48:
+{res}{txt}{it:m}=49:
+{res}{txt}{it:m}=50:
 {res}{com}. 
 .   // Compute the composite outcome.
 .   mi passive: generate y = .
@@ -828,32 +918,302 @@ Multivariate imputation{txt}{col 45}{ralign 12:Imputations }= {res}       5
 (6,367 missing values generated)
 {res}{txt}{it:m}=5:
 (6,367 missing values generated)
+{res}{txt}{it:m}=6:
+(6,367 missing values generated)
+{res}{txt}{it:m}=7:
+(6,367 missing values generated)
+{res}{txt}{it:m}=8:
+(6,367 missing values generated)
+{res}{txt}{it:m}=9:
+(6,367 missing values generated)
+{res}{txt}{it:m}=10:
+(6,367 missing values generated)
+{res}{txt}{it:m}=11:
+(6,367 missing values generated)
+{res}{txt}{it:m}=12:
+(6,367 missing values generated)
+{res}{txt}{it:m}=13:
+(6,367 missing values generated)
+{res}{txt}{it:m}=14:
+(6,367 missing values generated)
+{res}{txt}{it:m}=15:
+(6,367 missing values generated)
+{res}{txt}{it:m}=16:
+(6,367 missing values generated)
+{res}{txt}{it:m}=17:
+(6,367 missing values generated)
+{res}{txt}{it:m}=18:
+(6,367 missing values generated)
+{res}{txt}{it:m}=19:
+(6,367 missing values generated)
+{res}{txt}{it:m}=20:
+(6,367 missing values generated)
+{res}{txt}{it:m}=21:
+(6,367 missing values generated)
+{res}{txt}{it:m}=22:
+(6,367 missing values generated)
+{res}{txt}{it:m}=23:
+(6,367 missing values generated)
+{res}{txt}{it:m}=24:
+(6,367 missing values generated)
+{res}{txt}{it:m}=25:
+(6,367 missing values generated)
+{res}{txt}{it:m}=26:
+(6,367 missing values generated)
+{res}{txt}{it:m}=27:
+(6,367 missing values generated)
+{res}{txt}{it:m}=28:
+(6,367 missing values generated)
+{res}{txt}{it:m}=29:
+(6,367 missing values generated)
+{res}{txt}{it:m}=30:
+(6,367 missing values generated)
+{res}{txt}{it:m}=31:
+(6,367 missing values generated)
+{res}{txt}{it:m}=32:
+(6,367 missing values generated)
+{res}{txt}{it:m}=33:
+(6,367 missing values generated)
+{res}{txt}{it:m}=34:
+(6,367 missing values generated)
+{res}{txt}{it:m}=35:
+(6,367 missing values generated)
+{res}{txt}{it:m}=36:
+(6,367 missing values generated)
+{res}{txt}{it:m}=37:
+(6,367 missing values generated)
+{res}{txt}{it:m}=38:
+(6,367 missing values generated)
+{res}{txt}{it:m}=39:
+(6,367 missing values generated)
+{res}{txt}{it:m}=40:
+(6,367 missing values generated)
+{res}{txt}{it:m}=41:
+(6,367 missing values generated)
+{res}{txt}{it:m}=42:
+(6,367 missing values generated)
+{res}{txt}{it:m}=43:
+(6,367 missing values generated)
+{res}{txt}{it:m}=44:
+(6,367 missing values generated)
+{res}{txt}{it:m}=45:
+(6,367 missing values generated)
+{res}{txt}{it:m}=46:
+(6,367 missing values generated)
+{res}{txt}{it:m}=47:
+(6,367 missing values generated)
+{res}{txt}{it:m}=48:
+(6,367 missing values generated)
+{res}{txt}{it:m}=49:
+(6,367 missing values generated)
+{res}{txt}{it:m}=50:
+(6,367 missing values generated)
 {res}{com}.   mi passive: replace  y = 0 if `all_false'
 {res}{txt}{it:m}=0:
 (2,818 real changes made)
 {res}{txt}{it:m}=1:
-(4,765 real changes made)
+(4,750 real changes made)
 {res}{txt}{it:m}=2:
-(4,749 real changes made)
+(4,748 real changes made)
 {res}{txt}{it:m}=3:
-(4,721 real changes made)
+(4,716 real changes made)
 {res}{txt}{it:m}=4:
-(4,763 real changes made)
+(4,778 real changes made)
 {res}{txt}{it:m}=5:
+(4,761 real changes made)
+{res}{txt}{it:m}=6:
+(4,761 real changes made)
+{res}{txt}{it:m}=7:
+(4,749 real changes made)
+{res}{txt}{it:m}=8:
+(4,744 real changes made)
+{res}{txt}{it:m}=9:
+(4,722 real changes made)
+{res}{txt}{it:m}=10:
+(4,759 real changes made)
+{res}{txt}{it:m}=11:
+(4,748 real changes made)
+{res}{txt}{it:m}=12:
+(4,747 real changes made)
+{res}{txt}{it:m}=13:
+(4,742 real changes made)
+{res}{txt}{it:m}=14:
+(4,753 real changes made)
+{res}{txt}{it:m}=15:
+(4,786 real changes made)
+{res}{txt}{it:m}=16:
+(4,737 real changes made)
+{res}{txt}{it:m}=17:
+(4,730 real changes made)
+{res}{txt}{it:m}=18:
+(4,762 real changes made)
+{res}{txt}{it:m}=19:
+(4,744 real changes made)
+{res}{txt}{it:m}=20:
+(4,775 real changes made)
+{res}{txt}{it:m}=21:
+(4,775 real changes made)
+{res}{txt}{it:m}=22:
+(4,751 real changes made)
+{res}{txt}{it:m}=23:
+(4,776 real changes made)
+{res}{txt}{it:m}=24:
+(4,765 real changes made)
+{res}{txt}{it:m}=25:
+(4,768 real changes made)
+{res}{txt}{it:m}=26:
+(4,742 real changes made)
+{res}{txt}{it:m}=27:
+(4,751 real changes made)
+{res}{txt}{it:m}=28:
+(4,735 real changes made)
+{res}{txt}{it:m}=29:
+(4,776 real changes made)
+{res}{txt}{it:m}=30:
+(4,772 real changes made)
+{res}{txt}{it:m}=31:
+(4,763 real changes made)
+{res}{txt}{it:m}=32:
+(4,744 real changes made)
+{res}{txt}{it:m}=33:
+(4,767 real changes made)
+{res}{txt}{it:m}=34:
+(4,732 real changes made)
+{res}{txt}{it:m}=35:
+(4,754 real changes made)
+{res}{txt}{it:m}=36:
+(4,769 real changes made)
+{res}{txt}{it:m}=37:
+(4,724 real changes made)
+{res}{txt}{it:m}=38:
+(4,756 real changes made)
+{res}{txt}{it:m}=39:
+(4,772 real changes made)
+{res}{txt}{it:m}=40:
+(4,743 real changes made)
+{res}{txt}{it:m}=41:
+(4,745 real changes made)
+{res}{txt}{it:m}=42:
+(4,739 real changes made)
+{res}{txt}{it:m}=43:
+(4,701 real changes made)
+{res}{txt}{it:m}=44:
+(4,752 real changes made)
+{res}{txt}{it:m}=45:
+(4,775 real changes made)
+{res}{txt}{it:m}=46:
+(4,738 real changes made)
+{res}{txt}{it:m}=47:
+(4,734 real changes made)
+{res}{txt}{it:m}=48:
+(4,754 real changes made)
+{res}{txt}{it:m}=49:
 (4,746 real changes made)
+{res}{txt}{it:m}=50:
+(4,765 real changes made)
 {res}{com}.   mi passive: replace  y = 1 if `one_true'
 {res}{txt}{it:m}=0:
 (1,396 real changes made)
 {res}{txt}{it:m}=1:
-(1,602 real changes made)
+(1,617 real changes made)
 {res}{txt}{it:m}=2:
-(1,618 real changes made)
+(1,619 real changes made)
 {res}{txt}{it:m}=3:
-(1,646 real changes made)
+(1,651 real changes made)
 {res}{txt}{it:m}=4:
-(1,604 real changes made)
+(1,589 real changes made)
 {res}{txt}{it:m}=5:
+(1,606 real changes made)
+{res}{txt}{it:m}=6:
+(1,606 real changes made)
+{res}{txt}{it:m}=7:
+(1,618 real changes made)
+{res}{txt}{it:m}=8:
+(1,623 real changes made)
+{res}{txt}{it:m}=9:
+(1,645 real changes made)
+{res}{txt}{it:m}=10:
+(1,608 real changes made)
+{res}{txt}{it:m}=11:
+(1,619 real changes made)
+{res}{txt}{it:m}=12:
+(1,620 real changes made)
+{res}{txt}{it:m}=13:
+(1,625 real changes made)
+{res}{txt}{it:m}=14:
+(1,614 real changes made)
+{res}{txt}{it:m}=15:
+(1,581 real changes made)
+{res}{txt}{it:m}=16:
+(1,630 real changes made)
+{res}{txt}{it:m}=17:
+(1,637 real changes made)
+{res}{txt}{it:m}=18:
+(1,605 real changes made)
+{res}{txt}{it:m}=19:
+(1,623 real changes made)
+{res}{txt}{it:m}=20:
+(1,592 real changes made)
+{res}{txt}{it:m}=21:
+(1,592 real changes made)
+{res}{txt}{it:m}=22:
+(1,616 real changes made)
+{res}{txt}{it:m}=23:
+(1,591 real changes made)
+{res}{txt}{it:m}=24:
+(1,602 real changes made)
+{res}{txt}{it:m}=25:
+(1,599 real changes made)
+{res}{txt}{it:m}=26:
+(1,625 real changes made)
+{res}{txt}{it:m}=27:
+(1,616 real changes made)
+{res}{txt}{it:m}=28:
+(1,632 real changes made)
+{res}{txt}{it:m}=29:
+(1,591 real changes made)
+{res}{txt}{it:m}=30:
+(1,595 real changes made)
+{res}{txt}{it:m}=31:
+(1,604 real changes made)
+{res}{txt}{it:m}=32:
+(1,623 real changes made)
+{res}{txt}{it:m}=33:
+(1,600 real changes made)
+{res}{txt}{it:m}=34:
+(1,635 real changes made)
+{res}{txt}{it:m}=35:
+(1,613 real changes made)
+{res}{txt}{it:m}=36:
+(1,598 real changes made)
+{res}{txt}{it:m}=37:
+(1,643 real changes made)
+{res}{txt}{it:m}=38:
+(1,611 real changes made)
+{res}{txt}{it:m}=39:
+(1,595 real changes made)
+{res}{txt}{it:m}=40:
+(1,624 real changes made)
+{res}{txt}{it:m}=41:
+(1,622 real changes made)
+{res}{txt}{it:m}=42:
+(1,628 real changes made)
+{res}{txt}{it:m}=43:
+(1,666 real changes made)
+{res}{txt}{it:m}=44:
+(1,615 real changes made)
+{res}{txt}{it:m}=45:
+(1,592 real changes made)
+{res}{txt}{it:m}=46:
+(1,629 real changes made)
+{res}{txt}{it:m}=47:
+(1,633 real changes made)
+{res}{txt}{it:m}=48:
+(1,613 real changes made)
+{res}{txt}{it:m}=49:
 (1,621 real changes made)
+{res}{txt}{it:m}=50:
+(1,602 real changes made)
 {res}{com}.   label variable y "Adverse pregnancy outcome"
 .   label values y yes_no_label
 . 
@@ -1184,7 +1544,7 @@ lab_available {c |}
 {txt} 14{com}.     global rr_p_`var'  = result["pvalue", "`var':2.arm"]
 {txt} 15{com}.   {c )-}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -1192,45 +1552,45 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.2214
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2891
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     57.12
-{txt}{col 49}        avg{col 67}= {res}    325.88
-{txt}{col 49}        max{col 67}= {res}  1,464.34
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}  866.5{txt}){col 67}= {res}      3.88
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0001
+{txt}{col 49}Average RVI{col 67}= {res}    0.1659
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1708
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,699.80
+{txt}{col 49}        avg{col 67}= {res}  2,953.25
+{txt}{col 49}        max{col 67}= {res}  9,358.44
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}21481.7{txt}){col 67}= {res}      3.99
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}            y{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.07{col 38}{space 1}   -0.10{col 47}{space 3} 0.92{col 55}{space 4}     0.87{col 68}{space 3}     1.14
+Intervention  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.06{col 38}{space 1}   -0.17{col 47}{space 3} 0.86{col 55}{space 4}     0.87{col 68}{space 3}     1.12
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.17{col 27}{space 2}     0.13{col 38}{space 1}    1.36{col 47}{space 3} 0.18{col 55}{space 4}     0.93{col 68}{space 3}     1.46
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.12{col 38}{space 1}   -1.02{col 47}{space 3} 0.31{col 55}{space 4}     0.66{col 68}{space 3}     1.14
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.12{col 38}{space 1}    0.28{col 47}{space 3} 0.78{col 55}{space 4}     0.81{col 68}{space 3}     1.31
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.13{col 38}{space 1}    1.54{col 47}{space 3} 0.13{col 55}{space 4}     0.95{col 68}{space 3}     1.48
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.18{col 27}{space 2}     0.13{col 38}{space 1}    1.47{col 47}{space 3} 0.14{col 55}{space 4}     0.95{col 68}{space 3}     1.47
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.91{col 27}{space 2}     0.13{col 38}{space 1}   -0.62{col 47}{space 3} 0.53{col 55}{space 4}     0.69{col 68}{space 3}     1.21
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.12{col 38}{space 1}    0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.85{col 68}{space 3}     1.32
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.13{col 38}{space 1}    1.73{col 47}{space 3} 0.08{col 55}{space 4}     0.97{col 68}{space 3}     1.50
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.07{col 38}{space 1}   -1.86{col 47}{space 3} 0.06{col 55}{space 4}     0.74{col 68}{space 3}     1.01
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.01{col 38}{space 1}    4.48{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.04
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.07{col 38}{space 1}   -1.70{col 47}{space 3} 0.09{col 55}{space 4}     0.75{col 68}{space 3}     1.02
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.01{col 38}{space 1}    4.92{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.04
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.15{col 27}{space 2}     0.09{col 38}{space 1}    1.84{col 47}{space 3} 0.07{col 55}{space 4}     0.99{col 68}{space 3}     1.33
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.12{col 27}{space 2}     0.09{col 38}{space 1}    1.46{col 47}{space 3} 0.14{col 55}{space 4}     0.96{col 68}{space 3}     1.30
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.09{col 38}{space 1}    0.41{col 47}{space 3} 0.68{col 55}{space 4}     0.88{col 68}{space 3}     1.22
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.03{col 38}{space 1}   -9.15{col 47}{space 3} 0.00{col 55}{space 4}     0.10{col 68}{space 3}     0.23
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.09{col 38}{space 1}    0.68{col 47}{space 3} 0.50{col 55}{space 4}     0.90{col 68}{space 3}     1.25
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.03{col 38}{space 1}   -9.40{col 47}{space 3} 0.00{col 55}{space 4}     0.10{col 68}{space 3}     0.22
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -9.13{col 27}{space 2}    10.17{col 55}{space 4}   -29.11{col 68}{space 3}    10.85
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -9.19{col 27}{space 2}    10.82{col 55}{space 4}   -30.40{col 68}{space 3}    12.03
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.05{col 55}{space 4}     0.00{col 68}{space 3}   226.56
+      sigma_u {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.05{col 55}{space 4}     0.00{col 68}{space 3}   409.17
 {txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -1238,45 +1598,45 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.4049
-{txt}{col 49}Largest FMI{col 67}= {res}    0.5346
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     17.13
-{txt}{col 49}        avg{col 67}= {res}     65.48
-{txt}{col 49}        max{col 67}= {res}    273.16
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}  303.8{txt}){col 67}= {res}      1.13
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.3382
+{txt}{col 49}Average RVI{col 67}= {res}    0.3124
+{txt}{col 49}Largest FMI{col 67}= {res}    0.3524
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    401.76
+{txt}{col 49}        avg{col 67}= {res}  1,341.81
+{txt}{col 49}        max{col 67}= {res}  7,650.84
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 6810.2{txt}){col 67}= {res}      1.17
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.3093
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y1{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.81{col 27}{space 2}     0.21{col 38}{space 1}   -0.82{col 47}{space 3} 0.42{col 55}{space 4}     0.49{col 68}{space 3}     1.36
+Intervention  {c |}{col 15}{res}{space 2}     0.82{col 27}{space 2}     0.19{col 38}{space 1}   -0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.52{col 68}{space 3}     1.29
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.51{col 27}{space 2}     0.82{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.48{col 68}{space 3}     4.73
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.71{col 38}{space 1}    0.08{col 47}{space 3} 0.94{col 55}{space 4}     0.26{col 68}{space 3}     4.28
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.49{col 27}{space 2}     0.79{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.49{col 68}{space 3}     4.56
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.73{col 27}{space 2}     0.85{col 38}{space 1}    1.11{col 47}{space 3} 0.28{col 55}{space 4}     0.63{col 68}{space 3}     4.75
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.40{col 27}{space 2}     0.63{col 38}{space 1}    0.75{col 47}{space 3} 0.45{col 55}{space 4}     0.58{col 68}{space 3}     3.37
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.64{col 38}{space 1}    0.21{col 47}{space 3} 0.84{col 55}{space 4}     0.37{col 68}{space 3}     3.46
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.44{col 27}{space 2}     0.61{col 38}{space 1}    0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.63{col 68}{space 3}     3.32
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.60{col 27}{space 2}     0.69{col 38}{space 1}    1.09{col 47}{space 3} 0.28{col 55}{space 4}     0.69{col 68}{space 3}     3.72
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.59{col 27}{space 2}     0.19{col 38}{space 1}   -1.65{col 47}{space 3} 0.10{col 55}{space 4}     0.32{col 68}{space 3}     1.11
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.02{col 38}{space 1}   -1.75{col 47}{space 3} 0.09{col 55}{space 4}     0.91{col 68}{space 3}     1.01
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.64{col 27}{space 2}     0.20{col 38}{space 1}   -1.44{col 47}{space 3} 0.15{col 55}{space 4}     0.35{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.02{col 38}{space 1}   -1.92{col 47}{space 3} 0.05{col 55}{space 4}     0.91{col 68}{space 3}     1.00
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.39{col 27}{space 2}     0.38{col 38}{space 1}    1.21{col 47}{space 3} 0.23{col 55}{space 4}     0.81{col 68}{space 3}     2.37
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.41{col 27}{space 2}     0.38{col 38}{space 1}    1.29{col 47}{space 3} 0.20{col 55}{space 4}     0.83{col 68}{space 3}     2.40
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     0.50{col 27}{space 2}     0.19{col 38}{space 1}   -1.81{col 47}{space 3} 0.09{col 55}{space 4}     0.22{col 68}{space 3}     1.11
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.05{col 27}{space 2}     0.04{col 38}{space 1}   -3.57{col 47}{space 3} 0.00{col 55}{space 4}     0.01{col 68}{space 3}     0.28
+{space 7}Primi  {c |}{col 15}{res}{space 2}     0.52{col 27}{space 2}     0.17{col 38}{space 1}   -1.95{col 47}{space 3} 0.05{col 55}{space 4}     0.27{col 68}{space 3}     1.00
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.04{col 38}{space 1}   -3.60{col 47}{space 3} 0.00{col 55}{space 4}     0.01{col 68}{space 3}     0.27
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.55{col 27}{space 2}    15.64{col 55}{space 4}   -36.35{col 68}{space 3}    25.25
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.06{col 27}{space 2}    14.49{col 55}{space 4}   -33.47{col 68}{space 3}    23.36
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.49{col 55}{space 4}     0.00{col 68}{space 3}303580.97
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.02{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+      sigma_u {c |}{col 15}{res}{space 2}     0.08{col 27}{space 2}     0.58{col 55}{space 4}     0.00{col 68}{space 3}117976.41
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.03{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -1284,130 +1644,38 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.6504
-{txt}{col 49}Largest FMI{col 67}= {res}    0.6092
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     13.05
-{txt}{col 49}        avg{col 67}= {res}     87.32
-{txt}{col 49}        max{col 67}= {res}    210.00
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res}   79.0{txt}){col 67}= {res}      5.73
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0001
+{txt}{col 49}Average RVI{col 67}= {res}    0.6448
+{txt}{col 49}Largest FMI{col 67}= {res}    0.5264
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    180.38
+{txt}{col 49}        avg{col 67}= {res}220,567.38
+{txt}{col 49}        max{col 67}= {res}1542435.69
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 1243.4{txt}){col 67}= {res}      6.20
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y2{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.59{col 27}{space 2}     0.29{col 38}{space 1}   -1.08{col 47}{space 3} 0.30{col 55}{space 4}     0.20{col 68}{space 3}     1.70
-{txt}{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.77{col 27}{space 2}     0.37{col 38}{space 1}   -0.55{col 47}{space 3} 0.59{col 55}{space 4}     0.29{col 68}{space 3}     2.04
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.05{col 38}{space 1}    4.60{col 47}{space 3} 0.00{col 55}{space 4}     1.10{col 68}{space 3}     1.29
+Intervention  {c |}{col 15}{res}{space 2}     0.60{col 27}{space 2}     0.25{col 38}{space 1}   -1.22{col 47}{space 3} 0.22{col 55}{space 4}     0.27{col 68}{space 3}     1.37
+{txt}{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.72{col 27}{space 2}     0.38{col 38}{space 1}   -0.61{col 47}{space 3} 0.54{col 55}{space 4}     0.26{col 68}{space 3}     2.04
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.20{col 27}{space 2}     0.04{col 38}{space 1}    5.11{col 47}{space 3} 0.00{col 55}{space 4}     1.12{col 68}{space 3}     1.28
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.23{col 27}{space 2}     0.46{col 38}{space 1}    0.57{col 47}{space 3} 0.57{col 55}{space 4}     0.59{col 68}{space 3}     2.58
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.43{col 38}{space 1}   -0.04{col 47}{space 3} 0.97{col 55}{space 4}     0.41{col 68}{space 3}     2.35
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     4.21{col 27}{space 2}     1.72{col 38}{space 1}    3.52{col 47}{space 3} 0.00{col 55}{space 4}     1.88{col 68}{space 3}     9.42
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 38}{space 1}   -8.65{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.00
+{space 7}Primi  {c |}{col 15}{res}{space 2}     5.25{col 27}{space 2}     2.84{col 38}{space 1}    3.07{col 47}{space 3} 0.00{col 55}{space 4}     1.81{col 68}{space 3}    15.25
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 38}{space 1}   -8.19{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.00
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.50{col 27}{space 2}    16.09{col 55}{space 4}   -37.29{col 68}{space 3}    26.28
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.44{col 27}{space 2}    63.67{col 55}{space 4}  -130.24{col 68}{space 3}   119.35
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.51{col 55}{space 4}     0.00{col 68}{space 3}509622.97
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.02{col 55}{space 4}     0.00{col 68}{space 3}     1.00
-{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
-{txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
-
-{txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
-{txt}Random effects u_i ~ {res:Gaussian}{col 49}Obs per group:
-{col 49}              min{col 67}= {res}         9
-{txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
-{txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1076
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2247
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     92.36
-{txt}{col 49}        avg{col 67}= {res}    938.12
-{txt}{col 49}        max{col 67}= {res}  4,480.23
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 2535.9{txt}){col 67}= {res}      3.38
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0004
-
-{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}           y3{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
-{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.11{col 38}{space 1}    0.00{col 47}{space 3} 1.00{col 55}{space 4}     0.80{col 68}{space 3}     1.25
-{txt}{space 13} {c |}
-{space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.18{col 38}{space 1}   -0.33{col 47}{space 3} 0.74{col 55}{space 4}     0.64{col 68}{space 3}     1.38
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.61{col 27}{space 2}     0.16{col 38}{space 1}   -1.94{col 47}{space 3} 0.05{col 55}{space 4}     0.37{col 68}{space 3}     1.01
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.17{col 38}{space 1}   -0.37{col 47}{space 3} 0.71{col 55}{space 4}     0.65{col 68}{space 3}     1.34
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.19{col 38}{space 1}   -0.07{col 47}{space 3} 0.94{col 55}{space 4}     0.67{col 68}{space 3}     1.46
-{txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.88{col 27}{space 2}     0.13{col 38}{space 1}   -0.88{col 47}{space 3} 0.38{col 55}{space 4}     0.65{col 68}{space 3}     1.18
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.01{col 38}{space 1}   -2.57{col 47}{space 3} 0.01{col 55}{space 4}     0.96{col 68}{space 3}     0.99
-{txt}{space 13} {c |}
-lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.26{col 27}{space 2}     0.17{col 38}{space 1}    1.78{col 47}{space 3} 0.08{col 55}{space 4}     0.98{col 68}{space 3}     1.64
-{txt}{space 13} {c |}
-{space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.18{col 38}{space 1}    2.52{col 47}{space 3} 0.01{col 55}{space 4}     1.07{col 68}{space 3}     1.78
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.16{col 27}{space 2}     0.05{col 38}{space 1}   -5.73{col 47}{space 3} 0.00{col 55}{space 4}     0.08{col 68}{space 3}     0.30
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -3.04{col 27}{space 2}     0.71{col 55}{space 4}    -4.43{col 68}{space 3}    -1.64
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.08{col 55}{space 4}     0.11{col 68}{space 3}     0.44
-{txt}          rho {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3}     0.06
-{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
-{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
-{res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
-{txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
-
-{txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
-{txt}Random effects u_i ~ {res:Gaussian}{col 49}Obs per group:
-{col 49}              min{col 67}= {res}         9
-{txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
-{txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1801
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2821
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     59.84
-{txt}{col 49}        avg{col 67}= {res} 14,294.54
-{txt}{col 49}        max{col 67}= {res}154,958.95
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 1073.5{txt}){col 67}= {res}      2.91
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0021
-
-{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{col 1}           y4{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
-{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.15{col 38}{space 1}   -0.40{col 47}{space 3} 0.69{col 55}{space 4}     0.69{col 68}{space 3}     1.28
-{txt}{space 13} {c |}
-{space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.36{col 38}{space 1}    0.66{col 47}{space 3} 0.51{col 55}{space 4}     0.68{col 68}{space 3}     2.16
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.76{col 27}{space 2}     0.33{col 38}{space 1}   -0.64{col 47}{space 3} 0.52{col 55}{space 4}     0.32{col 68}{space 3}     1.77
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.60{col 27}{space 2}     0.48{col 38}{space 1}    1.57{col 47}{space 3} 0.12{col 55}{space 4}     0.88{col 68}{space 3}     2.91
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.46{col 27}{space 2}     0.44{col 38}{space 1}    1.24{col 47}{space 3} 0.22{col 55}{space 4}     0.80{col 68}{space 3}     2.67
-{txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.70{col 27}{space 2}     0.16{col 38}{space 1}   -1.53{col 47}{space 3} 0.13{col 55}{space 4}     0.45{col 68}{space 3}     1.11
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.02{col 38}{space 1}    3.04{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.08
-{txt}{space 13} {c |}
-lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.18{col 38}{space 1}   -0.02{col 47}{space 3} 0.99{col 55}{space 4}     0.69{col 68}{space 3}     1.43
-{txt}{space 13} {c |}
-{space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.87{col 27}{space 2}     0.38{col 38}{space 1}    3.07{col 47}{space 3} 0.00{col 55}{space 4}     1.25{col 68}{space 3}     2.82
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.00{col 38}{space 1}   -8.52{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.03
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -4.38{col 27}{space 2}    19.97{col 55}{space 4}   -43.52{col 68}{space 3}    34.75
-{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.11{col 27}{space 2}     1.12{col 55}{space 4}     0.00{col 68}{space 3} 3.52e+07
+      sigma_u {c |}{col 15}{res}{space 2}     0.07{col 27}{space 2}     2.09{col 55}{space 4}     0.00{col 68}{space 3} 8.25e+25
 {txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.08{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -1415,39 +1683,131 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1796
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2997
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     53.33
-{txt}{col 49}        avg{col 67}= {res}    552.11
-{txt}{col 49}        max{col 67}= {res}  2,050.69
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 1239.3{txt}){col 67}= {res}      8.89
+{txt}{col 49}Average RVI{col 67}= {res}    0.1104
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1630
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,863.87
+{txt}{col 49}        avg{col 67}= {res}  5,187.83
+{txt}{col 49}        max{col 67}= {res} 10,586.79
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}40993.1{txt}){col 67}= {res}      3.20
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0007
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y3{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+Intervention  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.11{col 38}{space 1}   -0.01{col 47}{space 3} 0.99{col 55}{space 4}     0.80{col 68}{space 3}     1.24
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.18{col 38}{space 1}   -0.30{col 47}{space 3} 0.76{col 55}{space 4}     0.65{col 68}{space 3}     1.37
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.65{col 27}{space 2}     0.17{col 38}{space 1}   -1.66{col 47}{space 3} 0.10{col 55}{space 4}     0.39{col 68}{space 3}     1.08
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.95{col 27}{space 2}     0.17{col 38}{space 1}   -0.27{col 47}{space 3} 0.79{col 55}{space 4}     0.67{col 68}{space 3}     1.36
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.01{col 27}{space 2}     0.19{col 38}{space 1}    0.03{col 47}{space 3} 0.97{col 55}{space 4}     0.70{col 68}{space 3}     1.45
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.88{col 27}{space 2}     0.13{col 38}{space 1}   -0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.66{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.01{col 38}{space 1}   -2.65{col 47}{space 3} 0.01{col 55}{space 4}     0.95{col 68}{space 3}     0.99
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.26{col 27}{space 2}     0.17{col 38}{space 1}    1.74{col 47}{space 3} 0.08{col 55}{space 4}     0.97{col 68}{space 3}     1.63
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.33{col 27}{space 2}     0.16{col 38}{space 1}    2.36{col 47}{space 3} 0.02{col 55}{space 4}     1.05{col 68}{space 3}     1.70
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.16{col 27}{space 2}     0.06{col 38}{space 1}   -5.36{col 47}{space 3} 0.00{col 55}{space 4}     0.08{col 68}{space 3}     0.32
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -3.04{col 27}{space 2}     0.74{col 55}{space 4}    -4.50{col 68}{space 3}    -1.59
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.08{col 55}{space 4}     0.11{col 68}{space 3}     0.45
+{txt}          rho {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3}     0.06
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
+{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
+{res}
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
+{txt}Random effects u_i ~ {res:Gaussian}{col 49}Obs per group:
+{col 49}              min{col 67}= {res}         9
+{txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
+{txt}{col 49}              max{col 67}= {res}       217
+{txt}{col 49}Average RVI{col 67}= {res}    0.1588
+{txt}{col 49}Largest FMI{col 67}= {res}    0.2211
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,016.10
+{txt}{col 49}        avg{col 67}= {res}  9.14e+07
+{txt}{col 49}        max{col 67}= {res}  1.01e+09
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}19502.1{txt}){col 67}= {res}      3.33
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0004
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}           y4{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+Intervention  {c |}{col 15}{res}{space 2}     0.93{col 27}{space 2}     0.15{col 38}{space 1}   -0.44{col 47}{space 3} 0.66{col 55}{space 4}     0.68{col 68}{space 3}     1.27
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.24{col 27}{space 2}     0.40{col 38}{space 1}    0.67{col 47}{space 3} 0.50{col 55}{space 4}     0.66{col 68}{space 3}     2.32
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.78{col 27}{space 2}     0.36{col 38}{space 1}   -0.53{col 47}{space 3} 0.59{col 55}{space 4}     0.31{col 68}{space 3}     1.94
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.72{col 27}{space 2}     0.52{col 38}{space 1}    1.81{col 47}{space 3} 0.07{col 55}{space 4}     0.96{col 68}{space 3}     3.10
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.50{col 27}{space 2}     0.46{col 38}{space 1}    1.32{col 47}{space 3} 0.19{col 55}{space 4}     0.82{col 68}{space 3}     2.76
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.15{col 38}{space 1}   -1.75{col 47}{space 3} 0.08{col 55}{space 4}     0.43{col 68}{space 3}     1.05
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    3.32{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.08
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.19{col 38}{space 1}   -0.12{col 47}{space 3} 0.90{col 55}{space 4}     0.67{col 68}{space 3}     1.43
+{txt}{space 13} {c |}
+{space 2}primiparous {c |}
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.90{col 27}{space 2}     0.36{col 38}{space 1}    3.34{col 47}{space 3} 0.00{col 55}{space 4}     1.30{col 68}{space 3}     2.76
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.00{col 38}{space 1}   -9.31{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.02
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -7.73{col 27}{space 2}   282.60{col 55}{space 4}  -561.62{col 68}{space 3}   546.16
+{txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+      sigma_u {c |}{col 15}{res}{space 2}     0.02{col 27}{space 2}     2.96{col 55}{space 4}     0.00{col 68}{space 3} 4.0e+118
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.04{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
+{p 0 6 2}Note: {res:_cons} estimates baseline odds (conditional on zero random effects){txt}.{p_end}
+{res}
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
+{txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
+
+{txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
+{txt}Random effects u_i ~ {res:Gaussian}{col 49}Obs per group:
+{col 49}              min{col 67}= {res}         9
+{txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
+{txt}{col 49}              max{col 67}= {res}       217
+{txt}{col 49}Average RVI{col 67}= {res}    0.1284
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1472
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  2,285.29
+{txt}{col 49}        avg{col 67}= {res}  3,605.98
+{txt}{col 49}        max{col 67}= {res}  8,377.56
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}30022.1{txt}){col 67}= {res}      9.39
 {txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y5{col 15}{c |} Odds Ratio{col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.09{col 38}{space 1}    0.81{col 47}{space 3} 0.42{col 55}{space 4}     0.91{col 68}{space 3}     1.25
+Intervention  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.09{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.90{col 68}{space 3}     1.25
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.17{col 38}{space 1}    1.26{col 47}{space 3} 0.21{col 55}{space 4}     0.91{col 68}{space 3}     1.58
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.09{col 27}{space 2}     0.20{col 38}{space 1}    0.47{col 47}{space 3} 0.64{col 55}{space 4}     0.76{col 68}{space 3}     1.56
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.14{col 38}{space 1}   -0.27{col 47}{space 3} 0.79{col 55}{space 4}     0.72{col 68}{space 3}     1.29
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.16{col 38}{space 1}    0.87{col 47}{space 3} 0.39{col 55}{space 4}     0.85{col 68}{space 3}     1.51
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.18{col 38}{space 1}    1.32{col 47}{space 3} 0.19{col 55}{space 4}     0.91{col 68}{space 3}     1.61
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.21{col 38}{space 1}    0.65{col 47}{space 3} 0.51{col 55}{space 4}     0.78{col 68}{space 3}     1.63
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.14{col 38}{space 1}   -0.21{col 47}{space 3} 0.83{col 55}{space 4}     0.72{col 68}{space 3}     1.30
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.15{col 27}{space 2}     0.17{col 38}{space 1}    0.95{col 47}{space 3} 0.34{col 55}{space 4}     0.86{col 68}{space 3}     1.53
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.10{col 38}{space 1}   -0.44{col 47}{space 3} 0.66{col 55}{space 4}     0.78{col 68}{space 3}     1.17
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    6.50{col 47}{space 3} 0.00{col 55}{space 4}     1.03{col 68}{space 3}     1.06
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.10{col 38}{space 1}   -0.33{col 47}{space 3} 0.74{col 55}{space 4}     0.79{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    6.76{col 47}{space 3} 0.00{col 55}{space 4}     1.04{col 68}{space 3}     1.06
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.10{col 38}{space 1}    0.31{col 47}{space 3} 0.75{col 55}{space 4}     0.85{col 68}{space 3}     1.25
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.02{col 27}{space 2}     0.10{col 38}{space 1}    0.18{col 47}{space 3} 0.85{col 55}{space 4}     0.84{col 68}{space 3}     1.24
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     0.65{col 27}{space 2}     0.09{col 38}{space 1}   -3.19{col 47}{space 3} 0.00{col 55}{space 4}     0.50{col 68}{space 3}     0.85
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.01{col 38}{space 1}  -12.99{col 47}{space 3} 0.00{col 55}{space 4}     0.03{col 68}{space 3}     0.07
+{space 7}Primi  {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.08{col 38}{space 1}   -3.17{col 47}{space 3} 0.00{col 55}{space 4}     0.54{col 68}{space 3}     0.86
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.01{col 38}{space 1}  -12.62{col 47}{space 3} 0.00{col 55}{space 4}     0.02{col 68}{space 3}     0.06
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -6.82{col 27}{space 2}    12.24{col 55}{space 4}   -30.83{col 68}{space 3}    17.19
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -6.77{col 27}{space 2}    11.27{col 55}{space 4}   -28.86{col 68}{space 3}    15.32
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.03{col 27}{space 2}     0.20{col 55}{space 4}     0.00{col 68}{space 3}  5404.08
+      sigma_u {c |}{col 15}{res}{space 2}     0.03{col 27}{space 2}     0.19{col 55}{space 4}     0.00{col 68}{space 3}  2121.65
 {txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
@@ -2629,16 +2989,16 @@ lab_available {c |}
 {txt}
 {com}. frame `this_frame' {c -(}
 .   mi set M = `imputations_to_plot'
-{txt}(number of imputations {it:M} = 5 unchanged)
-{com}. 
-.   // Generate a variable for each imputed variable that contains the original
-.   // values (with the missing data), repeated for each imputed data set.
-.   mi convert wide, clear
 {txt}{p}
 (passive variables
 {res}__000000 __000001
 {txt}unregistered because not in {it:m}=0)
 {p_end}
+(45 imputations dropped; {it:M} = 5)
+{com}. 
+.   // Generate a variable for each imputed variable that contains the original
+.   // values (with the missing data), repeated for each imputed data set.
+.   mi convert wide, clear
 {res}{com}.   foreach var of varlist $imputeds y1-y5 y {c -(}
 {txt}  2{com}.     generate `var'_orig = `var'
 {txt}  3{com}.   {c )-}
@@ -3053,7 +3413,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3061,39 +3421,39 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.2214
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2891
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     57.12
-{txt}{col 49}        avg{col 67}= {res}    325.88
-{txt}{col 49}        max{col 67}= {res}  1,464.34
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}  866.5{txt}){col 67}= {res}      3.88
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0001
+{txt}{col 49}Average RVI{col 67}= {res}    0.1659
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1708
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,699.80
+{txt}{col 49}        avg{col 67}= {res}  2,953.25
+{txt}{col 49}        max{col 67}= {res}  9,358.44
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}21481.7{txt}){col 67}= {res}      3.99
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}            y{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.07{col 38}{space 1}   -0.10{col 47}{space 3} 0.92{col 55}{space 4}     0.87{col 68}{space 3}     1.14
+Intervention  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.06{col 38}{space 1}   -0.17{col 47}{space 3} 0.86{col 55}{space 4}     0.87{col 68}{space 3}     1.12
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.17{col 27}{space 2}     0.13{col 38}{space 1}    1.36{col 47}{space 3} 0.18{col 55}{space 4}     0.93{col 68}{space 3}     1.46
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.12{col 38}{space 1}   -1.02{col 47}{space 3} 0.31{col 55}{space 4}     0.66{col 68}{space 3}     1.14
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.12{col 38}{space 1}    0.28{col 47}{space 3} 0.78{col 55}{space 4}     0.81{col 68}{space 3}     1.31
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.13{col 38}{space 1}    1.54{col 47}{space 3} 0.13{col 55}{space 4}     0.95{col 68}{space 3}     1.48
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.18{col 27}{space 2}     0.13{col 38}{space 1}    1.47{col 47}{space 3} 0.14{col 55}{space 4}     0.95{col 68}{space 3}     1.47
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.91{col 27}{space 2}     0.13{col 38}{space 1}   -0.62{col 47}{space 3} 0.53{col 55}{space 4}     0.69{col 68}{space 3}     1.21
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.12{col 38}{space 1}    0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.85{col 68}{space 3}     1.32
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.13{col 38}{space 1}    1.73{col 47}{space 3} 0.08{col 55}{space 4}     0.97{col 68}{space 3}     1.50
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.07{col 38}{space 1}   -1.86{col 47}{space 3} 0.06{col 55}{space 4}     0.74{col 68}{space 3}     1.01
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.01{col 38}{space 1}    4.48{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.04
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.07{col 38}{space 1}   -1.70{col 47}{space 3} 0.09{col 55}{space 4}     0.75{col 68}{space 3}     1.02
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.01{col 38}{space 1}    4.92{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.04
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.15{col 27}{space 2}     0.09{col 38}{space 1}    1.84{col 47}{space 3} 0.07{col 55}{space 4}     0.99{col 68}{space 3}     1.33
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.12{col 27}{space 2}     0.09{col 38}{space 1}    1.46{col 47}{space 3} 0.14{col 55}{space 4}     0.96{col 68}{space 3}     1.30
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.09{col 38}{space 1}    0.41{col 47}{space 3} 0.68{col 55}{space 4}     0.88{col 68}{space 3}     1.22
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.03{col 38}{space 1}   -9.15{col 47}{space 3} 0.00{col 55}{space 4}     0.10{col 68}{space 3}     0.23
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.09{col 38}{space 1}    0.68{col 47}{space 3} 0.50{col 55}{space 4}     0.90{col 68}{space 3}     1.25
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.03{col 38}{space 1}   -9.40{col 47}{space 3} 0.00{col 55}{space 4}     0.10{col 68}{space 3}     0.22
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -9.13{col 27}{space 2}    10.17{col 55}{space 4}   -29.11{col 68}{space 3}    10.85
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -9.19{col 27}{space 2}    10.82{col 55}{space 4}   -30.40{col 68}{space 3}    12.03
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.05{col 55}{space 4}     0.00{col 68}{space 3}   226.56
+      sigma_u {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.05{col 55}{space 4}     0.00{col 68}{space 3}   409.17
 {txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
@@ -3102,7 +3462,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y1_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3110,40 +3470,40 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.4049
-{txt}{col 49}Largest FMI{col 67}= {res}    0.5346
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     17.13
-{txt}{col 49}        avg{col 67}= {res}     65.48
-{txt}{col 49}        max{col 67}= {res}    273.16
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}  303.8{txt}){col 67}= {res}      1.13
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.3382
+{txt}{col 49}Average RVI{col 67}= {res}    0.3124
+{txt}{col 49}Largest FMI{col 67}= {res}    0.3524
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    401.76
+{txt}{col 49}        avg{col 67}= {res}  1,341.81
+{txt}{col 49}        max{col 67}= {res}  7,650.84
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 6810.2{txt}){col 67}= {res}      1.17
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.3093
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y1{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.81{col 27}{space 2}     0.21{col 38}{space 1}   -0.82{col 47}{space 3} 0.42{col 55}{space 4}     0.49{col 68}{space 3}     1.36
+Intervention  {c |}{col 15}{res}{space 2}     0.82{col 27}{space 2}     0.19{col 38}{space 1}   -0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.52{col 68}{space 3}     1.29
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.51{col 27}{space 2}     0.82{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.48{col 68}{space 3}     4.73
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.71{col 38}{space 1}    0.08{col 47}{space 3} 0.94{col 55}{space 4}     0.26{col 68}{space 3}     4.28
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.49{col 27}{space 2}     0.79{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.49{col 68}{space 3}     4.56
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.73{col 27}{space 2}     0.85{col 38}{space 1}    1.11{col 47}{space 3} 0.28{col 55}{space 4}     0.63{col 68}{space 3}     4.75
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.40{col 27}{space 2}     0.63{col 38}{space 1}    0.75{col 47}{space 3} 0.45{col 55}{space 4}     0.58{col 68}{space 3}     3.37
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.64{col 38}{space 1}    0.21{col 47}{space 3} 0.84{col 55}{space 4}     0.37{col 68}{space 3}     3.46
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.44{col 27}{space 2}     0.61{col 38}{space 1}    0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.63{col 68}{space 3}     3.32
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.60{col 27}{space 2}     0.69{col 38}{space 1}    1.09{col 47}{space 3} 0.28{col 55}{space 4}     0.69{col 68}{space 3}     3.72
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.59{col 27}{space 2}     0.19{col 38}{space 1}   -1.65{col 47}{space 3} 0.10{col 55}{space 4}     0.32{col 68}{space 3}     1.11
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.02{col 38}{space 1}   -1.75{col 47}{space 3} 0.09{col 55}{space 4}     0.91{col 68}{space 3}     1.01
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.64{col 27}{space 2}     0.20{col 38}{space 1}   -1.44{col 47}{space 3} 0.15{col 55}{space 4}     0.35{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.02{col 38}{space 1}   -1.92{col 47}{space 3} 0.05{col 55}{space 4}     0.91{col 68}{space 3}     1.00
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.39{col 27}{space 2}     0.38{col 38}{space 1}    1.21{col 47}{space 3} 0.23{col 55}{space 4}     0.81{col 68}{space 3}     2.37
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.41{col 27}{space 2}     0.38{col 38}{space 1}    1.29{col 47}{space 3} 0.20{col 55}{space 4}     0.83{col 68}{space 3}     2.40
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     0.50{col 27}{space 2}     0.19{col 38}{space 1}   -1.81{col 47}{space 3} 0.09{col 55}{space 4}     0.22{col 68}{space 3}     1.11
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.05{col 27}{space 2}     0.04{col 38}{space 1}   -3.57{col 47}{space 3} 0.00{col 55}{space 4}     0.01{col 68}{space 3}     0.28
+{space 7}Primi  {c |}{col 15}{res}{space 2}     0.52{col 27}{space 2}     0.17{col 38}{space 1}   -1.95{col 47}{space 3} 0.05{col 55}{space 4}     0.27{col 68}{space 3}     1.00
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.04{col 38}{space 1}   -3.60{col 47}{space 3} 0.00{col 55}{space 4}     0.01{col 68}{space 3}     0.27
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.55{col 27}{space 2}    15.64{col 55}{space 4}   -36.35{col 68}{space 3}    25.25
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.06{col 27}{space 2}    14.49{col 55}{space 4}   -33.47{col 68}{space 3}    23.36
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.49{col 55}{space 4}     0.00{col 68}{space 3}303580.97
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.02{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+      sigma_u {c |}{col 15}{res}{space 2}     0.08{col 27}{space 2}     0.58{col 55}{space 4}     0.00{col 68}{space 3}117976.41
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.03{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {res}
@@ -3151,7 +3511,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y2_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3159,33 +3519,33 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.6504
-{txt}{col 49}Largest FMI{col 67}= {res}    0.6092
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     13.05
-{txt}{col 49}        avg{col 67}= {res}     87.32
-{txt}{col 49}        max{col 67}= {res}    210.00
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res}   79.0{txt}){col 67}= {res}      5.73
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0001
+{txt}{col 49}Average RVI{col 67}= {res}    0.6448
+{txt}{col 49}Largest FMI{col 67}= {res}    0.5264
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    180.38
+{txt}{col 49}        avg{col 67}= {res}220,567.38
+{txt}{col 49}        max{col 67}= {res}1542435.69
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 1243.4{txt}){col 67}= {res}      6.20
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y2{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.59{col 27}{space 2}     0.29{col 38}{space 1}   -1.08{col 47}{space 3} 0.30{col 55}{space 4}     0.20{col 68}{space 3}     1.70
-{txt}{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.77{col 27}{space 2}     0.37{col 38}{space 1}   -0.55{col 47}{space 3} 0.59{col 55}{space 4}     0.29{col 68}{space 3}     2.04
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.05{col 38}{space 1}    4.60{col 47}{space 3} 0.00{col 55}{space 4}     1.10{col 68}{space 3}     1.29
+Intervention  {c |}{col 15}{res}{space 2}     0.60{col 27}{space 2}     0.25{col 38}{space 1}   -1.22{col 47}{space 3} 0.22{col 55}{space 4}     0.27{col 68}{space 3}     1.37
+{txt}{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.72{col 27}{space 2}     0.38{col 38}{space 1}   -0.61{col 47}{space 3} 0.54{col 55}{space 4}     0.26{col 68}{space 3}     2.04
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.20{col 27}{space 2}     0.04{col 38}{space 1}    5.11{col 47}{space 3} 0.00{col 55}{space 4}     1.12{col 68}{space 3}     1.28
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.23{col 27}{space 2}     0.46{col 38}{space 1}    0.57{col 47}{space 3} 0.57{col 55}{space 4}     0.59{col 68}{space 3}     2.58
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.43{col 38}{space 1}   -0.04{col 47}{space 3} 0.97{col 55}{space 4}     0.41{col 68}{space 3}     2.35
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     4.21{col 27}{space 2}     1.72{col 38}{space 1}    3.52{col 47}{space 3} 0.00{col 55}{space 4}     1.88{col 68}{space 3}     9.42
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 38}{space 1}   -8.65{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.00
+{space 7}Primi  {c |}{col 15}{res}{space 2}     5.25{col 27}{space 2}     2.84{col 38}{space 1}    3.07{col 47}{space 3} 0.00{col 55}{space 4}     1.81{col 68}{space 3}    15.25
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 38}{space 1}   -8.19{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.00
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.50{col 27}{space 2}    16.09{col 55}{space 4}   -37.29{col 68}{space 3}    26.28
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.44{col 27}{space 2}    63.67{col 55}{space 4}  -130.24{col 68}{space 3}   119.35
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.51{col 55}{space 4}     0.00{col 68}{space 3}509622.97
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.02{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+      sigma_u {c |}{col 15}{res}{space 2}     0.07{col 27}{space 2}     2.09{col 55}{space 4}     0.00{col 68}{space 3} 8.25e+25
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.08{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {res}
@@ -3193,7 +3553,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y3_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3201,39 +3561,39 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1076
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2247
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     92.36
-{txt}{col 49}        avg{col 67}= {res}    938.12
-{txt}{col 49}        max{col 67}= {res}  4,480.23
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 2535.9{txt}){col 67}= {res}      3.38
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0004
+{txt}{col 49}Average RVI{col 67}= {res}    0.1104
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1630
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,863.87
+{txt}{col 49}        avg{col 67}= {res}  5,187.83
+{txt}{col 49}        max{col 67}= {res} 10,586.79
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}40993.1{txt}){col 67}= {res}      3.20
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0007
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y3{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.11{col 38}{space 1}    0.00{col 47}{space 3} 1.00{col 55}{space 4}     0.80{col 68}{space 3}     1.25
+Intervention  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.11{col 38}{space 1}   -0.01{col 47}{space 3} 0.99{col 55}{space 4}     0.80{col 68}{space 3}     1.24
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.18{col 38}{space 1}   -0.33{col 47}{space 3} 0.74{col 55}{space 4}     0.64{col 68}{space 3}     1.38
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.61{col 27}{space 2}     0.16{col 38}{space 1}   -1.94{col 47}{space 3} 0.05{col 55}{space 4}     0.37{col 68}{space 3}     1.01
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.17{col 38}{space 1}   -0.37{col 47}{space 3} 0.71{col 55}{space 4}     0.65{col 68}{space 3}     1.34
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.19{col 38}{space 1}   -0.07{col 47}{space 3} 0.94{col 55}{space 4}     0.67{col 68}{space 3}     1.46
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.18{col 38}{space 1}   -0.30{col 47}{space 3} 0.76{col 55}{space 4}     0.65{col 68}{space 3}     1.37
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.65{col 27}{space 2}     0.17{col 38}{space 1}   -1.66{col 47}{space 3} 0.10{col 55}{space 4}     0.39{col 68}{space 3}     1.08
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.95{col 27}{space 2}     0.17{col 38}{space 1}   -0.27{col 47}{space 3} 0.79{col 55}{space 4}     0.67{col 68}{space 3}     1.36
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.01{col 27}{space 2}     0.19{col 38}{space 1}    0.03{col 47}{space 3} 0.97{col 55}{space 4}     0.70{col 68}{space 3}     1.45
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.88{col 27}{space 2}     0.13{col 38}{space 1}   -0.88{col 47}{space 3} 0.38{col 55}{space 4}     0.65{col 68}{space 3}     1.18
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.01{col 38}{space 1}   -2.57{col 47}{space 3} 0.01{col 55}{space 4}     0.96{col 68}{space 3}     0.99
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.88{col 27}{space 2}     0.13{col 38}{space 1}   -0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.66{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.01{col 38}{space 1}   -2.65{col 47}{space 3} 0.01{col 55}{space 4}     0.95{col 68}{space 3}     0.99
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.26{col 27}{space 2}     0.17{col 38}{space 1}    1.78{col 47}{space 3} 0.08{col 55}{space 4}     0.98{col 68}{space 3}     1.64
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.26{col 27}{space 2}     0.17{col 38}{space 1}    1.74{col 47}{space 3} 0.08{col 55}{space 4}     0.97{col 68}{space 3}     1.63
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.18{col 38}{space 1}    2.52{col 47}{space 3} 0.01{col 55}{space 4}     1.07{col 68}{space 3}     1.78
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.16{col 27}{space 2}     0.05{col 38}{space 1}   -5.73{col 47}{space 3} 0.00{col 55}{space 4}     0.08{col 68}{space 3}     0.30
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.33{col 27}{space 2}     0.16{col 38}{space 1}    2.36{col 47}{space 3} 0.02{col 55}{space 4}     1.05{col 68}{space 3}     1.70
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.16{col 27}{space 2}     0.06{col 38}{space 1}   -5.36{col 47}{space 3} 0.00{col 55}{space 4}     0.08{col 68}{space 3}     0.32
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -3.04{col 27}{space 2}     0.71{col 55}{space 4}    -4.43{col 68}{space 3}    -1.64
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -3.04{col 27}{space 2}     0.74{col 55}{space 4}    -4.50{col 68}{space 3}    -1.59
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.08{col 55}{space 4}     0.11{col 68}{space 3}     0.44
+      sigma_u {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.08{col 55}{space 4}     0.11{col 68}{space 3}     0.45
 {txt}          rho {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3}     0.06
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
@@ -3242,7 +3602,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y4_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3250,40 +3610,40 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1801
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2821
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     59.84
-{txt}{col 49}        avg{col 67}= {res} 14,294.54
-{txt}{col 49}        max{col 67}= {res}154,958.95
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 1073.5{txt}){col 67}= {res}      2.91
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0021
+{txt}{col 49}Average RVI{col 67}= {res}    0.1588
+{txt}{col 49}Largest FMI{col 67}= {res}    0.2211
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,016.10
+{txt}{col 49}        avg{col 67}= {res}  9.14e+07
+{txt}{col 49}        max{col 67}= {res}  1.01e+09
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}19502.1{txt}){col 67}= {res}      3.33
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0004
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y4{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.15{col 38}{space 1}   -0.40{col 47}{space 3} 0.69{col 55}{space 4}     0.69{col 68}{space 3}     1.28
+Intervention  {c |}{col 15}{res}{space 2}     0.93{col 27}{space 2}     0.15{col 38}{space 1}   -0.44{col 47}{space 3} 0.66{col 55}{space 4}     0.68{col 68}{space 3}     1.27
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.36{col 38}{space 1}    0.66{col 47}{space 3} 0.51{col 55}{space 4}     0.68{col 68}{space 3}     2.16
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.76{col 27}{space 2}     0.33{col 38}{space 1}   -0.64{col 47}{space 3} 0.52{col 55}{space 4}     0.32{col 68}{space 3}     1.77
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.60{col 27}{space 2}     0.48{col 38}{space 1}    1.57{col 47}{space 3} 0.12{col 55}{space 4}     0.88{col 68}{space 3}     2.91
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.46{col 27}{space 2}     0.44{col 38}{space 1}    1.24{col 47}{space 3} 0.22{col 55}{space 4}     0.80{col 68}{space 3}     2.67
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.24{col 27}{space 2}     0.40{col 38}{space 1}    0.67{col 47}{space 3} 0.50{col 55}{space 4}     0.66{col 68}{space 3}     2.32
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.78{col 27}{space 2}     0.36{col 38}{space 1}   -0.53{col 47}{space 3} 0.59{col 55}{space 4}     0.31{col 68}{space 3}     1.94
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.72{col 27}{space 2}     0.52{col 38}{space 1}    1.81{col 47}{space 3} 0.07{col 55}{space 4}     0.96{col 68}{space 3}     3.10
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.50{col 27}{space 2}     0.46{col 38}{space 1}    1.32{col 47}{space 3} 0.19{col 55}{space 4}     0.82{col 68}{space 3}     2.76
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.70{col 27}{space 2}     0.16{col 38}{space 1}   -1.53{col 47}{space 3} 0.13{col 55}{space 4}     0.45{col 68}{space 3}     1.11
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.02{col 38}{space 1}    3.04{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.08
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.15{col 38}{space 1}   -1.75{col 47}{space 3} 0.08{col 55}{space 4}     0.43{col 68}{space 3}     1.05
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    3.32{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.08
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.18{col 38}{space 1}   -0.02{col 47}{space 3} 0.99{col 55}{space 4}     0.69{col 68}{space 3}     1.43
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.19{col 38}{space 1}   -0.12{col 47}{space 3} 0.90{col 55}{space 4}     0.67{col 68}{space 3}     1.43
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.87{col 27}{space 2}     0.38{col 38}{space 1}    3.07{col 47}{space 3} 0.00{col 55}{space 4}     1.25{col 68}{space 3}     2.82
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.00{col 38}{space 1}   -8.52{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.03
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.90{col 27}{space 2}     0.36{col 38}{space 1}    3.34{col 47}{space 3} 0.00{col 55}{space 4}     1.30{col 68}{space 3}     2.76
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.00{col 38}{space 1}   -9.31{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.02
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -4.38{col 27}{space 2}    19.97{col 55}{space 4}   -43.52{col 68}{space 3}    34.75
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -7.73{col 27}{space 2}   282.60{col 55}{space 4}  -561.62{col 68}{space 3}   546.16
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.11{col 27}{space 2}     1.12{col 55}{space 4}     0.00{col 68}{space 3} 3.52e+07
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.08{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+      sigma_u {c |}{col 15}{res}{space 2}     0.02{col 27}{space 2}     2.96{col 55}{space 4}     0.00{col 68}{space 3} 4.0e+118
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.04{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {res}
@@ -3291,7 +3651,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y5_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3299,39 +3659,39 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1796
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2997
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     53.33
-{txt}{col 49}        avg{col 67}= {res}    552.11
-{txt}{col 49}        max{col 67}= {res}  2,050.69
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 1239.3{txt}){col 67}= {res}      8.89
+{txt}{col 49}Average RVI{col 67}= {res}    0.1284
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1472
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  2,285.29
+{txt}{col 49}        avg{col 67}= {res}  3,605.98
+{txt}{col 49}        max{col 67}= {res}  8,377.56
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}30022.1{txt}){col 67}= {res}      9.39
 {txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y5{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.09{col 38}{space 1}    0.81{col 47}{space 3} 0.42{col 55}{space 4}     0.91{col 68}{space 3}     1.25
+Intervention  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.09{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.90{col 68}{space 3}     1.25
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.17{col 38}{space 1}    1.26{col 47}{space 3} 0.21{col 55}{space 4}     0.91{col 68}{space 3}     1.58
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.09{col 27}{space 2}     0.20{col 38}{space 1}    0.47{col 47}{space 3} 0.64{col 55}{space 4}     0.76{col 68}{space 3}     1.56
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.14{col 38}{space 1}   -0.27{col 47}{space 3} 0.79{col 55}{space 4}     0.72{col 68}{space 3}     1.29
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.16{col 38}{space 1}    0.87{col 47}{space 3} 0.39{col 55}{space 4}     0.85{col 68}{space 3}     1.51
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.18{col 38}{space 1}    1.32{col 47}{space 3} 0.19{col 55}{space 4}     0.91{col 68}{space 3}     1.61
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.21{col 38}{space 1}    0.65{col 47}{space 3} 0.51{col 55}{space 4}     0.78{col 68}{space 3}     1.63
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.14{col 38}{space 1}   -0.21{col 47}{space 3} 0.83{col 55}{space 4}     0.72{col 68}{space 3}     1.30
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.15{col 27}{space 2}     0.17{col 38}{space 1}    0.95{col 47}{space 3} 0.34{col 55}{space 4}     0.86{col 68}{space 3}     1.53
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.10{col 38}{space 1}   -0.44{col 47}{space 3} 0.66{col 55}{space 4}     0.78{col 68}{space 3}     1.17
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    6.50{col 47}{space 3} 0.00{col 55}{space 4}     1.03{col 68}{space 3}     1.06
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.10{col 38}{space 1}   -0.33{col 47}{space 3} 0.74{col 55}{space 4}     0.79{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    6.76{col 47}{space 3} 0.00{col 55}{space 4}     1.04{col 68}{space 3}     1.06
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.10{col 38}{space 1}    0.31{col 47}{space 3} 0.75{col 55}{space 4}     0.85{col 68}{space 3}     1.25
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.02{col 27}{space 2}     0.10{col 38}{space 1}    0.18{col 47}{space 3} 0.85{col 55}{space 4}     0.84{col 68}{space 3}     1.24
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     0.65{col 27}{space 2}     0.09{col 38}{space 1}   -3.19{col 47}{space 3} 0.00{col 55}{space 4}     0.50{col 68}{space 3}     0.85
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.01{col 38}{space 1}  -12.99{col 47}{space 3} 0.00{col 55}{space 4}     0.03{col 68}{space 3}     0.07
+{space 7}Primi  {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.08{col 38}{space 1}   -3.17{col 47}{space 3} 0.00{col 55}{space 4}     0.54{col 68}{space 3}     0.86
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.01{col 38}{space 1}  -12.62{col 47}{space 3} 0.00{col 55}{space 4}     0.02{col 68}{space 3}     0.06
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -6.82{col 27}{space 2}    12.24{col 55}{space 4}   -30.83{col 68}{space 3}    17.19
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -6.77{col 27}{space 2}    11.27{col 55}{space 4}   -28.86{col 68}{space 3}    15.32
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.03{col 27}{space 2}     0.20{col 55}{space 4}     0.00{col 68}{space 3}  5404.08
+      sigma_u {c |}{col 15}{res}{space 2}     0.03{col 27}{space 2}     0.19{col 55}{space 4}     0.00{col 68}{space 3}  2121.65
 {txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
@@ -3832,7 +4192,7 @@ products/Imputations - Parity
 {p 0 8}Model {hi:y_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3840,39 +4200,39 @@ products/Imputations - Parity
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.2214
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2891
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     57.12
-{txt}{col 49}        avg{col 67}= {res}    325.88
-{txt}{col 49}        max{col 67}= {res}  1,464.34
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}  866.5{txt}){col 67}= {res}      3.88
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0001
+{txt}{col 49}Average RVI{col 67}= {res}    0.1659
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1708
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,699.80
+{txt}{col 49}        avg{col 67}= {res}  2,953.25
+{txt}{col 49}        max{col 67}= {res}  9,358.44
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}21481.7{txt}){col 67}= {res}      3.99
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}            y{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.07{col 38}{space 1}   -0.10{col 47}{space 3} 0.92{col 55}{space 4}     0.87{col 68}{space 3}     1.14
+Intervention  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.06{col 38}{space 1}   -0.17{col 47}{space 3} 0.86{col 55}{space 4}     0.87{col 68}{space 3}     1.12
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.17{col 27}{space 2}     0.13{col 38}{space 1}    1.36{col 47}{space 3} 0.18{col 55}{space 4}     0.93{col 68}{space 3}     1.46
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.12{col 38}{space 1}   -1.02{col 47}{space 3} 0.31{col 55}{space 4}     0.66{col 68}{space 3}     1.14
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.12{col 38}{space 1}    0.28{col 47}{space 3} 0.78{col 55}{space 4}     0.81{col 68}{space 3}     1.31
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.13{col 38}{space 1}    1.54{col 47}{space 3} 0.13{col 55}{space 4}     0.95{col 68}{space 3}     1.48
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.18{col 27}{space 2}     0.13{col 38}{space 1}    1.47{col 47}{space 3} 0.14{col 55}{space 4}     0.95{col 68}{space 3}     1.47
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.91{col 27}{space 2}     0.13{col 38}{space 1}   -0.62{col 47}{space 3} 0.53{col 55}{space 4}     0.69{col 68}{space 3}     1.21
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.12{col 38}{space 1}    0.54{col 47}{space 3} 0.59{col 55}{space 4}     0.85{col 68}{space 3}     1.32
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.13{col 38}{space 1}    1.73{col 47}{space 3} 0.08{col 55}{space 4}     0.97{col 68}{space 3}     1.50
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.07{col 38}{space 1}   -1.86{col 47}{space 3} 0.06{col 55}{space 4}     0.74{col 68}{space 3}     1.01
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.01{col 38}{space 1}    4.48{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.04
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.87{col 27}{space 2}     0.07{col 38}{space 1}   -1.70{col 47}{space 3} 0.09{col 55}{space 4}     0.75{col 68}{space 3}     1.02
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.01{col 38}{space 1}    4.92{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.04
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.15{col 27}{space 2}     0.09{col 38}{space 1}    1.84{col 47}{space 3} 0.07{col 55}{space 4}     0.99{col 68}{space 3}     1.33
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.12{col 27}{space 2}     0.09{col 38}{space 1}    1.46{col 47}{space 3} 0.14{col 55}{space 4}     0.96{col 68}{space 3}     1.30
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.09{col 38}{space 1}    0.41{col 47}{space 3} 0.68{col 55}{space 4}     0.88{col 68}{space 3}     1.22
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.03{col 38}{space 1}   -9.15{col 47}{space 3} 0.00{col 55}{space 4}     0.10{col 68}{space 3}     0.23
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.09{col 38}{space 1}    0.68{col 47}{space 3} 0.50{col 55}{space 4}     0.90{col 68}{space 3}     1.25
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.15{col 27}{space 2}     0.03{col 38}{space 1}   -9.40{col 47}{space 3} 0.00{col 55}{space 4}     0.10{col 68}{space 3}     0.22
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -9.13{col 27}{space 2}    10.17{col 55}{space 4}   -29.11{col 68}{space 3}    10.85
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -9.19{col 27}{space 2}    10.82{col 55}{space 4}   -30.40{col 68}{space 3}    12.03
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.05{col 55}{space 4}     0.00{col 68}{space 3}   226.56
+      sigma_u {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.05{col 55}{space 4}     0.00{col 68}{space 3}   409.17
 {txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
@@ -3881,7 +4241,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y1_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3889,40 +4249,40 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.4049
-{txt}{col 49}Largest FMI{col 67}= {res}    0.5346
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     17.13
-{txt}{col 49}        avg{col 67}= {res}     65.48
-{txt}{col 49}        max{col 67}= {res}    273.16
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}  303.8{txt}){col 67}= {res}      1.13
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.3382
+{txt}{col 49}Average RVI{col 67}= {res}    0.3124
+{txt}{col 49}Largest FMI{col 67}= {res}    0.3524
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    401.76
+{txt}{col 49}        avg{col 67}= {res}  1,341.81
+{txt}{col 49}        max{col 67}= {res}  7,650.84
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 6810.2{txt}){col 67}= {res}      1.17
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.3093
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y1{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.81{col 27}{space 2}     0.21{col 38}{space 1}   -0.82{col 47}{space 3} 0.42{col 55}{space 4}     0.49{col 68}{space 3}     1.36
+Intervention  {c |}{col 15}{res}{space 2}     0.82{col 27}{space 2}     0.19{col 38}{space 1}   -0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.52{col 68}{space 3}     1.29
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.51{col 27}{space 2}     0.82{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.48{col 68}{space 3}     4.73
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.71{col 38}{space 1}    0.08{col 47}{space 3} 0.94{col 55}{space 4}     0.26{col 68}{space 3}     4.28
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.49{col 27}{space 2}     0.79{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.49{col 68}{space 3}     4.56
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.73{col 27}{space 2}     0.85{col 38}{space 1}    1.11{col 47}{space 3} 0.28{col 55}{space 4}     0.63{col 68}{space 3}     4.75
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.40{col 27}{space 2}     0.63{col 38}{space 1}    0.75{col 47}{space 3} 0.45{col 55}{space 4}     0.58{col 68}{space 3}     3.37
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.64{col 38}{space 1}    0.21{col 47}{space 3} 0.84{col 55}{space 4}     0.37{col 68}{space 3}     3.46
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.44{col 27}{space 2}     0.61{col 38}{space 1}    0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.63{col 68}{space 3}     3.32
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.60{col 27}{space 2}     0.69{col 38}{space 1}    1.09{col 47}{space 3} 0.28{col 55}{space 4}     0.69{col 68}{space 3}     3.72
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.59{col 27}{space 2}     0.19{col 38}{space 1}   -1.65{col 47}{space 3} 0.10{col 55}{space 4}     0.32{col 68}{space 3}     1.11
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.02{col 38}{space 1}   -1.75{col 47}{space 3} 0.09{col 55}{space 4}     0.91{col 68}{space 3}     1.01
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.64{col 27}{space 2}     0.20{col 38}{space 1}   -1.44{col 47}{space 3} 0.15{col 55}{space 4}     0.35{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.02{col 38}{space 1}   -1.92{col 47}{space 3} 0.05{col 55}{space 4}     0.91{col 68}{space 3}     1.00
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.39{col 27}{space 2}     0.38{col 38}{space 1}    1.21{col 47}{space 3} 0.23{col 55}{space 4}     0.81{col 68}{space 3}     2.37
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.41{col 27}{space 2}     0.38{col 38}{space 1}    1.29{col 47}{space 3} 0.20{col 55}{space 4}     0.83{col 68}{space 3}     2.40
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     0.50{col 27}{space 2}     0.19{col 38}{space 1}   -1.81{col 47}{space 3} 0.09{col 55}{space 4}     0.22{col 68}{space 3}     1.11
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.05{col 27}{space 2}     0.04{col 38}{space 1}   -3.57{col 47}{space 3} 0.00{col 55}{space 4}     0.01{col 68}{space 3}     0.28
+{space 7}Primi  {c |}{col 15}{res}{space 2}     0.52{col 27}{space 2}     0.17{col 38}{space 1}   -1.95{col 47}{space 3} 0.05{col 55}{space 4}     0.27{col 68}{space 3}     1.00
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.04{col 38}{space 1}   -3.60{col 47}{space 3} 0.00{col 55}{space 4}     0.01{col 68}{space 3}     0.27
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.55{col 27}{space 2}    15.64{col 55}{space 4}   -36.35{col 68}{space 3}    25.25
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.06{col 27}{space 2}    14.49{col 55}{space 4}   -33.47{col 68}{space 3}    23.36
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.49{col 55}{space 4}     0.00{col 68}{space 3}303580.97
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.02{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+      sigma_u {c |}{col 15}{res}{space 2}     0.08{col 27}{space 2}     0.58{col 55}{space 4}     0.00{col 68}{space 3}117976.41
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.03{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {res}
@@ -3930,7 +4290,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y2_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3938,33 +4298,33 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.6504
-{txt}{col 49}Largest FMI{col 67}= {res}    0.6092
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     13.05
-{txt}{col 49}        avg{col 67}= {res}     87.32
-{txt}{col 49}        max{col 67}= {res}    210.00
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res}   79.0{txt}){col 67}= {res}      5.73
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0001
+{txt}{col 49}Average RVI{col 67}= {res}    0.6448
+{txt}{col 49}Largest FMI{col 67}= {res}    0.5264
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}    180.38
+{txt}{col 49}        avg{col 67}= {res}220,567.38
+{txt}{col 49}        max{col 67}= {res}1542435.69
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   5{txt},{res} 1243.4{txt}){col 67}= {res}      6.20
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y2{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.59{col 27}{space 2}     0.29{col 38}{space 1}   -1.08{col 47}{space 3} 0.30{col 55}{space 4}     0.20{col 68}{space 3}     1.70
-{txt}{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.77{col 27}{space 2}     0.37{col 38}{space 1}   -0.55{col 47}{space 3} 0.59{col 55}{space 4}     0.29{col 68}{space 3}     2.04
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.05{col 38}{space 1}    4.60{col 47}{space 3} 0.00{col 55}{space 4}     1.10{col 68}{space 3}     1.29
+Intervention  {c |}{col 15}{res}{space 2}     0.60{col 27}{space 2}     0.25{col 38}{space 1}   -1.22{col 47}{space 3} 0.22{col 55}{space 4}     0.27{col 68}{space 3}     1.37
+{txt}{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.72{col 27}{space 2}     0.38{col 38}{space 1}   -0.61{col 47}{space 3} 0.54{col 55}{space 4}     0.26{col 68}{space 3}     2.04
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.20{col 27}{space 2}     0.04{col 38}{space 1}    5.11{col 47}{space 3} 0.00{col 55}{space 4}     1.12{col 68}{space 3}     1.28
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.23{col 27}{space 2}     0.46{col 38}{space 1}    0.57{col 47}{space 3} 0.57{col 55}{space 4}     0.59{col 68}{space 3}     2.58
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.43{col 38}{space 1}   -0.04{col 47}{space 3} 0.97{col 55}{space 4}     0.41{col 68}{space 3}     2.35
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     4.21{col 27}{space 2}     1.72{col 38}{space 1}    3.52{col 47}{space 3} 0.00{col 55}{space 4}     1.88{col 68}{space 3}     9.42
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 38}{space 1}   -8.65{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.00
+{space 7}Primi  {c |}{col 15}{res}{space 2}     5.25{col 27}{space 2}     2.84{col 38}{space 1}    3.07{col 47}{space 3} 0.00{col 55}{space 4}     1.81{col 68}{space 3}    15.25
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 38}{space 1}   -8.19{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.00
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.50{col 27}{space 2}    16.09{col 55}{space 4}   -37.29{col 68}{space 3}    26.28
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -5.44{col 27}{space 2}    63.67{col 55}{space 4}  -130.24{col 68}{space 3}   119.35
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.06{col 27}{space 2}     0.51{col 55}{space 4}     0.00{col 68}{space 3}509622.97
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.02{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+      sigma_u {c |}{col 15}{res}{space 2}     0.07{col 27}{space 2}     2.09{col 55}{space 4}     0.00{col 68}{space 3} 8.25e+25
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.08{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {res}
@@ -3972,7 +4332,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y3_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -3980,39 +4340,39 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1076
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2247
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     92.36
-{txt}{col 49}        avg{col 67}= {res}    938.12
-{txt}{col 49}        max{col 67}= {res}  4,480.23
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 2535.9{txt}){col 67}= {res}      3.38
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0004
+{txt}{col 49}Average RVI{col 67}= {res}    0.1104
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1630
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,863.87
+{txt}{col 49}        avg{col 67}= {res}  5,187.83
+{txt}{col 49}        max{col 67}= {res} 10,586.79
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}40993.1{txt}){col 67}= {res}      3.20
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0007
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y3{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.11{col 38}{space 1}    0.00{col 47}{space 3} 1.00{col 55}{space 4}     0.80{col 68}{space 3}     1.25
+Intervention  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.11{col 38}{space 1}   -0.01{col 47}{space 3} 0.99{col 55}{space 4}     0.80{col 68}{space 3}     1.24
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.18{col 38}{space 1}   -0.33{col 47}{space 3} 0.74{col 55}{space 4}     0.64{col 68}{space 3}     1.38
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.61{col 27}{space 2}     0.16{col 38}{space 1}   -1.94{col 47}{space 3} 0.05{col 55}{space 4}     0.37{col 68}{space 3}     1.01
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.17{col 38}{space 1}   -0.37{col 47}{space 3} 0.71{col 55}{space 4}     0.65{col 68}{space 3}     1.34
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     0.99{col 27}{space 2}     0.19{col 38}{space 1}   -0.07{col 47}{space 3} 0.94{col 55}{space 4}     0.67{col 68}{space 3}     1.46
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.18{col 38}{space 1}   -0.30{col 47}{space 3} 0.76{col 55}{space 4}     0.65{col 68}{space 3}     1.37
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.65{col 27}{space 2}     0.17{col 38}{space 1}   -1.66{col 47}{space 3} 0.10{col 55}{space 4}     0.39{col 68}{space 3}     1.08
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.95{col 27}{space 2}     0.17{col 38}{space 1}   -0.27{col 47}{space 3} 0.79{col 55}{space 4}     0.67{col 68}{space 3}     1.36
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.01{col 27}{space 2}     0.19{col 38}{space 1}    0.03{col 47}{space 3} 0.97{col 55}{space 4}     0.70{col 68}{space 3}     1.45
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.88{col 27}{space 2}     0.13{col 38}{space 1}   -0.88{col 47}{space 3} 0.38{col 55}{space 4}     0.65{col 68}{space 3}     1.18
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.01{col 38}{space 1}   -2.57{col 47}{space 3} 0.01{col 55}{space 4}     0.96{col 68}{space 3}     0.99
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.88{col 27}{space 2}     0.13{col 38}{space 1}   -0.86{col 47}{space 3} 0.39{col 55}{space 4}     0.66{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.01{col 38}{space 1}   -2.65{col 47}{space 3} 0.01{col 55}{space 4}     0.95{col 68}{space 3}     0.99
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.26{col 27}{space 2}     0.17{col 38}{space 1}    1.78{col 47}{space 3} 0.08{col 55}{space 4}     0.98{col 68}{space 3}     1.64
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.26{col 27}{space 2}     0.17{col 38}{space 1}    1.74{col 47}{space 3} 0.08{col 55}{space 4}     0.97{col 68}{space 3}     1.63
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.38{col 27}{space 2}     0.18{col 38}{space 1}    2.52{col 47}{space 3} 0.01{col 55}{space 4}     1.07{col 68}{space 3}     1.78
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.16{col 27}{space 2}     0.05{col 38}{space 1}   -5.73{col 47}{space 3} 0.00{col 55}{space 4}     0.08{col 68}{space 3}     0.30
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.33{col 27}{space 2}     0.16{col 38}{space 1}    2.36{col 47}{space 3} 0.02{col 55}{space 4}     1.05{col 68}{space 3}     1.70
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.16{col 27}{space 2}     0.06{col 38}{space 1}   -5.36{col 47}{space 3} 0.00{col 55}{space 4}     0.08{col 68}{space 3}     0.32
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -3.04{col 27}{space 2}     0.71{col 55}{space 4}    -4.43{col 68}{space 3}    -1.64
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -3.04{col 27}{space 2}     0.74{col 55}{space 4}    -4.50{col 68}{space 3}    -1.59
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.08{col 55}{space 4}     0.11{col 68}{space 3}     0.44
+      sigma_u {c |}{col 15}{res}{space 2}     0.22{col 27}{space 2}     0.08{col 55}{space 4}     0.11{col 68}{space 3}     0.45
 {txt}          rho {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.01{col 55}{space 4}     0.00{col 68}{space 3}     0.06
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
@@ -4021,7 +4381,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y4_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -4029,40 +4389,40 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1801
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2821
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     59.84
-{txt}{col 49}        avg{col 67}= {res} 14,294.54
-{txt}{col 49}        max{col 67}= {res}154,958.95
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 1073.5{txt}){col 67}= {res}      2.91
-{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0021
+{txt}{col 49}Average RVI{col 67}= {res}    0.1588
+{txt}{col 49}Largest FMI{col 67}= {res}    0.2211
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  1,016.10
+{txt}{col 49}        avg{col 67}= {res}  9.14e+07
+{txt}{col 49}        max{col 67}= {res}  1.01e+09
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}19502.1{txt}){col 67}= {res}      3.33
+{txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0004
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y4{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     0.94{col 27}{space 2}     0.15{col 38}{space 1}   -0.40{col 47}{space 3} 0.69{col 55}{space 4}     0.69{col 68}{space 3}     1.28
+Intervention  {c |}{col 15}{res}{space 2}     0.93{col 27}{space 2}     0.15{col 38}{space 1}   -0.44{col 47}{space 3} 0.66{col 55}{space 4}     0.68{col 68}{space 3}     1.27
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.36{col 38}{space 1}    0.66{col 47}{space 3} 0.51{col 55}{space 4}     0.68{col 68}{space 3}     2.16
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.76{col 27}{space 2}     0.33{col 38}{space 1}   -0.64{col 47}{space 3} 0.52{col 55}{space 4}     0.32{col 68}{space 3}     1.77
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.60{col 27}{space 2}     0.48{col 38}{space 1}    1.57{col 47}{space 3} 0.12{col 55}{space 4}     0.88{col 68}{space 3}     2.91
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.46{col 27}{space 2}     0.44{col 38}{space 1}    1.24{col 47}{space 3} 0.22{col 55}{space 4}     0.80{col 68}{space 3}     2.67
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.24{col 27}{space 2}     0.40{col 38}{space 1}    0.67{col 47}{space 3} 0.50{col 55}{space 4}     0.66{col 68}{space 3}     2.32
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     0.78{col 27}{space 2}     0.36{col 38}{space 1}   -0.53{col 47}{space 3} 0.59{col 55}{space 4}     0.31{col 68}{space 3}     1.94
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     1.72{col 27}{space 2}     0.52{col 38}{space 1}    1.81{col 47}{space 3} 0.07{col 55}{space 4}     0.96{col 68}{space 3}     3.10
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.50{col 27}{space 2}     0.46{col 38}{space 1}    1.32{col 47}{space 3} 0.19{col 55}{space 4}     0.82{col 68}{space 3}     2.76
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.70{col 27}{space 2}     0.16{col 38}{space 1}   -1.53{col 47}{space 3} 0.13{col 55}{space 4}     0.45{col 68}{space 3}     1.11
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.02{col 38}{space 1}    3.04{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.08
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.15{col 38}{space 1}   -1.75{col 47}{space 3} 0.08{col 55}{space 4}     0.43{col 68}{space 3}     1.05
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    3.32{col 47}{space 3} 0.00{col 55}{space 4}     1.02{col 68}{space 3}     1.08
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.00{col 27}{space 2}     0.18{col 38}{space 1}   -0.02{col 47}{space 3} 0.99{col 55}{space 4}     0.69{col 68}{space 3}     1.43
+{space 9}Lab  {c |}{col 15}{res}{space 2}     0.98{col 27}{space 2}     0.19{col 38}{space 1}   -0.12{col 47}{space 3} 0.90{col 55}{space 4}     0.67{col 68}{space 3}     1.43
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     1.87{col 27}{space 2}     0.38{col 38}{space 1}    3.07{col 47}{space 3} 0.00{col 55}{space 4}     1.25{col 68}{space 3}     2.82
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.00{col 38}{space 1}   -8.52{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.03
+{space 7}Primi  {c |}{col 15}{res}{space 2}     1.90{col 27}{space 2}     0.36{col 38}{space 1}    3.34{col 47}{space 3} 0.00{col 55}{space 4}     1.30{col 68}{space 3}     2.76
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.01{col 27}{space 2}     0.00{col 38}{space 1}   -9.31{col 47}{space 3} 0.00{col 55}{space 4}     0.00{col 68}{space 3}     0.02
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -4.38{col 27}{space 2}    19.97{col 55}{space 4}   -43.52{col 68}{space 3}    34.75
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -7.73{col 27}{space 2}   282.60{col 55}{space 4}  -561.62{col 68}{space 3}   546.16
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.11{col 27}{space 2}     1.12{col 55}{space 4}     0.00{col 68}{space 3} 3.52e+07
-{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.08{col 55}{space 4}     0.00{col 68}{space 3}     1.00
+      sigma_u {c |}{col 15}{res}{space 2}     0.02{col 27}{space 2}     2.96{col 55}{space 4}     0.00{col 68}{space 3} 4.0e+118
+{txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.04{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
 {res}
@@ -4070,7 +4430,7 @@ lab_available {c |}
 {p 0 8}Model {hi:y5_estimates}{p_end}
 {hline}
 {res}
-{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}         5
+{txt}Multiple-imputation estimates{col 49}Imputations{col 67}= {res}        50
 {txt}Random-effects logistic regression{col 49}Number of obs{col 67}= {res}     6,367
 
 {txt}Group variable: {res:clusterid}{col 49}Number of groups{col 67}= {res}       119
@@ -4078,39 +4438,39 @@ lab_available {c |}
 {col 49}              min{col 67}= {res}         9
 {txt}Integration points = {res:12}{col 49}              avg{col 67}= {res}      53.5
 {txt}{col 49}              max{col 67}= {res}       217
-{txt}{col 49}Average RVI{col 67}= {res}    0.1796
-{txt}{col 49}Largest FMI{col 67}= {res}    0.2997
-{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}     53.33
-{txt}{col 49}        avg{col 67}= {res}    552.11
-{txt}{col 49}        max{col 67}= {res}  2,050.69
-{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res} 1239.3{txt}){col 67}= {res}      8.89
+{txt}{col 49}Average RVI{col 67}= {res}    0.1284
+{txt}{col 49}Largest FMI{col 67}= {res}    0.1472
+{txt}DF adjustment:{ralign 15: {res:Large sample}}{col 49}DF:     min{col 67}= {res}  2,285.29
+{txt}{col 49}        avg{col 67}= {res}  3,605.98
+{txt}{col 49}        max{col 67}= {res}  8,377.56
+{txt}Model F test:{ralign 16: {res:Equal FMI}}{col 49}F({res}   9{txt},{res}30022.1{txt}){col 67}= {res}      9.39
 {txt}Within VCE type: {ralign 12:{res:OIM}}{col 49}Prob > F{col 67}= {res}    0.0000
 
 {txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {col 1}           y5{col 15}{c |}     exp(b){col 27}   Std. Err.{col 39}      t{col 47}   P>|t|{col 55}     [95% Con{col 68}f. Interval]
 {hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {space 10}arm {c |}
-Intervention  {c |}{col 15}{res}{space 2}     1.07{col 27}{space 2}     0.09{col 38}{space 1}    0.81{col 47}{space 3} 0.42{col 55}{space 4}     0.91{col 68}{space 3}     1.25
+Intervention  {c |}{col 15}{res}{space 2}     1.06{col 27}{space 2}     0.09{col 38}{space 1}    0.75{col 47}{space 3} 0.46{col 55}{space 4}     0.90{col 68}{space 3}     1.25
 {txt}{space 13} {c |}
 {space 4}strat_var {c |}
-{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.19{col 27}{space 2}     0.17{col 38}{space 1}    1.26{col 47}{space 3} 0.21{col 55}{space 4}     0.91{col 68}{space 3}     1.58
-{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.09{col 27}{space 2}     0.20{col 38}{space 1}    0.47{col 47}{space 3} 0.64{col 55}{space 4}     0.76{col 68}{space 3}     1.56
-{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.14{col 38}{space 1}   -0.27{col 47}{space 3} 0.79{col 55}{space 4}     0.72{col 68}{space 3}     1.29
-{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.16{col 38}{space 1}    0.87{col 47}{space 3} 0.39{col 55}{space 4}     0.85{col 68}{space 3}     1.51
+{space 6}8d9c30  {c |}{col 15}{res}{space 2}     1.21{col 27}{space 2}     0.18{col 38}{space 1}    1.32{col 47}{space 3} 0.19{col 55}{space 4}     0.91{col 68}{space 3}     1.61
+{txt}{space 6}9d5ed6  {c |}{col 15}{res}{space 2}     1.13{col 27}{space 2}     0.21{col 38}{space 1}    0.65{col 47}{space 3} 0.51{col 55}{space 4}     0.78{col 68}{space 3}     1.63
+{txt}{space 6}e1e1d3  {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.14{col 38}{space 1}   -0.21{col 47}{space 3} 0.83{col 55}{space 4}     0.72{col 68}{space 3}     1.30
+{txt}{space 6}ff4457  {c |}{col 15}{res}{space 2}     1.15{col 27}{space 2}     0.17{col 38}{space 1}    0.95{col 47}{space 3} 0.34{col 55}{space 4}     0.86{col 68}{space 3}     1.53
 {txt}{space 13} {c |}
-{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.96{col 27}{space 2}     0.10{col 38}{space 1}   -0.44{col 47}{space 3} 0.66{col 55}{space 4}     0.78{col 68}{space 3}     1.17
-{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    6.50{col 47}{space 3} 0.00{col 55}{space 4}     1.03{col 68}{space 3}     1.06
+{space 1}cluster_size {c |}{col 15}{res}{space 2}     0.97{col 27}{space 2}     0.10{col 38}{space 1}   -0.33{col 47}{space 3} 0.74{col 55}{space 4}     0.79{col 68}{space 3}     1.18
+{txt}{space 10}age {c |}{col 15}{res}{space 2}     1.05{col 27}{space 2}     0.01{col 38}{space 1}    6.76{col 47}{space 3} 0.00{col 55}{space 4}     1.04{col 68}{space 3}     1.06
 {txt}{space 13} {c |}
 lab_available {c |}
-{space 9}Lab  {c |}{col 15}{res}{space 2}     1.03{col 27}{space 2}     0.10{col 38}{space 1}    0.31{col 47}{space 3} 0.75{col 55}{space 4}     0.85{col 68}{space 3}     1.25
+{space 9}Lab  {c |}{col 15}{res}{space 2}     1.02{col 27}{space 2}     0.10{col 38}{space 1}    0.18{col 47}{space 3} 0.85{col 55}{space 4}     0.84{col 68}{space 3}     1.24
 {txt}{space 13} {c |}
 {space 2}primiparous {c |}
-{space 7}Primi  {c |}{col 15}{res}{space 2}     0.65{col 27}{space 2}     0.09{col 38}{space 1}   -3.19{col 47}{space 3} 0.00{col 55}{space 4}     0.50{col 68}{space 3}     0.85
-{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.01{col 38}{space 1}  -12.99{col 47}{space 3} 0.00{col 55}{space 4}     0.03{col 68}{space 3}     0.07
+{space 7}Primi  {c |}{col 15}{res}{space 2}     0.68{col 27}{space 2}     0.08{col 38}{space 1}   -3.17{col 47}{space 3} 0.00{col 55}{space 4}     0.54{col 68}{space 3}     0.86
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     0.04{col 27}{space 2}     0.01{col 38}{space 1}  -12.62{col 47}{space 3} 0.00{col 55}{space 4}     0.02{col 68}{space 3}     0.06
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -6.82{col 27}{space 2}    12.24{col 55}{space 4}   -30.83{col 68}{space 3}    17.19
+{space 5}/lnsig2u {c |}{col 15}{res}{space 2}    -6.77{col 27}{space 2}    11.27{col 55}{space 4}   -28.86{col 68}{space 3}    15.32
 {txt}{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
-      sigma_u {c |}{col 15}{res}{space 2}     0.03{col 27}{space 2}     0.20{col 55}{space 4}     0.00{col 68}{space 3}  5404.08
+      sigma_u {c |}{col 15}{res}{space 2}     0.03{col 27}{space 2}     0.19{col 55}{space 4}     0.00{col 68}{space 3}  2121.65
 {txt}          rho {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.00{col 55}{space 4}     0.00{col 68}{space 3}     1.00
 {txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
 {p 0 6 2}Note: {help eform_option:Estimates are transformed} only in the first equation.{p_end}
@@ -4506,27 +4866,5 @@ lab_available {c |}
 
 {com}. 
 {txt}end of do-file
-
-{com}. clear all
-{res}
-{com}. use "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
-
-. encode prettyExposure, generate(arm)
-
-. codebook arm
-
-{txt}{hline}
-{res}arm{right:prettyExposure}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}long{txt})
-{ralign 22:label}:  {res:arm}
-
-{col 18}range:  [{res}1{txt},{res}2{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}0{txt}/{res}6,367
-
-{txt}{col 13}tabulation:  Freq.   Numeric  Label
-{col 21}{res}     3,148{col 33}       1{col 43}{txt}G
-{col 21}{res}     3,219{col 33}       2{col 43}{txt}H
 
 {com}. 
