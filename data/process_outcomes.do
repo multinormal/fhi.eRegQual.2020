@@ -65,11 +65,18 @@ foreach outcome of global process_outcomes {
     label variable age           "Age (years)"
     label variable primiparous   "Parity"       // Indicator of primiparity.
 
-    // Label values.
-    label define lab_available_label 1 "Lab" 0 "No lab"
+    // Label values and set base level where appropriate.
+    label define lab_available_label                1 "Lab"          0 "No lab"
     label values lab_available lab_available_label
-    label define primiparous_label 1 "Primi" 0 "Multi"
-    label values primiparous primiparous_label
+    label define primiparous_label                  1 "Primi"        0 "Multi"
+    label values primiparous   primiparous_label
+    
+    // Recode the arm levels, ensure that level 1 is control, and set the
+    // value labels.
+    ${recode_`outcome'}
+    fvset base 1 arm
+    label define arm_value_label 1 "Control" 2 "Intervention"
+    label values arm arm_value_label
 
     // There should only be missing data for the age variable.
     describe, short varlist
