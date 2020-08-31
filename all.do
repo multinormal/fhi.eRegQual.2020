@@ -11,23 +11,24 @@ do setup/setup
 // Set up globals.
 do globals/globals
 
-// Import the process outcome data.
+// Import the data.
 do data/process_outcomes
-
-// Import birth outcome data and perform imputation.
 do data/birth_outcomes
-do data/impute
+do data/time_outcomes
+
+// Perform imputation.
+// TODO: REINSTATE do data/impute
 
 // Do estimation.
-do estimation/missing          // Calculate percentage of data missing.
+// TODO: REINSTATE do estimation/missing          // Calculate percentage of data missing.
 do estimation/mcar             // Test the MCAR hypothesis.
-do estimation/birth_outcomes   // Analyze the birth outcome data.
-do estimation/process_outcomes // Analyze process outcome data.
-do estimation/margins          // Compute marginal probabilities.
+// TODO: REINSTATE do estimation/birth_outcomes   // Analyze the birth outcome data.
+// TODO: REINSTATE do estimation/process_outcomes // Analyze process outcome data.
+// TODO: REINSTATE do estimation/margins          // Compute marginal probabilities.
 
 // Make figures
-do figures/imputation
-do figures/margins
+// TODO: REINSTATE do figures/imputation
+// TODO: REINSTATE do figures/margins
 
 // Obtain the git revision hash, which is used in the reports.
 tempfile git_revision_filename
@@ -38,4 +39,4 @@ file read `revision_file' line
 global git_revision = "`macval(line)'"
 
 // Make the report
-do reports/report products/report.docx
+// TODO: REINSTATE do reports/report products/report.docx
