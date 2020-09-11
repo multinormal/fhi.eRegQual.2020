@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}31 Aug 2020, 12:46:27
+ {txt}opened on:  {res}11 Sep 2020, 11:33:41
 {txt}
 {com}. 
 . // Set up Stata.
@@ -52,8 +52,15 @@
 {com}. global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 {txt}
 {com}. 
-. // The variables to adjust for, with their "types". See the generated report for
-. // an explanation of why these variables are adjusted for.
+. // Define the names of the time outcomes.
+. global time_outcomes ""
+{txt}
+{com}. global time_outcomes $time_outcomes info_management
+{txt}
+{com}. 
+. // The variables to adjust for in the "main" analyses, with their "types". See
+. // the generated report for an explanation of why these variables are adjusted
+. // for.
 . global adj_vars i.strat_var c.cluster_size c.age i.lab_available i.primiparous
 {txt}
 {com}. global adj_var_names // A global with just the *names* of the adj_vars
@@ -61,6 +68,21 @@
 {com}. foreach x of global adj_vars {c -(}
 {txt}  2{com}.   local x_name = substr("`x'", 3, .) // Remove the i. or c.
 {txt}  3{com}.   global adj_var_names $adj_var_names `x_name'
+{txt}  4{com}. {c )-}
+{txt}
+{com}. 
+. // The variables to adjust for in the time and motion analyses, with their
+. // "types". See the generated report for an explanation of why these variables
+. // are adjusted for. Note that unlike the "main" outcomes, data are not 
+. // available for age and parity, which were used as constraints in the
+. // randomization.
+. global time_adj_vars i.strat_var c.cluster_size i.lab_available
+{txt}
+{com}. global time_adj_var_names // A global with just the *names* of the time_adj_vars
+{txt}
+{com}. foreach x of global time_adj_vars {c -(}
+{txt}  2{com}.   local x_name = substr("`x'", 3, .) // Remove the i. or c.
+{txt}  3{com}.   global time_adj_var_names $time_adj_var_names `x_name'
 {txt}  4{com}. {c )-}
 {txt}
 {com}. 
@@ -78,6 +100,10 @@
 {com}. global fname_fetalgrowth     "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
 {txt}
 {com}. 
+. // Define paths to the time outcome file.
+. global fname_time            "data/raw/02Sep2020_eRegTime.dta"
+{txt}
+{com}. 
 . // Define data signatures for the process outcome files.
 . global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
 {txt}
@@ -90,6 +116,10 @@
 {com}. global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
 {txt}
 {com}. global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
+{txt}
+{com}. 
+. // Define data signature for the time data.
+. global datasignature_time                "241:25(46964):1322369528:1413582791"
 {txt}
 {com}. 
 . // Define recoding rules for the arm variables of the process outcomes; the 
@@ -682,6 +712,77 @@ Contains data
 {com}. 
 {txt}end of do-file
 
+{com}. do data/time_outcomes
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. // Load the data and check its signature is as expected.
+. frame create time
+{txt}
+{com}. frame time {c -(}
+.   // Import the data and verify its signature.
+.   use "${c -(}fname_time{c )-}", replace
+.   datasignature
+  {res}241:25(46964):1322369528:1413582791
+{com}.   assert r(datasignature) == "${c -(}datasignature_time{c )-}"
+. 
+.   // Encode/rename arm variable.
+.   encode exposure, generate(arm)
+.   label variable arm Arm
+. 
+.   // Rename observer variable.
+.   rename observercode observer
+{res}{com}. 
+.   // Rename cluster identifier variables.
+.   rename clinicnumber clusterid
+{res}{com}.   label variable clusterid Cluster
+. 
+.   // Rename the district variable, which was used in stratification.
+.   rename district strat_var
+{res}{com}. 
+.   // Lab availability.
+.   label variable lab_available "Lab available"
+.   label define lab_available_label 1 "Lab" 0 "No lab"
+.   label values lab_available lab_available_label
+. 
+.   // Compute the cluster size from the trial data. We use the trial data for
+.   // simplicity and have verified that these agree with the "baseline" data on
+.   // trial size. We divide by 100 because cluster sizes range from about 10 to
+.   // about 220, and we want to get regression coefficients that are non-null
+.   // within two decimal places! Note that cluster size computation must be
+.   // done before the data set is reshaped to long format, or we will count
+.   // one enrollment per visit rather than pregnancy.
+.   by clusterid, sort: generate cluster_size = _N / 100
+. 
+.   // Rename the outcomes.
+.   rename himwithinconsultation y1
+{res}{com}.   label variable               y1 "HIM time per consultation (mins)"
+. 
+.   // Transform the times to the log scale.
+.   foreach y of varlist y* {c -(}
+{txt}  2{com}.     replace `y' = log(`y' + epsfloat()) // Prevent missing data due to log(0).
+{txt}  3{com}.   {c )-}
+{txt}(241 real changes made)
+{com}. 
+.   // Keep only the variables of interest.
+.   //// TODO: REINSTATE
+>   //// keep y* arm clusterid observer $time_adj_var_names
+> 
+.   // Verify that no data are missing.
+.   //// TODO: REINSTATE
+>   //// misstable summarize
+>   //// assert r(N_lt_dot) == .
+> 
+.   // TODO: Take logs of the time variables!
+. 
+. 
+.   // TODO: Remember to place a random effect on observer!
+. {c )-}
+{txt}
+{com}. 
+{txt}end of do-file
+
 {com}. 
 . // Perform imputation.
 . // TODO: REINSTATE do data/impute
@@ -752,1029 +853,5 @@ Number of obs       = {res}5807
 . // TODO: REINSTATE do reports/report products/report.docx
 . 
 {txt}end of do-file
-
-{com}. clear all
-{res}
-{com}. use "data/raw/05August2020_eRegTime.dta"
-
-. datasignature
-  {res}241:24(68218):3592272240:210409283
-
-{com}. codebook prettyExposure
-{err}variable {bf}prettyExposure{sf} not found
-{txt}{search r(111), local:r(111);}
-
-{com}. codebook Exposure
-{err}variable {bf}Exposure{sf} not found
-{txt}{search r(111), local:r(111);}
-
-{com}. codebook exposure
-
-{txt}{hline}
-{res}exposure{right:Exposure}
-{txt}{hline}
-
-{col 19}type:  string ({res}str1{txt})
-
-{col 10}unique values:  {res}2{col 51}{txt}missing "":  {res}0{txt}/{res}241
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}       118{col 33}"A"
-{col 21}       123{col 33}"B"
-
-{com}. by clinicnumber, sort: generate cluster_size = _N / 100
-
-. summarize cluster_size 
-
-{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
-{hline 13}{c +}{hline 57}
-cluster_size {c |}{res}        241    .1260996    .0539032        .04        .26
-
-{com}. codebook
-
-{txt}{hline}
-{res}clinicnumber{right:Clinic number}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}byte{txt})
-
-{col 18}range:  [{res}1{txt},{res}22{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}22{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 11.1577
-{txt}{col 15}std. dev:{res}{col 26}  6.4511
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27}       2{col 37}       6{col 47}      11{col 57}      17{col 67}      20
-
-{txt}{hline}
-{res}observationnumber{right:Observation number}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}int{txt})
-
-{col 18}range:  [{res}1{txt},{res}241{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}241{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26}     121
-{txt}{col 15}std. dev:{res}{col 26} 69.7149
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27}      25{col 37}      61{col 47}     121{col 57}     181{col 67}     217
-
-{txt}{hline}
-{res}consultationtime{right:consultation time }
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}2.0666667{txt},{res}38.683333{txt}]{col 55}units:  {res}1.000e-08
-{col 10}{txt}unique values:  {res}233{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 12.6095
-{txt}{col 15}std. dev:{res}{col 26} 7.34145
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} 5.41667{col 37} 7.11667{col 47}    10.4{col 57} 16.2167{col 67} 24.2667
-
-{txt}{hline}
-{res}himwithinconsultation{right:HIM within consultation}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.81666667{txt},{res}34.383333{txt}]{col 55}units:  {res}1.000e-08
-{col 10}{txt}unique values:  {res}226{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 7.07415
-{txt}{col 15}std. dev:{res}{col 26} 4.92212
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} 2.73333{col 37} 3.73333{col 47}    5.55{col 57} 8.38333{col 67} 14.2667
-
-{txt}{hline}
-{res}clientcarewithinconsultation{right:Client care within consultation}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.15{txt},{res}21.616667{txt}]{col 55}units:  {res}1.000e-08
-{col 10}{txt}unique values:  {res}226{col 51}{txt}missing .:  {res}4{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 4.96398
-{txt}{col 15}std. dev:{res}{col 26}  3.7884
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27}     1.3{col 37}    2.55{col 47}    3.85{col 57}     6.4{col 67}    10.8
-
-{txt}{hline}
-{res}miscellaneouswithinconsultatio{right:Miscellaneous within consultation}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.13333333{txt},{res}7.6333333{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}78{col 51}{txt}missing .:  {res}157{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 1.84786
-{txt}{col 15}std. dev:{res}{col 26} 1.63232
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} .383333{col 37}    .575{col 47} 1.29167{col 57}   2.625{col 67} 4.43333
-
-{txt}{hline}
-{res}bookingvisit{right:Booking visit }
-{txt}{hline}
-
-{col 19}type:  numeric ({res}byte{txt})
-
-{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}1{txt}/{res}241
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}       210{col 33}0
-{col 21}        30{col 33}1
-{col 21}         1{col 33}.
-
-{txt}{hline}
-{res}observercode{right:Observer code}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}byte{txt})
-
-{col 18}range:  [{res}1{txt},{res}4{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}4{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}        46{col 33}1
-{col 21}        84{col 33}2
-{col 21}        40{col 33}3
-{col 21}        71{col 33}4
-
-{txt}{hline}
-{res}afterconsultationhim{right:after consultation HIM}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}0{txt},{res}28.13{txt}]{col 55}units:  {res}1.000e-08
-{col 10}{txt}unique values:  {res}10{col 51}{txt}missing .:  {res}115{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 2.17315
-{txt}{col 15}std. dev:{res}{col 26} 4.88833
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} .116667{col 37}     .53{col 47} .932051{col 57}     1.7{col 67}    5.03
-
-{txt}{hline}
-{res}afterconsultationmiscellaneous{right:after consultation miscellaneous}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}1.365{txt},{res}60.99{txt}]{col 55}units:  {res}1.000e-07
-{col 10}{txt}unique values:  {res}21{col 51}{txt}missing .:  {res}10{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 13.6769
-{txt}{col 15}std. dev:{res}{col 26} 14.0151
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} 2.81795{col 37}    3.03{col 47}    9.76{col 57}   16.12{col 67}   39.71
-
-{txt}{hline}
-{res}clientrelatedcare{right:client-related care }
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}3.59{txt},{res}14.17{txt}]{col 55}units:  {res}.01
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}220{txt}/{res}241
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}        13{col 33}3.59
-{col 21}         8{col 33}14.17
-{col 21}       220{col 33}.
-
-{txt}{hline}
-{res}himperconsultation{right:HIM per consultation}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.81666667{txt},{res}51.913333{txt}]{col 55}units:  {res}1.000e-08
-{col 10}{txt}unique values:  {res}237{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 8.21032
-{txt}{col 15}std. dev:{res}{col 26} 6.59417
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} 3.30833{col 37} 4.58333{col 47} 6.34872{col 57}    9.41{col 67} 14.8833
-
-{txt}{hline}
-{res}exposure{right:Exposure}
-{txt}{hline}
-
-{col 19}type:  string ({res}str1{txt})
-
-{col 10}unique values:  {res}2{col 51}{txt}missing "":  {res}0{txt}/{res}241
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}       118{col 33}"A"
-{col 21}       123{col 33}"B"
-
-{txt}{hline}
-{res}paperfindhim{right:Paper find HIM}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.08333333{txt},{res}6.0333333{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}76{col 51}{txt}missing .:  {res}139{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26}  .68219
-{txt}{col 15}std. dev:{res}{col 26} .823821
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} .133333{col 37}      .2{col 47} .383333{col 57} .966667{col 67} 1.71667
-
-{txt}{hline}
-{res}paperreadhim{right:Paper read HIM}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.11666667{txt},{res}10.366667{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}72{col 51}{txt}missing .:  {res}155{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 1.13081
-{txt}{col 15}std. dev:{res}{col 26} 1.56271
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} .216667{col 37} .266667{col 47} .483333{col 57}    1.45{col 67} 2.53333
-
-{txt}{hline}
-{res}paperwritinghim{right:Paper writing HIM}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.18333333{txt},{res}25.716667{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}205{col 51}{txt}missing .:  {res}21{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 4.16212
-{txt}{col 15}std. dev:{res}{col 26} 4.61567
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27}    .575{col 37} 1.19167{col 47} 2.73333{col 57} 5.46667{col 67} 8.68333
-
-{txt}{hline}
-{res}computerfindhim{right:Computer find HIM}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.11666667{txt},{res}7.2333333{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}93{col 51}{txt}missing .:  {res}126{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} .908696
-{txt}{col 15}std. dev:{res}{col 26} .844231
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} .216667{col 37} .416667{col 47} .716667{col 57}     1.2{col 67} 1.66667
-
-{txt}{hline}
-{res}computerreadhim{right:Computer read HIM}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.15{txt},{res}1.9{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}28{col 51}{txt}missing .:  {res}208{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} .641919
-{txt}{col 15}std. dev:{res}{col 26} .513483
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} .216667{col 37} .233333{col 47} .433333{col 57}      .8{col 67} 1.56667
-
-{txt}{hline}
-{res}computerwritinghim{right:Computer writing HIM}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.73333333{txt},{res}15.233333{txt}]{col 55}units:  {res}1.000e-08
-{col 10}{txt}unique values:  {res}121{col 51}{txt}missing .:  {res}119{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 3.99303
-{txt}{col 15}std. dev:{res}{col 26}  2.9324
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} 1.21667{col 37} 1.88333{col 47} 3.23333{col 57}     5.1{col 67} 8.48333
-
-{txt}{hline}
-{res}talkinghim{right:Talking HIM}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.25{txt},{res}1.7{txt}]{col 55}units:  {res}1.000e-08
-{col 10}{txt}unique values:  {res}6{col 51}{txt}missing .:  {res}234{txt}/{res}241
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}         1{col 33}.25
-{col 21}         1{col 33}.38333333
-{col 21}         2{col 33}.48333333
-{col 21}         1{col 33}.63333333
-{col 21}         1{col 33}.8
-{col 21}         1{col 33}1.7
-{col 21}       234{col 33}.
-
-{txt}{hline}
-{res}proceduresclientcare{right:Procedures client care}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.15{txt},{res}21.4{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}203{col 51}{txt}missing .:  {res}16{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 2.93126
-{txt}{col 15}std. dev:{res}{col 26} 2.31343
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27}       1{col 37}    1.55{col 47} 2.36667{col 57} 3.71667{col 67} 5.16667
-
-{txt}{hline}
-{res}talkingclientcare{right:Talking client care}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.2{txt},{res}10.383333{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}147{col 51}{txt}missing .:  {res}79{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 2.10144
-{txt}{col 15}std. dev:{res}{col 26} 1.98807
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27}      .4{col 37} .733333{col 47} 1.50833{col 57}    2.65{col 67} 4.76667
-
-{txt}{hline}
-{res}outsideclientcare{right:Outside client care}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}double{txt})
-
-{col 18}range:  [{res}.26666667{txt},{res}20.35{txt}]{col 55}units:  {res}1.000e-09
-{col 10}{txt}unique values:  {res}40{col 51}{txt}missing .:  {res}200{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26} 3.63659
-{txt}{col 15}std. dev:{res}{col 26} 4.17714
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27} .516667{col 37} .766667{col 47} 2.38333{col 57} 5.21667{col 67}     7.2
-
-{txt}{hline}
-{res}lab_available{right:(unlabeled)}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}float{txt})
-
-{col 18}range:  [{res}0{txt},{res}1{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}2{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}       147{col 33}0
-{col 21}        94{col 33}1
-
-{txt}{hline}
-{res}cluster_size{right:(unlabeled)}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}float{txt})
-
-{col 18}range:  [{res}.04{txt},{res}.26{txt}]{col 55}units:  {res}.01
-{col 10}{txt}unique values:  {res}11{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 19}mean:{res}{col 26}   .1261
-{txt}{col 15}std. dev:{res}{col 26} .053903
-
-{txt}{col 12}percentiles:{col 32}10%{col 42}25%{col 52}50%{col 62}75%{col 72}90%
-{res}{col 27}     .08{col 37}     .09{col 47}     .11{col 57}     .13{col 67}     .26
-
-{com}. describe
-
-{txt}Contains data from {res}data/raw/05August2020_eRegTime.dta
-{txt}  obs:{res}           241                          
-{txt} vars:{res}            25                          5 Aug 2020 15:32
-{txt}{hline}
-              storage   display    value
-variable name   type    format     label      variable label
-{hline}
-{p 0 48}{res}{bind:clinicnumber   }{txt}{bind: byte    }{bind:{txt}%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}Clinic number{p_end}
-{p 0 48}{bind:observationnu~r}{txt}{bind: int     }{bind:{txt}%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}Observation number{p_end}
-{p 0 48}{bind:consultationt~e}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}consultation time {p_end}
-{p 0 48}{bind:himwithincons~n}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}HIM within consultation{p_end}
-{p 0 48}{bind:clientcarewit~n}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Client care within consultation{p_end}
-{p 0 48}{bind:miscellaneous~o}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Miscellaneous within consultation{p_end}
-{p 0 48}{bind:bookingvisit   }{txt}{bind: byte    }{bind:{txt}%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}Booking visit {p_end}
-{p 0 48}{bind:observercode   }{txt}{bind: byte    }{bind:{txt}%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}Observer code{p_end}
-{p 0 48}{bind:afterconsulta~m}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}after consultation HIM{p_end}
-{p 0 48}{bind:afterconsulta~s}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}after consultation miscellaneous{p_end}
-{p 0 48}{bind:clientrelated~e}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}client-related care {p_end}
-{p 0 48}{bind:himperconsult~n}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}HIM per consultation{p_end}
-{p 0 48}{bind:exposure       }{txt}{bind: str1    }{bind:{txt}%9s       }{space 1}{bind:         }{bind:  }{res}{res}Exposure{p_end}
-{p 0 48}{bind:paperfindhim   }{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Paper find HIM{p_end}
-{p 0 48}{bind:paperreadhim   }{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Paper read HIM{p_end}
-{p 0 48}{bind:paperwritinghim}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Paper writing HIM{p_end}
-{p 0 48}{bind:computerfindhim}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Computer find HIM{p_end}
-{p 0 48}{bind:computerreadhim}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Computer read HIM{p_end}
-{p 0 48}{bind:computerwriti~m}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Computer writing HIM{p_end}
-{p 0 48}{bind:talkinghim     }{txt}{bind: double  }{bind:{txt}%10.0g    }{space 1}{bind:         }{bind:  }{res}{res}Talking HIM{p_end}
-{p 0 48}{bind:procedurescli~e}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Procedures client care{p_end}
-{p 0 48}{bind:talkingclient~e}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Talking client care{p_end}
-{p 0 48}{bind:outsideclient~e}{txt}{bind: double  }{bind:{txt}%14.2f    }{space 1}{bind:         }{bind:  }{res}{res}Outside client care{p_end}
-{p 0 48}{bind:lab_available  }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
-{p 0 48}{bind:cluster_size   }{txt}{bind: float   }{bind:{txt}%9.0g     }{space 1}{bind:         }{bind:  }{res}{res}{p_end}
-{txt}{hline}
-Sorted by: {res}clinicnumber
-     Note: Dataset has changed since last saved.
-
-{com}. clear all
-{res}
-{com}. do globals/globals
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // The number of imputations to perform.
-. global m_imputations 50 // Very slightly narrower CI if m=100.
-{txt}
-{com}. 
-. // Define the names of the process outcomes.
-. global process_outcomes ""
-{txt}
-{com}. global process_outcomes $process_outcomes attendance hypertension diabetes
-{txt}
-{com}. global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
-{txt}
-{com}. 
-. // Define the names of the time outcomes.
-. global time_outcomes ""
-{txt}
-{com}. global time_outcomes $time_outcomes info_management
-{txt}
-{com}. 
-. // The variables to adjust for, with their "types". See the generated report for
-. // an explanation of why these variables are adjusted for.
-. global adj_vars i.strat_var c.cluster_size c.age i.lab_available i.primiparous
-{txt}
-{com}. global adj_var_names // A global with just the *names* of the adj_vars
-{txt}
-{com}. foreach x of global adj_vars {c -(}
-{txt}  2{com}.   local x_name = substr("`x'", 3, .) // Remove the i. or c.
-{txt}  3{com}.   global adj_var_names $adj_var_names `x_name'
-{txt}  4{com}. {c )-}
-{txt}
-{com}. 
-. // Define paths to the process outcome files.
-. global fname_attendance      "data/raw/25June2020_eRegQual process outcomes_attendance.dta"
-{txt}
-{com}. global fname_hypertension    "data/raw/25June2020_eRegQual process outcomes_hypertension.dta"
-{txt}
-{com}. global fname_diabetes        "data/raw/25June2020_eRegQual process outcomes_diabetes.dta"
-{txt}
-{com}. global fname_malpresentation "data/raw/25June2020_eRegQual process outcomes_malpresentation.dta"
-{txt}
-{com}. global fname_anemia          "data/raw/02July2020_eRegQual process outcomes_anemia.dta"
-{txt}
-{com}. global fname_fetalgrowth     "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
-{txt}
-{com}. 
-. // Define paths to the time outcome file.
-. global fname_time            "data/raw/05August2020_eRegTime.dta"
-{txt}
-{com}. 
-. // Define data signatures for the process outcome files.
-. global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
-{txt}
-{com}. global datasignature_hypertension        "6367:60(68365):3970041110:3735367683"
-{txt}
-{com}. global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
-{txt}
-{com}. global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
-{txt}
-{com}. global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
-{txt}
-{com}. global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
-{txt}
-{com}. 
-. // Define data signature for the time data.
-. global datasignature_time                "241:24(68218):3592272240:210409283"
-{txt}
-{com}. 
-. // Define recoding rules for the arm variables of the process outcomes; the 
-. // coding of control and intervention vary by outcome. We will adopt the 
-. // convention that control is coded as 1 and intervention as 2.
-. global recode_attendance   recode arm (1 = 2) (2 = 1)
-{txt}
-{com}. global recode_hypertension recode arm (1 = 2) (2 = 1)
-{txt}
-{com}. foreach x in diabetes malpresentation anemia fetalgrowth {c -(}
-{txt}  2{com}.   global recode_`x' // No recoding necessary
-{txt}  3{com}. {c )-}
-{txt}
-{com}. 
-{txt}end of do-file
-
-{com}. do data/time_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Load the data and check its signature is as expected.
-. frame create time
-{txt}
-{com}. frame time {c -(}
-.   // Import the data and verify its signature.
-.   use "${c -(}fname_time{c )-}", replace
-.   datasignature
-  {res}241:24(68218):3592272240:210409283
-{com}.   assert r(datasignature) == "${c -(}datasignature_time{c )-}"
-. 
-.   // Encode/rename arm variable.
-.   encode exposure, generate(arm)
-.   label variable arm Arm
-. 
-.   // Rename cluster identifier variables.
-.   rename clinicnumber clusterid
-{res}{com}.   label variable clusterid Cluster
-. 
-.   // TODO: Need district as strat_var.
-.   // TODO: Need age.
-.   // TODO: Need primiparous
-. 
-.   // Lab availability.
-.   label variable lab_available "Lab available"
-.   label define lab_available_label 1 "Lab" 0 "No lab"
-.   label values lab_available lab_available_label
-. 
-. 
-.   // Compute the cluster size from the trial data. We use the trial data for
-.   // simplicity and have verified that these agree with the "baseline" data on
-.   // trial size. We divide by 100 because cluster sizes range from about 10 to
-.   // about 220, and we want to get regression coefficients that are non-null
-.   // within two decimal places! Note that cluster size computation must be
-.   // done before the data set is reshaped to long format, or we will count
-.   // one enrollment per visit rather than pregnancy.
-.   by clusterid, sort: generate cluster_size = _N / 100
-. {c )-}
-{txt}
-{com}. 
-{txt}end of do-file
-
-{com}. frame dir
-{p2col 3 12 14 2:{txt}default }{res}0 {txt:{it:x}} 0
-{p_end}
-{p2col 1 12 14 2:{res}* {txt}time }{res}241 {txt:{it:x}} 26{txt:;} 05August2020_eRegTime.dta
-{p_end}
-
-{txt}Note: frames marked with {res:*} contain unsaved data
-
-{com}. frame time: summarize
-
-{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
-{hline 13}{c +}{hline 57}
-{space 3}clusterid {c |}{res}        241    11.15768    6.451101          1         22
-{txt}observatio~r {c |}{res}        241         121     69.7149          1        241
-{txt}consultati~e {c |}{res}        241    12.60954     7.34145   2.066667   38.68333
-{txt}himwithinc~n {c |}{res}        241    7.074149    4.922118   .8166667   34.38333
-{txt}clientcare~n {c |}{res}        237     4.96398    3.788403        .15   21.61667
-{txt}{hline 13}{c +}{hline 57}
-miscellane~o {c |}{res}         84    1.847857    1.632324   .1333333   7.633333
-{txt}bookingvisit {c |}{res}        240        .125    .3314101          0          1
-{txt}observercode {c |}{res}        241    2.564315     1.10539          1          4
-{txt}afterconsu~m {c |}{res}        126    2.173148    4.888334          0      28.13
-{txt}afterconsu~s {c |}{res}        231    13.67691     14.0151      1.365      60.99
-{txt}{hline 13}{c +}{hline 57}
-clientrela~e {c |}{res}         21    7.620476    5.264749       3.59      14.17
-{txt}himpercons~n {c |}{res}        241    8.210318    6.594167   .8166667   51.91333
-{txt}{space 4}exposure {c |}{res}          0
-{txt}paperfindhim {c |}{res}        102    .6821895    .8238212   .0833333   6.033333
-{txt}paperreadhim {c |}{res}         86    1.130814    1.562712   .1166667   10.36667
-{txt}{hline 13}{c +}{hline 57}
-paperwriti~m {c |}{res}        220    4.162121    4.615665   .1833333   25.71667
-{txt}computerfi~m {c |}{res}        115    .9086957    .8442309   .1166667   7.233333
-{txt}computerre~m {c |}{res}         33    .6419192    .5134835        .15        1.9
-{txt}computerwr~m {c |}{res}        122    3.993033    2.932398   .7333333   15.23333
-{txt}{space 2}talkinghim {c |}{res}          7    .6761905    .4842766        .25        1.7
-{txt}{hline 13}{c +}{hline 57}
-procedures~e {c |}{res}        225    2.931259    2.313427        .15       21.4
-{txt}talkingcli~e {c |}{res}        162     2.10144    1.988074         .2   10.38333
-{txt}outsidecli~e {c |}{res}         41    3.636585    4.177137   .2666667      20.35
-{txt}lab_availa~e {c |}{res}        241    .3900415    .4887744          0          1
-{txt}{space 9}arm {c |}{res}        241    1.510373    .5009327          1          2
-{txt}{hline 13}{c +}{hline 57}
-cluster_size {c |}{res}        241    .1260996    .0539032        .04        .26
-
-{com}. do globals/globals
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // The number of imputations to perform.
-. global m_imputations 50 // Very slightly narrower CI if m=100.
-{txt}
-{com}. 
-. // Define the names of the process outcomes.
-. global process_outcomes ""
-{txt}
-{com}. global process_outcomes $process_outcomes attendance hypertension diabetes
-{txt}
-{com}. global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
-{txt}
-{com}. 
-. // Define the names of the time outcomes.
-. global time_outcomes ""
-{txt}
-{com}. global time_outcomes $time_outcomes info_management
-{txt}
-{com}. 
-. // The variables to adjust for, with their "types". See the generated report for
-. // an explanation of why these variables are adjusted for.
-. global adj_vars i.strat_var c.cluster_size c.age i.lab_available i.primiparous
-{txt}
-{com}. global adj_var_names // A global with just the *names* of the adj_vars
-{txt}
-{com}. foreach x of global adj_vars {c -(}
-{txt}  2{com}.   local x_name = substr("`x'", 3, .) // Remove the i. or c.
-{txt}  3{com}.   global adj_var_names $adj_var_names `x_name'
-{txt}  4{com}. {c )-}
-{txt}
-{com}. 
-. // Define paths to the process outcome files.
-. global fname_attendance      "data/raw/25June2020_eRegQual process outcomes_attendance.dta"
-{txt}
-{com}. global fname_hypertension    "data/raw/25June2020_eRegQual process outcomes_hypertension.dta"
-{txt}
-{com}. global fname_diabetes        "data/raw/25June2020_eRegQual process outcomes_diabetes.dta"
-{txt}
-{com}. global fname_malpresentation "data/raw/25June2020_eRegQual process outcomes_malpresentation.dta"
-{txt}
-{com}. global fname_anemia          "data/raw/02July2020_eRegQual process outcomes_anemia.dta"
-{txt}
-{com}. global fname_fetalgrowth     "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
-{txt}
-{com}. 
-. // Define paths to the time outcome file.
-. global fname_time            "data/raw/05August2020_eRegTime.dta"
-{txt}
-{com}. 
-. // Define data signatures for the process outcome files.
-. global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
-{txt}
-{com}. global datasignature_hypertension        "6367:60(68365):3970041110:3735367683"
-{txt}
-{com}. global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
-{txt}
-{com}. global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
-{txt}
-{com}. global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
-{txt}
-{com}. global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
-{txt}
-{com}. 
-. // Define data signature for the time data.
-. global datasignature_time                "241:24(68218):3592272240:210409283"
-{txt}
-{com}. 
-. // Define recoding rules for the arm variables of the process outcomes; the 
-. // coding of control and intervention vary by outcome. We will adopt the 
-. // convention that control is coded as 1 and intervention as 2.
-. global recode_attendance   recode arm (1 = 2) (2 = 1)
-{txt}
-{com}. global recode_hypertension recode arm (1 = 2) (2 = 1)
-{txt}
-{com}. foreach x in diabetes malpresentation anemia fetalgrowth {c -(}
-{txt}  2{com}.   global recode_`x' // No recoding necessary
-{txt}  3{com}. {c )-}
-{txt}
-{com}. 
-{txt}end of do-file
-
-{com}. clear all
-{res}
-{com}. do globals/globals
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // The number of imputations to perform.
-. global m_imputations 50 // Very slightly narrower CI if m=100.
-{txt}
-{com}. 
-. // Define the names of the process outcomes.
-. global process_outcomes ""
-{txt}
-{com}. global process_outcomes $process_outcomes attendance hypertension diabetes
-{txt}
-{com}. global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
-{txt}
-{com}. 
-. // Define the names of the time outcomes.
-. global time_outcomes ""
-{txt}
-{com}. global time_outcomes $time_outcomes info_management
-{txt}
-{com}. 
-. // The variables to adjust for, with their "types". See the generated report for
-. // an explanation of why these variables are adjusted for.
-. global adj_vars i.strat_var c.cluster_size c.age i.lab_available i.primiparous
-{txt}
-{com}. global adj_var_names // A global with just the *names* of the adj_vars
-{txt}
-{com}. foreach x of global adj_vars {c -(}
-{txt}  2{com}.   local x_name = substr("`x'", 3, .) // Remove the i. or c.
-{txt}  3{com}.   global adj_var_names $adj_var_names `x_name'
-{txt}  4{com}. {c )-}
-{txt}
-{com}. 
-. // Define paths to the process outcome files.
-. global fname_attendance      "data/raw/25June2020_eRegQual process outcomes_attendance.dta"
-{txt}
-{com}. global fname_hypertension    "data/raw/25June2020_eRegQual process outcomes_hypertension.dta"
-{txt}
-{com}. global fname_diabetes        "data/raw/25June2020_eRegQual process outcomes_diabetes.dta"
-{txt}
-{com}. global fname_malpresentation "data/raw/25June2020_eRegQual process outcomes_malpresentation.dta"
-{txt}
-{com}. global fname_anemia          "data/raw/02July2020_eRegQual process outcomes_anemia.dta"
-{txt}
-{com}. global fname_fetalgrowth     "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
-{txt}
-{com}. 
-. // Define paths to the time outcome file.
-. global fname_time            "data/raw/05August2020_eRegTime.dta"
-{txt}
-{com}. 
-. // Define data signatures for the process outcome files.
-. global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
-{txt}
-{com}. global datasignature_hypertension        "6367:60(68365):3970041110:3735367683"
-{txt}
-{com}. global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
-{txt}
-{com}. global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
-{txt}
-{com}. global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
-{txt}
-{com}. global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
-{txt}
-{com}. 
-. // Define data signature for the time data.
-. global datasignature_time                "241:24(68218):3592272240:210409283"
-{txt}
-{com}. 
-. // Define recoding rules for the arm variables of the process outcomes; the 
-. // coding of control and intervention vary by outcome. We will adopt the 
-. // convention that control is coded as 1 and intervention as 2.
-. global recode_attendance   recode arm (1 = 2) (2 = 1)
-{txt}
-{com}. global recode_hypertension recode arm (1 = 2) (2 = 1)
-{txt}
-{com}. foreach x in diabetes malpresentation anemia fetalgrowth {c -(}
-{txt}  2{com}.   global recode_`x' // No recoding necessary
-{txt}  3{com}. {c )-}
-{txt}
-{com}. 
-{txt}end of do-file
-
-{com}. do data/time_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Load the data and check its signature is as expected.
-. frame create time
-{txt}
-{com}. frame time {c -(}
-.   // Import the data and verify its signature.
-.   use "${c -(}fname_time{c )-}", replace
-.   datasignature
-  {res}241:24(68218):3592272240:210409283
-{com}.   assert r(datasignature) == "${c -(}datasignature_time{c )-}"
-. 
-.   // Encode/rename arm variable.
-.   encode exposure, generate(arm)
-.   label variable arm Arm
-. 
-.   // Rename cluster identifier variables.
-.   rename clinicnumber clusterid
-{res}{com}.   label variable clusterid Cluster
-. 
-.   // TODO: Need district as strat_var.
-.   // TODO: Need age.
-.   // TODO: Need primiparous
-. 
-.   // Lab availability.
-.   label variable lab_available "Lab available"
-.   label define lab_available_label 1 "Lab" 0 "No lab"
-.   label values lab_available lab_available_label
-. 
-. 
-.   // Compute the cluster size from the trial data. We use the trial data for
-.   // simplicity and have verified that these agree with the "baseline" data on
-.   // trial size. We divide by 100 because cluster sizes range from about 10 to
-.   // about 220, and we want to get regression coefficients that are non-null
-.   // within two decimal places! Note that cluster size computation must be
-.   // done before the data set is reshaped to long format, or we will count
-.   // one enrollment per visit rather than pregnancy.
-.   by clusterid, sort: generate cluster_size = _N / 100
-. 
-.   // Keep only the variables of interest.
-.   keep y arm clusterid $adj_var_names
-{err}variable {bf}y{sf} not found
-{txt}{search r(111), local:r(111);}
-{com}. {c )-}
-{txt}{search r(111), local:r(111);}
-
-end of do-file
-
-{search r(111), local:r(111);}
-
-{com}. do data/time_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Load the data and check its signature is as expected.
-. frame create time
-{err}frame {bf}time{sf} already defined
-{txt}{search r(110), local:r(110);}
-
-end of do-file
-
-{search r(110), local:r(110);}
-
-{com}. clear all
-{res}
-{com}. do globals/globals
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // The number of imputations to perform.
-. global m_imputations 50 // Very slightly narrower CI if m=100.
-{txt}
-{com}. 
-. // Define the names of the process outcomes.
-. global process_outcomes ""
-{txt}
-{com}. global process_outcomes $process_outcomes attendance hypertension diabetes
-{txt}
-{com}. global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
-{txt}
-{com}. 
-. // Define the names of the time outcomes.
-. global time_outcomes ""
-{txt}
-{com}. global time_outcomes $time_outcomes info_management
-{txt}
-{com}. 
-. // The variables to adjust for, with their "types". See the generated report for
-. // an explanation of why these variables are adjusted for.
-. global adj_vars i.strat_var c.cluster_size c.age i.lab_available i.primiparous
-{txt}
-{com}. global adj_var_names // A global with just the *names* of the adj_vars
-{txt}
-{com}. foreach x of global adj_vars {c -(}
-{txt}  2{com}.   local x_name = substr("`x'", 3, .) // Remove the i. or c.
-{txt}  3{com}.   global adj_var_names $adj_var_names `x_name'
-{txt}  4{com}. {c )-}
-{txt}
-{com}. 
-. // Define paths to the process outcome files.
-. global fname_attendance      "data/raw/25June2020_eRegQual process outcomes_attendance.dta"
-{txt}
-{com}. global fname_hypertension    "data/raw/25June2020_eRegQual process outcomes_hypertension.dta"
-{txt}
-{com}. global fname_diabetes        "data/raw/25June2020_eRegQual process outcomes_diabetes.dta"
-{txt}
-{com}. global fname_malpresentation "data/raw/25June2020_eRegQual process outcomes_malpresentation.dta"
-{txt}
-{com}. global fname_anemia          "data/raw/02July2020_eRegQual process outcomes_anemia.dta"
-{txt}
-{com}. global fname_fetalgrowth     "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
-{txt}
-{com}. 
-. // Define paths to the time outcome file.
-. global fname_time            "data/raw/05August2020_eRegTime.dta"
-{txt}
-{com}. 
-. // Define data signatures for the process outcome files.
-. global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
-{txt}
-{com}. global datasignature_hypertension        "6367:60(68365):3970041110:3735367683"
-{txt}
-{com}. global datasignature_diabetes            "6367:38(91264):1895688975:3113856828"
-{txt}
-{com}. global datasignature_malpresentation     "6367:31(88392):1586201653:3483051938"
-{txt}
-{com}. global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
-{txt}
-{com}. global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
-{txt}
-{com}. 
-. // Define data signature for the time data.
-. global datasignature_time                "241:24(68218):3592272240:210409283"
-{txt}
-{com}. 
-. // Define recoding rules for the arm variables of the process outcomes; the 
-. // coding of control and intervention vary by outcome. We will adopt the 
-. // convention that control is coded as 1 and intervention as 2.
-. global recode_attendance   recode arm (1 = 2) (2 = 1)
-{txt}
-{com}. global recode_hypertension recode arm (1 = 2) (2 = 1)
-{txt}
-{com}. foreach x in diabetes malpresentation anemia fetalgrowth {c -(}
-{txt}  2{com}.   global recode_`x' // No recoding necessary
-{txt}  3{com}. {c )-}
-{txt}
-{com}. 
-{txt}end of do-file
-
-{com}. do data/time_outcomes
-{txt}
-{com}. version 16.1
-{txt}
-{com}. 
-. // Load the data and check its signature is as expected.
-. frame create time
-{txt}
-{com}. frame time {c -(}
-.   // Import the data and verify its signature.
-.   use "${c -(}fname_time{c )-}", replace
-.   datasignature
-  {res}241:24(68218):3592272240:210409283
-{com}.   assert r(datasignature) == "${c -(}datasignature_time{c )-}"
-. 
-.   // Encode/rename arm variable.
-.   encode exposure, generate(arm)
-.   label variable arm Arm
-. 
-.   // 
-.   
-. 
-.   // Rename cluster identifier variables.
-.   rename clinicnumber clusterid
-{res}{com}.   label variable clusterid Cluster
-. 
-.   // TODO: Need district as strat_var.
-.   // TODO: Need age.
-.   // TODO: Need primiparous
-. 
-.   // Lab availability.
-.   label variable lab_available "Lab available"
-.   label define lab_available_label 1 "Lab" 0 "No lab"
-.   label values lab_available lab_available_label
-. 
-. 
-.   // Compute the cluster size from the trial data. We use the trial data for
-.   // simplicity and have verified that these agree with the "baseline" data on
-.   // trial size. We divide by 100 because cluster sizes range from about 10 to
-.   // about 220, and we want to get regression coefficients that are non-null
-.   // within two decimal places! Note that cluster size computation must be
-.   // done before the data set is reshaped to long format, or we will count
-.   // one enrollment per visit rather than pregnancy.
-.   by clusterid, sort: generate cluster_size = _N / 100
-. 
-.   // Keep only the variables of interest.
-.   // TODO: keep arm clusterid $adj_var_names // TODO: Add y vars
-. 
-.   // TODO: Take logs of the time variables!
-. {c )-}
-{txt}
-{com}. 
-{txt}end of do-file
-
-{com}. frame change time
-
-. codebook observercode 
-
-{txt}{hline}
-{res}observercode{right:Observer code}
-{txt}{hline}
-
-{col 19}type:  numeric ({res}byte{txt})
-
-{col 18}range:  [{res}1{txt},{res}4{txt}]{col 55}units:  {res}1
-{col 10}{txt}unique values:  {res}4{col 51}{txt}missing .:  {res}0{txt}/{res}241
-
-{txt}{col 13}tabulation:  Freq.  Value
-{col 21}{res}        46{col 33}1
-{col 21}        84{col 33}2
-{col 21}        40{col 33}3
-{col 21}        71{col 33}4
 
 {com}. 

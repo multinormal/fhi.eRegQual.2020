@@ -12,13 +12,26 @@ global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 global time_outcomes ""
 global time_outcomes $time_outcomes info_management
 
-// The variables to adjust for, with their "types". See the generated report for
-// an explanation of why these variables are adjusted for.
+// The variables to adjust for in the "main" analyses, with their "types". See
+// the generated report for an explanation of why these variables are adjusted
+// for.
 global adj_vars i.strat_var c.cluster_size c.age i.lab_available i.primiparous
 global adj_var_names // A global with just the *names* of the adj_vars
 foreach x of global adj_vars {
   local x_name = substr("`x'", 3, .) // Remove the i. or c.
   global adj_var_names $adj_var_names `x_name'
+}
+
+// The variables to adjust for in the time and motion analyses, with their
+// "types". See the generated report for an explanation of why these variables
+// are adjusted for. Note that unlike the "main" outcomes, data are not 
+// available for age and parity, which were used as constraints in the
+// randomization.
+global time_adj_vars i.strat_var c.cluster_size i.lab_available
+global time_adj_var_names // A global with just the *names* of the time_adj_vars
+foreach x of global time_adj_vars {
+  local x_name = substr("`x'", 3, .) // Remove the i. or c.
+  global time_adj_var_names $time_adj_var_names `x_name'
 }
 
 // Define paths to the process outcome files.
@@ -30,7 +43,7 @@ global fname_anemia          "data/raw/02July2020_eRegQual process outcomes_anem
 global fname_fetalgrowth     "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
 
 // Define paths to the time outcome file.
-global fname_time            "data/raw/05August2020_eRegTime.dta"
+global fname_time            "data/raw/02Sep2020_eRegTime.dta"
 
 // Define data signatures for the process outcome files.
 global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
@@ -41,7 +54,7 @@ global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
 global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
 
 // Define data signature for the time data.
-global datasignature_time                "241:24(68218):3592272240:210409283"
+global datasignature_time                "241:25(46964):1322369528:1413582791"
 
 // Define recoding rules for the arm variables of the process outcomes; the 
 // coding of control and intervention vary by outcome. We will adopt the 

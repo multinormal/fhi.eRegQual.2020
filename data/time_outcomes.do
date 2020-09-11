@@ -19,9 +19,8 @@ frame time {
   rename clinicnumber clusterid
   label variable clusterid Cluster
 
-  // TODO: Need district as strat_var.
-  // TODO: Need age.
-  // TODO: Need primiparous
+  // Rename the district variable, which was used in stratification.
+  rename district strat_var
 
   // Lab availability.
   label variable lab_available "Lab available"
@@ -37,10 +36,26 @@ frame time {
   // one enrollment per visit rather than pregnancy.
   by clusterid, sort: generate cluster_size = _N / 100
 
+  // Rename the outcomes.
+  rename himwithinconsultation y1
+  label variable               y1 "HIM time per consultation (mins)"
+
+  // Transform times to the log scale.
+  foreach y of varlist y* {
+    replace `y' = log(`y' + epsfloat()) // Prevent missing data due to log(0).
+  }
+
   // Keep only the variables of interest.
-  // TODO: keep arm clusterid observer $adj_var_names // TODO: Add y vars, age etc.
+  //// TODO: REINSTATE
+  //// keep y* arm clusterid observer $time_adj_var_names
+
+  // Verify that no data are missing.
+  //// TODO: REINSTATE
+  //// misstable summarize
+  //// assert r(N_lt_dot) == .
 
   // TODO: Take logs of the time variables!
 
-  // TODO: Check that no data are missing (or that there is little missing).
+
+  // TODO: Remember to place a random effect on observer!
 }
