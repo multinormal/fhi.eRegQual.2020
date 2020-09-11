@@ -37,17 +37,17 @@ frame time {
   by clusterid, sort: generate cluster_size = _N / 100
 
   // Rename the outcomes.
-  rename himwithinconsultation y1
-  label variable               y1 "HIM time per consultation (mins)"
+  rename himwithinconsultation him_time
+  label variable               him_time "HIM time per consultation (mins)"
 
   // Transform times to the log scale.
-  foreach y of varlist y* {
+  foreach y of varlist $time_outcomes {
     replace `y' = log(`y' + epsfloat()) // Prevent missing data due to log(0).
   }
 
   // Keep only the variables of interest.
   //// TODO: REINSTATE
-  //// keep y* arm clusterid observer $time_adj_var_names
+  //// keep $time_outcomes arm clusterid observer $time_adj_var_names
 
   // Verify that no data are missing.
   //// TODO: REINSTATE

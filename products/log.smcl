@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}11 Sep 2020, 11:33:41
+ {txt}opened on:  {res}11 Sep 2020, 16:14:41
 {txt}
 {com}. 
 . // Set up Stata.
@@ -55,7 +55,7 @@
 . // Define the names of the time outcomes.
 . global time_outcomes ""
 {txt}
-{com}. global time_outcomes $time_outcomes info_management
+{com}. global time_outcomes $time_outcomes him_time
 {txt}
 {com}. 
 . // The variables to adjust for in the "main" analyses, with their "types". See
@@ -756,18 +756,18 @@ Contains data
 .   by clusterid, sort: generate cluster_size = _N / 100
 . 
 .   // Rename the outcomes.
-.   rename himwithinconsultation y1
-{res}{com}.   label variable               y1 "HIM time per consultation (mins)"
+.   rename himwithinconsultation him_time
+{res}{com}.   label variable               him_time "HIM time per consultation (mins)"
 . 
-.   // Transform the times to the log scale.
-.   foreach y of varlist y* {c -(}
+.   // Transform times to the log scale.
+.   foreach y of varlist $time_outcomes {c -(}
 {txt}  2{com}.     replace `y' = log(`y' + epsfloat()) // Prevent missing data due to log(0).
 {txt}  3{com}.   {c )-}
 {txt}(241 real changes made)
 {com}. 
 .   // Keep only the variables of interest.
 .   //// TODO: REINSTATE
->   //// keep y* arm clusterid observer $time_adj_var_names
+>   //// keep $time_outcomes arm clusterid observer $time_adj_var_names
 > 
 .   // Verify that no data are missing.
 .   //// TODO: REINSTATE
@@ -829,7 +829,82 @@ Number of obs       = {res}5807
 {com}. // TODO: REINSTATE do estimation/birth_outcomes   // Analyze the birth outcome data.
 . // TODO: REINSTATE do estimation/process_outcomes // Analyze process outcome data.
 . // TODO: REINSTATE do estimation/margins          // Compute marginal probabilities.
-. 
+. do estimation/time_outcomes                       // Analyze time and motion data.
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. frame time {c -(}
+.   foreach y of global time_outcomes {c -(}
+{txt}  2{com}.       //mixed `y' i.arm $time_adj_vars || observer:, vce(cluster clusterid)
+.       mixed `y' i.arm $time_adj_vars || clusterid: || observer:
+{txt}  3{com}.       // TODO: The above non-commented code seems fine, and gives identical
+.       // estimates to the opposite order of the random effects, but runs faster.
+.       estimates store `y'_estimates
+{txt}  4{com}.   {c )-}
+{res}
+{txt}Performing EM optimization: 
+{res}
+{txt}Performing gradient-based optimization: 
+{res}
+{txt}Iteration 0:{space 3}log likelihood = {res:-205.17597}  
+{res}{txt}Iteration 1:{space 3}log likelihood = {res:-205.16572}  (not concave)
+{res}{txt}Iteration 2:{space 3}log likelihood = {res:-205.16571}  (backed up)
+{res}
+{txt}Computing standard errors:
+{res}
+{txt}Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       241
+
+{txt}{hline 16}{c TT}{hline 44}
+{col 17}{c |}{col 23}No. of{col 36}Observations per Group
+{col 2}Group Variable{col 17}{c |}{col 23}Groups{col 33}Minimum{col 44}Average{col 55}Maximum
+{hline 16}{c +}{hline 44}
+{res}{col 7}clusterid{txt}{col 17}{c |}{res}{col 21}      22{col 31}        4{col 42}     11.0{col 53}       26
+{col 8}observer{txt}{col 17}{c |}{res}{col 21}      22{col 31}        4{col 42}     11.0{col 53}       26
+{txt}{hline 16}{c BT}{hline 44}
+
+{col 49}Wald chi2({res}7{txt}){col 67}={col 70}{res}    19.33
+{txt}Log likelihood = {res}-205.16571{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0072
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}     him_time{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}B  {c |}{col 15}{res}{space 2}    -0.20{col 27}{space 2}     0.13{col 38}{space 1}   -1.52{col 47}{space 3} 0.13{col 55}{space 4}    -0.46{col 68}{space 3}     0.06
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 4}Ramallah  {c |}{col 15}{res}{space 2}     0.47{col 27}{space 2}     0.31{col 38}{space 1}    1.49{col 47}{space 3} 0.14{col 55}{space 4}    -0.15{col 68}{space 3}     1.08
+{txt}{space 6}Nablus  {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.31{col 38}{space 1}    0.00{col 47}{space 3} 1.00{col 55}{space 4}    -0.61{col 68}{space 3}     0.61
+{txt}{space 6}Salfit  {c |}{col 15}{res}{space 2}     0.26{col 27}{space 2}     0.28{col 38}{space 1}    0.92{col 47}{space 3} 0.36{col 55}{space 4}    -0.29{col 68}{space 3}     0.80
+{txt}{space 7}Jenin  {c |}{col 15}{res}{space 2}    -0.00{col 27}{space 2}     0.26{col 38}{space 1}   -0.01{col 47}{space 3} 0.99{col 55}{space 4}    -0.51{col 68}{space 3}     0.51
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -3.17{col 27}{space 2}     1.74{col 38}{space 1}   -1.82{col 47}{space 3} 0.07{col 55}{space 4}    -6.58{col 68}{space 3}     0.25
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}    -0.09{col 27}{space 2}     0.13{col 38}{space 1}   -0.67{col 47}{space 3} 0.50{col 55}{space 4}    -0.34{col 68}{space 3}     0.16
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     2.23{col 27}{space 2}     0.28{col 38}{space 1}    8.00{col 47}{space 3} 0.00{col 55}{space 4}     1.68{col 68}{space 3}     2.77
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.02{col 44}     0.36{col 58}     0.00{col 70} 2.54e+17
+{txt}{hline 29}{c +}{hline 48}
+{res}observer{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.02{col 44}     0.36{col 58}     0.00{col 70} 2.54e+17
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     0.30{col 44}     0.03{col 58}     0.25{col 70}     0.36
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}chi2({res}2{txt}) = {res}6.28{col 59}{txt}Prob > chi2 ={col 73}{res}0.0433
+
+{txt}{p 0 6 4}Note: {help j_mixedlr##|_new:LR test is conservative} and provided only for reference.{p_end}
+{com}. {c )-}
+{txt}
+{com}. 
+{txt}end of do-file
+
+{com}. 
 . // Make figures
 . // TODO: REINSTATE do figures/imputation
 . // TODO: REINSTATE do figures/margins
