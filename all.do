@@ -39,5 +39,6 @@ file open `revision_file' using `git_revision_filename', read text
 file read `revision_file' line
 global git_revision = "`macval(line)'"
 
-// Make the report
+// Make the reports
 // TODO: REINSTATE do reports/report products/report.docx
+do reports/time_report products/time_report.docx
