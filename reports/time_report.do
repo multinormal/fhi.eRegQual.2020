@@ -46,7 +46,22 @@ putdocx textblock end
 putdocx text ("Methods")
 
 `newpara'
-TODO: Write this.
+Times (durations) are non-negative and their distributions are positively 
+skewed (e.g., there are many consultations of “typical” duration, but some 
+that are much longer). Further, we anticipated that the intervention is likely 
+to have a multiplicative rather than additive effect. We therefore analyzed 
+times on the log scale. We used mixed-effects linear regression to estimate 
+relative differences in time between treatment and control. We adjusted for 
+the stratification variable (CHMP 2015) and for cluster size and lab 
+availability (variables used to constrain randomization; Li 2016) as fixed 
+effects, and cluster and observer as random effects. We exponentiated to 
+obtain estimates of relative difference and 95% confidence intervals. We 
+followed the intention-to-treat principle for all analyses: participants were 
+analyzed in the arms to which they were randomized, and all participants were 
+included in the analyses. No data were missing. Statistical analyses were 
+performed using Stata 16 (StataCorp LLC, College Station, Texas, USA). The 
+statistician was not involved in data collection and was blinded to treatment 
+allocation during analysis. Protocol deviations are documented in Appendix 1.
 putdocx textblock end
 
 // Results section
@@ -58,23 +73,62 @@ TODO: Write this.
 putdocx textblock end
 
 frame time {
+  local note "* The standard error, z-score, and P-value are from the analysis"
+  local note "`note' performed on the log scale."
+
   foreach var of global time_outcomes {
     local ++tbl_num
     local var_label : variable label `var'
     local title "Table `tbl_num'. `var_label'"
     estimates replay `var'_estimates
-    //nlcom `transform', post
-    estimates table, eform
-    putdocx table tbl_`tbl_num' = etable, title("`title'")
-    /// putdocx table tbl_`tbl_num'(2, 1) = (" ") // Remove outcome var name.
-    /// putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
-    /// local n_rows  23
-    /// local n_start 5
-    /// if "`var'" == "y2" local n_rows  16
-    /// if "`var'" == "y2" local n_start 5
-    /// forvalues i = `n_rows'(-1)`n_start' { // Drop rows not of interest.
-    ///   putdocx table tbl_`tbl_num'(`i', .), drop
-    /// }
+
+    // Get arm label and estimates for the table.
+    // We assume that level 1 is the reference for arm.
+    local arm : label (arm) 2 
+    local beta = e(b)["y1", "`var':2.arm"]
+    local x  = exp(`beta')
+    local se = sqrt(e(V)["`var':2.arm", "`var':2.arm"])
+    local z  = `beta' / `se'
+    local p  = 2 * normal(-abs(`z'))
+    local lb = exp(`beta' - (1.96 * `se'))
+    local ub = exp(`beta' + (1.96 * `se'))
+
+    // Make strings for the table.
+    local x_str  = string(`x',  "`e_fmt'") // Point estimate.
+    local se_str = string(`se', "`e_fmt'") // Std. Err.
+    local z_str  = string(`z',  "`e_fmt'")  // z.
+    local p_str  = string(`p',  "`p_fmt'") // P-value.
+    local lb_str = string(`lb', "`e_fmt'") // Lower-bound on CI.
+    local ub_str = string(`ub', "`e_fmt'") // Upper-bound on CI.
+
+    // Make the table manually - it does not seem possible to use the "=etable"
+    // method after nlcom.
+    putdocx table tbl_`tbl_num' = (3, 7), title("`title'") note("`note'") ///
+                                          border(all, nil)
+    // Column titles.
+    putdocx table tbl_`tbl_num'(2, 2) = ("Rel. Time"), halign(right)
+    putdocx table tbl_`tbl_num'(2, 3) = ("Std. Err.*"), halign(right)
+    putdocx table tbl_`tbl_num'(2, 4) = ("z*"),         halign(right)
+    putdocx table tbl_`tbl_num'(2, 5) = ("P>|z|*"),     halign(right)
+    putdocx table tbl_`tbl_num'(2, 6) = ("[95% Conf. Interval]"),     ///
+                                                       halign(right)  ///
+                                                       colspan(2)
+    // Row titles.
+    putdocx table tbl_`tbl_num'(3, 1) = ("arm"),       halign(right)
+    // Values.
+    putdocx table tbl_`tbl_num'(4, 1) = ("`arm'"),     halign(right)
+    putdocx table tbl_`tbl_num'(4, 2) = ("`x_str'"),   halign(right)
+    putdocx table tbl_`tbl_num'(4, 3) = ("`se_str'"),  halign(right)
+    putdocx table tbl_`tbl_num'(4, 4) = ("`z_str'"),   halign(right)
+    putdocx table tbl_`tbl_num'(4, 5) = ("`p_str'"),   halign(right)
+    putdocx table tbl_`tbl_num'(4, 6) = ("`lb_str'"),  halign(right)
+    putdocx table tbl_`tbl_num'(4, 7) = ("`ub_str'"),  halign(right)
+
+    // Borders.
+    putdocx table tbl_`tbl_num'(2, .),   border(top)
+    putdocx table tbl_`tbl_num'(3, .),   border(top)
+    putdocx table tbl_`tbl_num'(4, .),   border(bottom)
+    putdocx table tbl_`tbl_num'(2/4, 1), border(right)
   }
 }
 
@@ -83,7 +137,15 @@ frame time {
 putdocx text ("References")
 
 `newpara'
-TODO: Add references.
+Committee for Medicinal Products for Human Use (CHMP) (2015). Guideline on 
+adjustment for baseline covariates in clinical trials. London: European 
+Medicines Agency.
+putdocx textblock end
+
+`newpara'
+Li, F., Lokhnygina, Y., Murray, D. M., Heagerty, P. J., & DeLong, E. R. (2016). 
+An evaluation of constrained randomization for the design and analysis of 
+group‐randomized trials. Statistics in Medicine, 35(10), 1565-1579.
 putdocx textblock end
 
 // Appendices
@@ -92,7 +154,7 @@ putdocx textblock end
 putdocx text ("Appendix 1 — Protocol Deviations")
 
 `newpara'
-We did not originally plan to model relative times via transfomation to the 
+We did not originally plan to model relative times via transformation to the 
 log scale. Nor did we originally plan to model observer as a random effect but 
 chose to do so as it is plausible that systematic differences may exist between 
 observers.
@@ -108,13 +170,14 @@ exponentiated.
 putdocx textblock end
 
 frame time {
+  local note  "Data were analyzed on the log scale."
+  local note  "`note' Estimates have not been exponentiated."
   foreach var of global time_outcomes {
     local ++tbl_num
     local var_label : variable label `var'
-    local title "Table `tbl_num'. `var_label' — Analyzed on log scale"
+    local title "Table `tbl_num'. `var_label'"
     estimates replay `var'_estimates
-    putdocx table tbl_`tbl_num' = etable, title("`title'")
-    // TODO: putdocx table tbl_`tbl_num'(2, 2) = ("Odds Ratio"), halign(right)
+    putdocx table tbl_`tbl_num' = etable, title("`title'") note(`note')
   }
 }
 

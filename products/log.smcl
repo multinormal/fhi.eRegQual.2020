@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}11 Sep 2020, 16:14:41
+ {txt}opened on:  {res}18 Sep 2020, 14:26:53
 {txt}
 {com}. 
 . // Set up Stata.
@@ -836,11 +836,8 @@ Number of obs       = {res}5807
 {com}. 
 . frame time {c -(}
 .   foreach y of global time_outcomes {c -(}
-{txt}  2{com}.       //mixed `y' i.arm $time_adj_vars || observer:, vce(cluster clusterid)
-.       mixed `y' i.arm $time_adj_vars || clusterid: || observer:
-{txt}  3{com}.       // TODO: The above non-commented code seems fine, and gives identical
-.       // estimates to the opposite order of the random effects, but runs faster.
-.       estimates store `y'_estimates
+{txt}  2{com}.       mixed `y' i.arm $time_adj_vars || clusterid: || observer:
+{txt}  3{com}.       estimates store `y'_estimates
 {txt}  4{com}.   {c )-}
 {res}
 {txt}Performing EM optimization: 
@@ -924,9 +921,297 @@ LR test vs. linear model:{col 27}chi2({res}2{txt}) = {res}6.28{col 59}{txt}Prob 
 {com}. global git_revision = "`macval(line)'"
 {txt}
 {com}. 
-. // Make the report
+. // Make the reports
 . // TODO: REINSTATE do reports/report products/report.docx
+. do reports/time_report products/time_report.docx
+{txt}
+{com}. version 16.1
+{txt}
+{com}. 
+. args filename
+{txt}
+{com}. 
+. // Define the transform to use in nlcom (times were originally logged)
+. local transform exp(_b[\`var':2.arm])
+{txt}
+{com}. 
+. // Some locals to make this file a little more readable.
+. local heading putdocx paragraph, style(Heading1)
+{txt}
+{com}. local subhead putdocx paragraph, style(Heading2)
+{txt}
+{com}. local newpara putdocx textblock begin, halign(both)
+{txt}
+{com}. local putdocx textblock end putdocx textblock end
+{txt}
+{com}. 
+. local p_fmt  %5.2f // Format used for P-values.
+{txt}
+{com}. local e_fmt  %5.2f // Format used for estimates.
+{txt}
+{com}. local pc_fmt %8.1f // Format used for percentages.
+{txt}
+{com}. 
+. local tbl_num = 0  // A table counter.
+{txt}
+{com}. 
+. // Start the document.
+. putdocx begin
+{res}{txt}
+{com}. 
+. // Title.
+. putdocx paragraph, style(Title)
+{res}{txt}
+{com}. putdocx text ("eRegQual analysis - Time and motion study analysis")
+{res}{txt}
+{com}. 
+. // Author and revision information.
+. `newpara'
+{res}{txt}
+{com}. `newpara'
+{res}{txt}
+{com}. 
+. // Introduction section.
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Introduction")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Methods section
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Methods")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Results section
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Results")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. frame time {c -(}
+.   local note "* The standard error, z-score, and P-value are from the analysis"
+.   local note "`note' performed on the log scale."
 . 
+.   foreach var of global time_outcomes {c -(}
+{txt}  2{com}.     local ++tbl_num
+{txt}  3{com}.     local var_label : variable label `var'
+{txt}  4{com}.     local title "Table `tbl_num'. `var_label'"
+{txt}  5{com}.     estimates replay `var'_estimates
+{txt}  6{com}. 
+.     // Get arm label and estimates for the table.
+.     // We assume that level 1 is the reference for arm.
+.     local arm : label (arm) 2 
+{txt}  7{com}.     local beta = e(b)["y1", "`var':2.arm"]
+{txt}  8{com}.     local x  = exp(`beta')
+{txt}  9{com}.     local se = sqrt(e(V)["`var':2.arm", "`var':2.arm"])
+{txt} 10{com}.     local z  = `beta' / `se'
+{txt} 11{com}.     local p  = 2 * normal(-abs(`z'))
+{txt} 12{com}.     local lb = exp(`beta' - (1.96 * `se'))
+{txt} 13{com}.     local ub = exp(`beta' + (1.96 * `se'))
+{txt} 14{com}. 
+.     // Make strings for the table.
+.     local x_str  = string(`x',  "`e_fmt'") // Point estimate.
+{txt} 15{com}.     local se_str = string(`se', "`e_fmt'") // Std. Err.
+{txt} 16{com}.     local z_str  = string(`z',  "`e_fmt'")  // z.
+{txt} 17{com}.     local p_str  = string(`p',  "`p_fmt'") // P-value.
+{txt} 18{com}.     local lb_str = string(`lb', "`e_fmt'") // Lower-bound on CI.
+{txt} 19{com}.     local ub_str = string(`ub', "`e_fmt'") // Upper-bound on CI.
+{txt} 20{com}. 
+.     // Make the table manually - it does not seem possible to use the "=etable"
+.     // method after nlcom.
+.     putdocx table tbl_`tbl_num' = (3, 7), title("`title'") note("`note'") ///
+>                                           border(all, nil)
+{txt} 21{com}.     // Column titles.
+.     putdocx table tbl_`tbl_num'(2, 2) = ("Rel. Time"), halign(right)
+{txt} 22{com}.     putdocx table tbl_`tbl_num'(2, 3) = ("Std. Err.*"), halign(right)
+{txt} 23{com}.     putdocx table tbl_`tbl_num'(2, 4) = ("z*"),         halign(right)
+{txt} 24{com}.     putdocx table tbl_`tbl_num'(2, 5) = ("P>|z|*"),     halign(right)
+{txt} 25{com}.     putdocx table tbl_`tbl_num'(2, 6) = ("[95% Conf. Interval]"),     ///
+>                                                        halign(right)  ///
+>                                                        colspan(2)
+{txt} 26{com}.     // Row titles.
+.     putdocx table tbl_`tbl_num'(3, 1) = ("arm"),       halign(right)
+{txt} 27{com}.     // Values.
+.     putdocx table tbl_`tbl_num'(4, 1) = ("`arm'"),     halign(right)
+{txt} 28{com}.     putdocx table tbl_`tbl_num'(4, 2) = ("`x_str'"),   halign(right)
+{txt} 29{com}.     putdocx table tbl_`tbl_num'(4, 3) = ("`se_str'"),  halign(right)
+{txt} 30{com}.     putdocx table tbl_`tbl_num'(4, 4) = ("`z_str'"),   halign(right)
+{txt} 31{com}.     putdocx table tbl_`tbl_num'(4, 5) = ("`p_str'"),   halign(right)
+{txt} 32{com}.     putdocx table tbl_`tbl_num'(4, 6) = ("`lb_str'"),  halign(right)
+{txt} 33{com}.     putdocx table tbl_`tbl_num'(4, 7) = ("`ub_str'"),  halign(right)
+{txt} 34{com}. 
+.     // Borders.
+.     putdocx table tbl_`tbl_num'(2, .),   border(top)
+{txt} 35{com}.     putdocx table tbl_`tbl_num'(3, .),   border(top)
+{txt} 36{com}.     putdocx table tbl_`tbl_num'(4, .),   border(bottom)
+{txt} 37{com}.     putdocx table tbl_`tbl_num'(2/4, 1), border(right)
+{txt} 38{com}.   {c )-}
+
+{txt}{hline}
+{p 0 8}Model {hi:him_time_estimates}{p_end}
+{hline}
+
+Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       241
+
+{txt}{hline 16}{c TT}{hline 44}
+{col 17}{c |}{col 23}No. of{col 36}Observations per Group
+{col 2}Group Variable{col 17}{c |}{col 23}Groups{col 33}Minimum{col 44}Average{col 55}Maximum
+{hline 16}{c +}{hline 44}
+{res}{col 7}clusterid{txt}{col 17}{c |}{res}{col 21}      22{col 31}        4{col 42}     11.0{col 53}       26
+{col 8}observer{txt}{col 17}{c |}{res}{col 21}      22{col 31}        4{col 42}     11.0{col 53}       26
+{txt}{hline 16}{c BT}{hline 44}
+
+{col 49}Wald chi2({res}7{txt}){col 67}={col 70}{res}    19.33
+{txt}Log likelihood = {res}-205.16571{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0072
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}     him_time{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}B  {c |}{col 15}{res}{space 2}    -0.20{col 27}{space 2}     0.13{col 38}{space 1}   -1.52{col 47}{space 3} 0.13{col 55}{space 4}    -0.46{col 68}{space 3}     0.06
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 4}Ramallah  {c |}{col 15}{res}{space 2}     0.47{col 27}{space 2}     0.31{col 38}{space 1}    1.49{col 47}{space 3} 0.14{col 55}{space 4}    -0.15{col 68}{space 3}     1.08
+{txt}{space 6}Nablus  {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.31{col 38}{space 1}    0.00{col 47}{space 3} 1.00{col 55}{space 4}    -0.61{col 68}{space 3}     0.61
+{txt}{space 6}Salfit  {c |}{col 15}{res}{space 2}     0.26{col 27}{space 2}     0.28{col 38}{space 1}    0.92{col 47}{space 3} 0.36{col 55}{space 4}    -0.29{col 68}{space 3}     0.80
+{txt}{space 7}Jenin  {c |}{col 15}{res}{space 2}    -0.00{col 27}{space 2}     0.26{col 38}{space 1}   -0.01{col 47}{space 3} 0.99{col 55}{space 4}    -0.51{col 68}{space 3}     0.51
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -3.17{col 27}{space 2}     1.74{col 38}{space 1}   -1.82{col 47}{space 3} 0.07{col 55}{space 4}    -6.58{col 68}{space 3}     0.25
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}    -0.09{col 27}{space 2}     0.13{col 38}{space 1}   -0.67{col 47}{space 3} 0.50{col 55}{space 4}    -0.34{col 68}{space 3}     0.16
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     2.23{col 27}{space 2}     0.28{col 38}{space 1}    8.00{col 47}{space 3} 0.00{col 55}{space 4}     1.68{col 68}{space 3}     2.77
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.02{col 44}     0.36{col 58}     0.00{col 70} 2.54e+17
+{txt}{hline 29}{c +}{hline 48}
+{res}observer{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.02{col 44}     0.36{col 58}     0.00{col 70} 2.54e+17
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     0.30{col 44}     0.03{col 58}     0.25{col 70}     0.36
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}chi2({res}2{txt}) = {res}6.28{col 59}{txt}Prob > chi2 ={col 73}{res}0.0433
+
+{txt}{p 0 6 4}Note: {help j_mixedlr##|_new:LR test is conservative} and provided only for reference.{p_end}
+{res}{com}. {c )-}
+{txt}
+{com}. 
+. // References
+. `heading'
+{res}{txt}
+{com}. putdocx text ("References")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. // Appendices
+. 
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Appendix 1 — Protocol Deviations")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. `heading'
+{res}{txt}
+{com}. putdocx text ("Appendix 3 — Full Regression Results")
+{res}{txt}
+{com}. 
+. `newpara'
+{res}{txt}
+{com}. 
+. frame time {c -(}
+.   local note  "Data were analyzed on the log scale."
+.   local note  "`note' Estimates have not been exponentiated."
+.   foreach var of global time_outcomes {c -(}
+{txt}  2{com}.     local ++tbl_num
+{txt}  3{com}.     local var_label : variable label `var'
+{txt}  4{com}.     local title "Table `tbl_num'. `var_label'"
+{txt}  5{com}.     estimates replay `var'_estimates
+{txt}  6{com}.     putdocx table tbl_`tbl_num' = etable, title("`title'") note(`note')
+{txt}  7{com}.   {c )-}
+
+{txt}{hline}
+{p 0 8}Model {hi:him_time_estimates}{p_end}
+{hline}
+
+Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       241
+
+{txt}{hline 16}{c TT}{hline 44}
+{col 17}{c |}{col 23}No. of{col 36}Observations per Group
+{col 2}Group Variable{col 17}{c |}{col 23}Groups{col 33}Minimum{col 44}Average{col 55}Maximum
+{hline 16}{c +}{hline 44}
+{res}{col 7}clusterid{txt}{col 17}{c |}{res}{col 21}      22{col 31}        4{col 42}     11.0{col 53}       26
+{col 8}observer{txt}{col 17}{c |}{res}{col 21}      22{col 31}        4{col 42}     11.0{col 53}       26
+{txt}{hline 16}{c BT}{hline 44}
+
+{col 49}Wald chi2({res}7{txt}){col 67}={col 70}{res}    19.33
+{txt}Log likelihood = {res}-205.16571{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0072
+
+{txt}{hline 14}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}     him_time{col 15}{c |}      Coef.{col 27}   Std. Err.{col 39}      z{col 47}   P>|z|{col 55}     [95% Con{col 68}f. Interval]
+{hline 14}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 10}arm {c |}
+{space 11}B  {c |}{col 15}{res}{space 2}    -0.20{col 27}{space 2}     0.13{col 38}{space 1}   -1.52{col 47}{space 3} 0.13{col 55}{space 4}    -0.46{col 68}{space 3}     0.06
+{txt}{space 13} {c |}
+{space 4}strat_var {c |}
+{space 4}Ramallah  {c |}{col 15}{res}{space 2}     0.47{col 27}{space 2}     0.31{col 38}{space 1}    1.49{col 47}{space 3} 0.14{col 55}{space 4}    -0.15{col 68}{space 3}     1.08
+{txt}{space 6}Nablus  {c |}{col 15}{res}{space 2}     0.00{col 27}{space 2}     0.31{col 38}{space 1}    0.00{col 47}{space 3} 1.00{col 55}{space 4}    -0.61{col 68}{space 3}     0.61
+{txt}{space 6}Salfit  {c |}{col 15}{res}{space 2}     0.26{col 27}{space 2}     0.28{col 38}{space 1}    0.92{col 47}{space 3} 0.36{col 55}{space 4}    -0.29{col 68}{space 3}     0.80
+{txt}{space 7}Jenin  {c |}{col 15}{res}{space 2}    -0.00{col 27}{space 2}     0.26{col 38}{space 1}   -0.01{col 47}{space 3} 0.99{col 55}{space 4}    -0.51{col 68}{space 3}     0.51
+{txt}{space 13} {c |}
+{space 1}cluster_size {c |}{col 15}{res}{space 2}    -3.17{col 27}{space 2}     1.74{col 38}{space 1}   -1.82{col 47}{space 3} 0.07{col 55}{space 4}    -6.58{col 68}{space 3}     0.25
+{txt}{space 13} {c |}
+lab_available {c |}
+{space 9}Lab  {c |}{col 15}{res}{space 2}    -0.09{col 27}{space 2}     0.13{col 38}{space 1}   -0.67{col 47}{space 3} 0.50{col 55}{space 4}    -0.34{col 68}{space 3}     0.16
+{txt}{space 8}_cons {c |}{col 15}{res}{space 2}     2.23{col 27}{space 2}     0.28{col 38}{space 1}    8.00{col 47}{space 3} 0.00{col 55}{space 4}     1.68{col 68}{space 3}     2.77
+{txt}{hline 14}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.02{col 44}     0.36{col 58}     0.00{col 70} 2.54e+17
+{txt}{hline 29}{c +}{hline 48}
+{res}observer{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.02{col 44}     0.36{col 58}     0.00{col 70} 2.54e+17
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     0.30{col 44}     0.03{col 58}     0.25{col 70}     0.36
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}chi2({res}2{txt}) = {res}6.28{col 59}{txt}Prob > chi2 ={col 73}{res}0.0433
+
+{txt}{p 0 6 4}Note: {help j_mixedlr##|_new:LR test is conservative} and provided only for reference.{p_end}
+{res}{com}. {c )-}
+{txt}
+{com}. 
+. // Save the report to the specified filename.
+. putdocx save `"`filename'"', replace
+{res}successfully replaced {browse "/Users/cjr/Repos/fhi.eRegQual.2020/products/time_report.docx":"/Users/cjr/Repos/fhi.eRegQual.2020/products/time_report.docx"}
+{txt}
+{com}. 
+{txt}end of do-file
+
+{com}. 
 {txt}end of do-file
 
 {com}. 

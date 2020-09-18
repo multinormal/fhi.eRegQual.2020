@@ -53,9 +53,4 @@ frame time {
   //// TODO: REINSTATE
   //// misstable summarize
   //// assert r(N_lt_dot) == .
-
-  // TODO: Take logs of the time variables!
-
-
-  // TODO: Remember to place a random effect on observer!
 }
