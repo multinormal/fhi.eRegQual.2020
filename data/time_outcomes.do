@@ -43,7 +43,10 @@ frame time {
 
   // Rename the outcomes.
   rename himperconsultation    him_time
-  label variable               him_time "HIM time per consultation (mins)"
+  label variable               him_time     "HIM time per consultation (mins)"
+
+  rename consultationtime      consult_time
+  label variable               consult_time "Consultation time (mins)"
 
   // Transform times to the log scale.
   foreach y of varlist $time_outcomes {

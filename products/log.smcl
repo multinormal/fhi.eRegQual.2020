@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}23 Sep 2020, 16:38:55
+ {txt}opened on:  {res}23 Sep 2020, 17:19:50
 {txt}
 {com}. 
 . // Set up Stata.
@@ -55,7 +55,7 @@
 . // Define the names of the time outcomes.
 . global time_outcomes ""
 {txt}
-{com}. global time_outcomes $time_outcomes him_time
+{com}. global time_outcomes $time_outcomes him_time consult_time
 {txt}
 {com}. 
 . // The variables to adjust for in the "main" analyses, with their "types". See
@@ -736,9 +736,7 @@ Contains data
 .   label variable arm Arm
 . 
 .   // Encode/rename booking visit variable.
-.   //// rename bookingvisit bookingvisit_orig
->   //// encode bookingvisit_orig, generate(bookingvisit)
->   label variable bookingvisit "Booking visit"
+.   label variable bookingvisit "Booking visit"
 .   label define bookingvisit_label 1 "Booking visit" 0 "Non-booking visit"
 .   label values bookingvisit bookingvisit_label
 . 
@@ -768,13 +766,17 @@ Contains data
 . 
 .   // Rename the outcomes.
 .   rename himperconsultation    him_time
-{res}{com}.   label variable               him_time "HIM time per consultation (mins)"
+{res}{com}.   label variable               him_time     "HIM time per consultation (mins)"
+. 
+.   rename consultationtime      consult_time
+{res}{com}.   label variable               consult_time "Consultation time (mins)"
 . 
 .   // Transform times to the log scale.
 .   foreach y of varlist $time_outcomes {c -(}
 {txt}  2{com}.     replace `y' = log(`y' + epsfloat()) // Prevent missing data due to log(0).
 {txt}  3{com}.   {c )-}
 {txt}(241 real changes made)
+(241 real changes made)
 {com}. 
 .   // Keep only the variables of interest.
 .   //// TODO: REINSTATE
@@ -838,9 +840,6 @@ Number of obs       = {res}5807
 . do estimation/time_outcomes                       // Analyze time and motion data.
 {txt}
 {com}. version 16.1
-{txt}
-{com}. 
-. local technique technique(bfgs 5 nr 5)
 {txt}
 {com}. 
 . frame time {c -(}
@@ -907,6 +906,64 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.78{col 28}{space 2}     0.09{co
 {col 16}var(Residual){col 30}{c |}{res}{col 33}     0.16{col 44}     0.02{col 58}     0.13{col 70}     0.19
 {txt}{hline 29}{c BT}{hline 48}
 LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}35.75{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.0000
+
+{txt}Performing EM optimization: 
+{res}
+{txt}Performing gradient-based optimization: 
+{res}
+{txt}Iteration 0:{space 3}log likelihood = {res:-118.64208}  
+{res}{txt}Iteration 1:{space 3}log likelihood = {res:-118.64208}  
+{res}
+{txt}Computing standard errors:
+{res}
+{txt}Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       240
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        22
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         4
+{txt}{col 63}avg{col 67}={col 69}{res}      10.9
+{txt}{col 63}max{col 67}={col 69}{res}        26
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}   137.67
+{txt}Log likelihood = {res}-118.64208{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}  consult_time{col 16}{c |}      Coef.{col 28}   Std. Err.{col 40}      z{col 48}   P>|z|{col 56}     [95% Con{col 69}f. Interval]
+{hline 15}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}arm {c |}
+{space 12}B  {c |}{col 16}{res}{space 2}    -0.16{col 28}{space 2}     0.11{col 39}{space 1}   -1.43{col 48}{space 3} 0.15{col 56}{space 4}    -0.38{col 69}{space 3}     0.06
+{txt}{space 14} {c |}
+{space 5}strat_var {c |}
+{space 5}Ramallah  {c |}{col 16}{res}{space 2}     0.54{col 28}{space 2}     0.26{col 39}{space 1}    2.05{col 48}{space 3} 0.04{col 56}{space 4}     0.02{col 69}{space 3}     1.06
+{txt}{space 7}Nablus  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.26{col 39}{space 1}    1.55{col 48}{space 3} 0.12{col 56}{space 4}    -0.11{col 69}{space 3}     0.92
+{txt}{space 7}Salfit  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.24{col 39}{space 1}    1.71{col 48}{space 3} 0.09{col 56}{space 4}    -0.06{col 69}{space 3}     0.89
+{txt}{space 8}Jenin  {c |}{col 16}{res}{space 2}     0.50{col 28}{space 2}     0.23{col 39}{space 1}    2.16{col 48}{space 3} 0.03{col 56}{space 4}     0.05{col 69}{space 3}     0.96
+{txt}{space 14} {c |}
+{space 2}cluster_size {c |}{col 16}{res}{space 2}    -2.01{col 28}{space 2}     1.77{col 39}{space 1}   -1.14{col 48}{space 3} 0.26{col 56}{space 4}    -5.47{col 69}{space 3}     1.46
+{txt}{space 14} {c |}
+{space 1}lab_available {c |}
+{space 10}Lab  {c |}{col 16}{res}{space 2}     0.02{col 28}{space 2}     0.11{col 39}{space 1}    0.22{col 48}{space 3} 0.83{col 56}{space 4}    -0.19{col 69}{space 3}     0.24
+{txt}{space 14} {c |}
+{space 2}bookingvisit {c |}
+Booking visit  {c |}{col 16}{res}{space 2}     0.80{col 28}{space 2}     0.08{col 39}{space 1}    9.67{col 48}{space 3} 0.00{col 56}{space 4}     0.63{col 69}{space 3}     0.96
+{txt}{space 14} {c |}
+{space 6}observer {c |}
+{space 12}2  {c |}{col 16}{res}{space 2}     0.18{col 28}{space 2}     0.16{col 39}{space 1}    1.12{col 48}{space 3} 0.26{col 56}{space 4}    -0.13{col 69}{space 3}     0.49
+{txt}{space 12}3  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.17{col 39}{space 1}    2.35{col 48}{space 3} 0.02{col 56}{space 4}     0.07{col 69}{space 3}     0.74
+{txt}{space 12}4  {c |}{col 16}{res}{space 2}     0.00{col 28}{space 2}     0.15{col 39}{space 1}    0.02{col 48}{space 3} 0.98{col 56}{space 4}    -0.29{col 69}{space 3}     0.29
+{txt}{space 14} {c |}
+{space 9}_cons {c |}{col 16}{res}{space 2}     2.04{col 28}{space 2}     0.26{col 39}{space 1}    7.76{col 48}{space 3} 0.00{col 56}{space 4}     1.53{col 69}{space 3}     2.56
+{txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.03{col 44}     0.01{col 58}     0.01{col 70}     0.07
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     0.14{col 44}     0.01{col 58}     0.12{col 70}     0.17
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}16.89{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.0000
 {com}. {c )-}
 {txt}
 {com}. 
@@ -1017,58 +1074,60 @@ LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}35.75
 {txt}  2{com}.     local ++tbl_num
 {txt}  3{com}.     local var_label : variable label `var'
 {txt}  4{com}.     local title "Table `tbl_num'. `var_label'"
-{txt}  5{com}.     estimates replay `var'_estimates
-{txt}  6{com}. 
+{txt}  5{com}.     estimates restore `var'_estimates
+{txt}  6{com}.     estimates replay
+{txt}  7{com}. 
 .     // Get arm label and estimates for the table.
 .     // We assume that level 1 is the reference for arm.
 .     local arm : label (arm) 2 
-{txt}  7{com}.     local beta = e(b)["y1", "`var':2.arm"]
-{txt}  8{com}.     local x  = exp(`beta')
-{txt}  9{com}.     local se = sqrt(e(V)["`var':2.arm", "`var':2.arm"])
-{txt} 10{com}.     local z  = `beta' / `se'
-{txt} 11{com}.     local p  = 2 * normal(-abs(`z'))
-{txt} 12{com}.     local lb = exp(`beta' - (1.96 * `se'))
-{txt} 13{com}.     local ub = exp(`beta' + (1.96 * `se'))
-{txt} 14{com}. 
+{txt}  8{com}.     local beta = e(b)["y1", "`var':2.arm"]
+{txt}  9{com}.     local x  = exp(`beta')
+{txt} 10{com}.     local se = sqrt(e(V)["`var':2.arm", "`var':2.arm"])
+{txt} 11{com}.     local z  = `beta' / `se'
+{txt} 12{com}.     local p  = 2 * normal(-abs(`z'))
+{txt} 13{com}.     local lb = exp(`beta' - (1.96 * `se'))
+{txt} 14{com}.     local ub = exp(`beta' + (1.96 * `se'))
+{txt} 15{com}. 
 .     // Make strings for the table.
 .     local x_str  = string(`x',  "`e_fmt'") // Point estimate.
-{txt} 15{com}.     local se_str = string(`se', "`e_fmt'") // Std. Err.
-{txt} 16{com}.     local z_str  = string(`z',  "`e_fmt'")  // z.
-{txt} 17{com}.     local p_str  = string(`p',  "`p_fmt'") // P-value.
-{txt} 18{com}.     local lb_str = string(`lb', "`e_fmt'") // Lower-bound on CI.
-{txt} 19{com}.     local ub_str = string(`ub', "`e_fmt'") // Upper-bound on CI.
-{txt} 20{com}. 
+{txt} 16{com}.     local se_str = string(`se', "`e_fmt'") // Std. Err.
+{txt} 17{com}.     local z_str  = string(`z',  "`e_fmt'")  // z.
+{txt} 18{com}.     local p_str  = string(`p',  "`p_fmt'") // P-value.
+{txt} 19{com}.     local lb_str = string(`lb', "`e_fmt'") // Lower-bound on CI.
+{txt} 20{com}.     local ub_str = string(`ub', "`e_fmt'") // Upper-bound on CI.
+{txt} 21{com}. 
 .     // Make the table manually - it does not seem possible to use the "=etable"
 .     // method after nlcom.
 .     putdocx table tbl_`tbl_num' = (3, 7), title("`title'") note("`note'") ///
 >                                           border(all, nil)
-{txt} 21{com}.     // Column titles.
+{txt} 22{com}.     // Column titles.
 .     putdocx table tbl_`tbl_num'(2, 2) = ("Rel. Time"), halign(right)
-{txt} 22{com}.     putdocx table tbl_`tbl_num'(2, 3) = ("Std. Err.*"), halign(right)
-{txt} 23{com}.     putdocx table tbl_`tbl_num'(2, 4) = ("z*"),         halign(right)
-{txt} 24{com}.     putdocx table tbl_`tbl_num'(2, 5) = ("P>|z|*"),     halign(right)
-{txt} 25{com}.     putdocx table tbl_`tbl_num'(2, 6) = ("[95% Conf. Interval]"),     ///
+{txt} 23{com}.     putdocx table tbl_`tbl_num'(2, 3) = ("Std. Err.*"), halign(right)
+{txt} 24{com}.     putdocx table tbl_`tbl_num'(2, 4) = ("z*"),         halign(right)
+{txt} 25{com}.     putdocx table tbl_`tbl_num'(2, 5) = ("P>|z|*"),     halign(right)
+{txt} 26{com}.     putdocx table tbl_`tbl_num'(2, 6) = ("[95% Conf. Interval]"),     ///
 >                                                        halign(right)  ///
 >                                                        colspan(2)
-{txt} 26{com}.     // Row titles.
+{txt} 27{com}.     // Row titles.
 .     putdocx table tbl_`tbl_num'(3, 1) = ("arm"),       halign(right)
-{txt} 27{com}.     // Values.
+{txt} 28{com}.     // Values.
 .     putdocx table tbl_`tbl_num'(4, 1) = ("`arm'"),     halign(right)
-{txt} 28{com}.     putdocx table tbl_`tbl_num'(4, 2) = ("`x_str'"),   halign(right)
-{txt} 29{com}.     putdocx table tbl_`tbl_num'(4, 3) = ("`se_str'"),  halign(right)
-{txt} 30{com}.     putdocx table tbl_`tbl_num'(4, 4) = ("`z_str'"),   halign(right)
-{txt} 31{com}.     putdocx table tbl_`tbl_num'(4, 5) = ("`p_str'"),   halign(right)
-{txt} 32{com}.     putdocx table tbl_`tbl_num'(4, 6) = ("`lb_str'"),  halign(right)
-{txt} 33{com}.     putdocx table tbl_`tbl_num'(4, 7) = ("`ub_str'"),  halign(right)
-{txt} 34{com}. 
+{txt} 29{com}.     putdocx table tbl_`tbl_num'(4, 2) = ("`x_str'"),   halign(right)
+{txt} 30{com}.     putdocx table tbl_`tbl_num'(4, 3) = ("`se_str'"),  halign(right)
+{txt} 31{com}.     putdocx table tbl_`tbl_num'(4, 4) = ("`z_str'"),   halign(right)
+{txt} 32{com}.     putdocx table tbl_`tbl_num'(4, 5) = ("`p_str'"),   halign(right)
+{txt} 33{com}.     putdocx table tbl_`tbl_num'(4, 6) = ("`lb_str'"),  halign(right)
+{txt} 34{com}.     putdocx table tbl_`tbl_num'(4, 7) = ("`ub_str'"),  halign(right)
+{txt} 35{com}. 
 .     // Borders.
 .     putdocx table tbl_`tbl_num'(2, .),   border(top)
-{txt} 35{com}.     putdocx table tbl_`tbl_num'(3, .),   border(top)
-{txt} 36{com}.     putdocx table tbl_`tbl_num'(4, .),   border(bottom)
-{txt} 37{com}.     putdocx table tbl_`tbl_num'(2/4, 1), border(right)
-{txt} 38{com}.   {c )-}
+{txt} 36{com}.     putdocx table tbl_`tbl_num'(3, .),   border(top)
+{txt} 37{com}.     putdocx table tbl_`tbl_num'(4, .),   border(bottom)
+{txt} 38{com}.     putdocx table tbl_`tbl_num'(2/4, 1), border(right)
+{txt} 39{com}.   {c )-}
+{txt}(results {stata estimates replay him_time_estimates:him_time_estimates} are active now)
 
-{txt}{hline}
+{hline}
 {p 0 8}Model {hi:him_time_estimates}{p_end}
 {hline}
 
@@ -1120,6 +1179,60 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.78{col 28}{space 2}     0.09{co
 {col 16}var(Residual){col 30}{c |}{res}{col 33}     0.16{col 44}     0.02{col 58}     0.13{col 70}     0.19
 {txt}{hline 29}{c BT}{hline 48}
 LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}35.75{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.0000
+{txt}(results {stata estimates replay consult_time_estimates:consult_time_estimates} are active now)
+
+{hline}
+{p 0 8}Model {hi:consult_time_estimates}{p_end}
+{hline}
+
+Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       240
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        22
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         4
+{txt}{col 63}avg{col 67}={col 69}{res}      10.9
+{txt}{col 63}max{col 67}={col 69}{res}        26
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}   137.67
+{txt}Log likelihood = {res}-118.64208{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}  consult_time{col 16}{c |}      Coef.{col 28}   Std. Err.{col 40}      z{col 48}   P>|z|{col 56}     [95% Con{col 69}f. Interval]
+{hline 15}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}arm {c |}
+{space 12}B  {c |}{col 16}{res}{space 2}    -0.16{col 28}{space 2}     0.11{col 39}{space 1}   -1.43{col 48}{space 3} 0.15{col 56}{space 4}    -0.38{col 69}{space 3}     0.06
+{txt}{space 14} {c |}
+{space 5}strat_var {c |}
+{space 5}Ramallah  {c |}{col 16}{res}{space 2}     0.54{col 28}{space 2}     0.26{col 39}{space 1}    2.05{col 48}{space 3} 0.04{col 56}{space 4}     0.02{col 69}{space 3}     1.06
+{txt}{space 7}Nablus  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.26{col 39}{space 1}    1.55{col 48}{space 3} 0.12{col 56}{space 4}    -0.11{col 69}{space 3}     0.92
+{txt}{space 7}Salfit  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.24{col 39}{space 1}    1.71{col 48}{space 3} 0.09{col 56}{space 4}    -0.06{col 69}{space 3}     0.89
+{txt}{space 8}Jenin  {c |}{col 16}{res}{space 2}     0.50{col 28}{space 2}     0.23{col 39}{space 1}    2.16{col 48}{space 3} 0.03{col 56}{space 4}     0.05{col 69}{space 3}     0.96
+{txt}{space 14} {c |}
+{space 2}cluster_size {c |}{col 16}{res}{space 2}    -2.01{col 28}{space 2}     1.77{col 39}{space 1}   -1.14{col 48}{space 3} 0.26{col 56}{space 4}    -5.47{col 69}{space 3}     1.46
+{txt}{space 14} {c |}
+{space 1}lab_available {c |}
+{space 10}Lab  {c |}{col 16}{res}{space 2}     0.02{col 28}{space 2}     0.11{col 39}{space 1}    0.22{col 48}{space 3} 0.83{col 56}{space 4}    -0.19{col 69}{space 3}     0.24
+{txt}{space 14} {c |}
+{space 2}bookingvisit {c |}
+Booking visit  {c |}{col 16}{res}{space 2}     0.80{col 28}{space 2}     0.08{col 39}{space 1}    9.67{col 48}{space 3} 0.00{col 56}{space 4}     0.63{col 69}{space 3}     0.96
+{txt}{space 14} {c |}
+{space 6}observer {c |}
+{space 12}2  {c |}{col 16}{res}{space 2}     0.18{col 28}{space 2}     0.16{col 39}{space 1}    1.12{col 48}{space 3} 0.26{col 56}{space 4}    -0.13{col 69}{space 3}     0.49
+{txt}{space 12}3  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.17{col 39}{space 1}    2.35{col 48}{space 3} 0.02{col 56}{space 4}     0.07{col 69}{space 3}     0.74
+{txt}{space 12}4  {c |}{col 16}{res}{space 2}     0.00{col 28}{space 2}     0.15{col 39}{space 1}    0.02{col 48}{space 3} 0.98{col 56}{space 4}    -0.29{col 69}{space 3}     0.29
+{txt}{space 14} {c |}
+{space 9}_cons {c |}{col 16}{res}{space 2}     2.04{col 28}{space 2}     0.26{col 39}{space 1}    7.76{col 48}{space 3} 0.00{col 56}{space 4}     1.53{col 69}{space 3}     2.56
+{txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.03{col 44}     0.01{col 58}     0.01{col 70}     0.07
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     0.14{col 44}     0.01{col 58}     0.12{col 70}     0.17
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}16.89{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.0000
 {com}. {c )-}
 {txt}
 {com}. 
@@ -1160,11 +1273,13 @@ LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}35.75
 {txt}  2{com}.     local ++tbl_num
 {txt}  3{com}.     local var_label : variable label `var'
 {txt}  4{com}.     local title "Table `tbl_num'. `var_label'"
-{txt}  5{com}.     estimates replay `var'_estimates
-{txt}  6{com}.     putdocx table tbl_`tbl_num' = etable, title("`title'") note(`note')
-{txt}  7{com}.   {c )-}
+{txt}  5{com}.     estimates restore `var'_estimates
+{txt}  6{com}.     estimates replay
+{txt}  7{com}.     putdocx table tbl_`tbl_num' = etable, title("`title'") note(`note')
+{txt}  8{com}.   {c )-}
+{txt}(results {stata estimates replay him_time_estimates:him_time_estimates} are active now)
 
-{txt}{hline}
+{hline}
 {p 0 8}Model {hi:him_time_estimates}{p_end}
 {hline}
 
@@ -1216,6 +1331,60 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.78{col 28}{space 2}     0.09{co
 {col 16}var(Residual){col 30}{c |}{res}{col 33}     0.16{col 44}     0.02{col 58}     0.13{col 70}     0.19
 {txt}{hline 29}{c BT}{hline 48}
 LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}35.75{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.0000
+{txt}(results {stata estimates replay consult_time_estimates:consult_time_estimates} are active now)
+
+{hline}
+{p 0 8}Model {hi:consult_time_estimates}{p_end}
+{hline}
+
+Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       240
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        22
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         4
+{txt}{col 63}avg{col 67}={col 69}{res}      10.9
+{txt}{col 63}max{col 67}={col 69}{res}        26
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}   137.67
+{txt}Log likelihood = {res}-118.64208{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}  consult_time{col 16}{c |}      Coef.{col 28}   Std. Err.{col 40}      z{col 48}   P>|z|{col 56}     [95% Con{col 69}f. Interval]
+{hline 15}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 11}arm {c |}
+{space 12}B  {c |}{col 16}{res}{space 2}    -0.16{col 28}{space 2}     0.11{col 39}{space 1}   -1.43{col 48}{space 3} 0.15{col 56}{space 4}    -0.38{col 69}{space 3}     0.06
+{txt}{space 14} {c |}
+{space 5}strat_var {c |}
+{space 5}Ramallah  {c |}{col 16}{res}{space 2}     0.54{col 28}{space 2}     0.26{col 39}{space 1}    2.05{col 48}{space 3} 0.04{col 56}{space 4}     0.02{col 69}{space 3}     1.06
+{txt}{space 7}Nablus  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.26{col 39}{space 1}    1.55{col 48}{space 3} 0.12{col 56}{space 4}    -0.11{col 69}{space 3}     0.92
+{txt}{space 7}Salfit  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.24{col 39}{space 1}    1.71{col 48}{space 3} 0.09{col 56}{space 4}    -0.06{col 69}{space 3}     0.89
+{txt}{space 8}Jenin  {c |}{col 16}{res}{space 2}     0.50{col 28}{space 2}     0.23{col 39}{space 1}    2.16{col 48}{space 3} 0.03{col 56}{space 4}     0.05{col 69}{space 3}     0.96
+{txt}{space 14} {c |}
+{space 2}cluster_size {c |}{col 16}{res}{space 2}    -2.01{col 28}{space 2}     1.77{col 39}{space 1}   -1.14{col 48}{space 3} 0.26{col 56}{space 4}    -5.47{col 69}{space 3}     1.46
+{txt}{space 14} {c |}
+{space 1}lab_available {c |}
+{space 10}Lab  {c |}{col 16}{res}{space 2}     0.02{col 28}{space 2}     0.11{col 39}{space 1}    0.22{col 48}{space 3} 0.83{col 56}{space 4}    -0.19{col 69}{space 3}     0.24
+{txt}{space 14} {c |}
+{space 2}bookingvisit {c |}
+Booking visit  {c |}{col 16}{res}{space 2}     0.80{col 28}{space 2}     0.08{col 39}{space 1}    9.67{col 48}{space 3} 0.00{col 56}{space 4}     0.63{col 69}{space 3}     0.96
+{txt}{space 14} {c |}
+{space 6}observer {c |}
+{space 12}2  {c |}{col 16}{res}{space 2}     0.18{col 28}{space 2}     0.16{col 39}{space 1}    1.12{col 48}{space 3} 0.26{col 56}{space 4}    -0.13{col 69}{space 3}     0.49
+{txt}{space 12}3  {c |}{col 16}{res}{space 2}     0.41{col 28}{space 2}     0.17{col 39}{space 1}    2.35{col 48}{space 3} 0.02{col 56}{space 4}     0.07{col 69}{space 3}     0.74
+{txt}{space 12}4  {c |}{col 16}{res}{space 2}     0.00{col 28}{space 2}     0.15{col 39}{space 1}    0.02{col 48}{space 3} 0.98{col 56}{space 4}    -0.29{col 69}{space 3}     0.29
+{txt}{space 14} {c |}
+{space 9}_cons {c |}{col 16}{res}{space 2}     2.04{col 28}{space 2}     0.26{col 39}{space 1}    7.76{col 48}{space 3} 0.00{col 56}{space 4}     1.53{col 69}{space 3}     2.56
+{txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.03{col 44}     0.01{col 58}     0.01{col 70}     0.07
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     0.14{col 44}     0.01{col 58}     0.12{col 70}     0.17
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}16.89{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.0000
 {com}. {c )-}
 {txt}
 {com}. 

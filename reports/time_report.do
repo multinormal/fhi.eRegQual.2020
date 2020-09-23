@@ -87,7 +87,8 @@ frame time {
     local ++tbl_num
     local var_label : variable label `var'
     local title "Table `tbl_num'. `var_label'"
-    estimates replay `var'_estimates
+    estimates restore `var'_estimates
+    estimates replay
 
     // Get arm label and estimates for the table.
     // We assume that level 1 is the reference for arm.
@@ -182,7 +183,8 @@ frame time {
     local ++tbl_num
     local var_label : variable label `var'
     local title "Table `tbl_num'. `var_label'"
-    estimates replay `var'_estimates
+    estimates restore `var'_estimates
+    estimates replay
     putdocx table tbl_`tbl_num' = etable, title("`title'") note(`note')
   }
 }
