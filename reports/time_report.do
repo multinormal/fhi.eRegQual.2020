@@ -52,16 +52,23 @@ that are much longer). Further, we anticipated that the intervention is likely
 to have a multiplicative rather than additive effect. We therefore analyzed 
 times on the log scale. We used mixed-effects linear regression to estimate 
 relative differences in time between treatment and control. We adjusted for 
-the stratification variable (CHMP 2015) and for cluster size and lab 
-availability (variables used to constrain randomization; Li 2016) as fixed 
-effects, and cluster and observer as random effects. We exponentiated to 
-obtain estimates of relative difference and 95% confidence intervals. We 
-followed the intention-to-treat principle for all analyses: participants were 
-analyzed in the arms to which they were randomized, and all participants were 
-included in the analyses. No data were missing. Statistical analyses were 
-performed using Stata 16 (StataCorp LLC, College Station, Texas, USA). The 
-statistician was not involved in data collection and was blinded to treatment 
-allocation during analysis. Protocol deviations are documented in Appendix 1.
+the stratification variable (CHMP 2015) and the variables used to constrain 
+randomization (cluster size and lab availability; Li 2016) as fixed effects. 
+We estimated the effect of observer and whether a visit was a booking visit 
+(fixed effects) because we anticipated that these would affect time 
+measurements. We modelled cluster as a random effect. It was not possible to 
+obtain reliable variance estimates using a model that adjusted for observer as a 
+random effect. However, an exploratory analysis that modelled observer as a 
+random effect showed that point estimates and confidence intervals comparing 
+treatment to control were almost identical for the primary outcome. 
+We exponentiated to obtain estimates of relative difference and 95% confidence 
+intervals. We followed the intention-to-treat principle for all analyses: 
+participants were analyzed in the arms to which they were randomized, and all 
+participants were included in the analyses. No data were missing. Statistical 
+analyses were performed using Stata 16 (StataCorp LLC, College Station, Texas, 
+USA). The statistician was not involved in data collection and was blinded to 
+treatment allocation during analysis. Protocol deviations are documented in 
+Appendix 1.
 putdocx textblock end
 
 // Results section
@@ -155,9 +162,8 @@ putdocx text ("Appendix 1 — Protocol Deviations")
 
 `newpara'
 We did not originally plan to model relative times via transformation to the 
-log scale. Nor did we originally plan to model observer as a random effect but 
-chose to do so as it is plausible that systematic differences may exist between 
-observers.
+log scale. Nor did we originally plan to adjust for observer but chose to do so 
+as it is plausible that systematic differences may exist between observers.
 putdocx textblock end
 
 `heading'

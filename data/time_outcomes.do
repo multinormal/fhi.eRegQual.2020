@@ -12,6 +12,11 @@ frame time {
   encode exposure, generate(arm)
   label variable arm Arm
 
+  // Encode/rename booking visit variable.
+  label variable bookingvisit "Booking visit"
+  label define bookingvisit_label 1 "Booking visit" 0 "Non-booking visit"
+  label values bookingvisit bookingvisit_label
+
   // Rename observer variable.
   rename observercode observer
 
@@ -37,7 +42,7 @@ frame time {
   by clusterid, sort: generate cluster_size = _N / 100
 
   // Rename the outcomes.
-  rename himwithinconsultation him_time
+  rename himperconsultation    him_time
   label variable               him_time "HIM time per consultation (mins)"
 
   // Transform times to the log scale.

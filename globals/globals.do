@@ -27,7 +27,9 @@ foreach x of global adj_vars {
 // are adjusted for. Note that unlike the "main" outcomes, data are not 
 // available for age and parity, which were used as constraints in the
 // randomization.
-global time_adj_vars i.strat_var c.cluster_size i.lab_available
+global time_adj_vars ""
+global time_adj_vars $time_adj_vars i.strat_var c.cluster_size i.lab_available 
+global time_adj_vars $time_adj_vars i.bookingvisit i.observer
 global time_adj_var_names // A global with just the *names* of the time_adj_vars
 foreach x of global time_adj_vars {
   local x_name = substr("`x'", 3, .) // Remove the i. or c.
