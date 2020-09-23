@@ -49,6 +49,8 @@ frame time {
   rename clientcarewithinconsultation care_time 
   label variable                      care_time ///
     "Client care time within consultation (mins)"
+  rename paperfindhim          paper_f_him_time
+  label variable               paper_f_him_time "Time spent finding files and records (mins)"
 
   // Transform times to the log scale.
   foreach y of varlist $time_outcomes {
