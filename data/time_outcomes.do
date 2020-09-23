@@ -41,12 +41,14 @@ frame time {
   // one enrollment per visit rather than pregnancy.
   by clusterid, sort: generate cluster_size = _N / 100
 
-  // Rename the outcomes.
+  // Rename and relabel the outcomes.
   rename himperconsultation    him_time
   label variable               him_time     "HIM time per consultation (mins)"
-
   rename consultationtime      consult_time
   label variable               consult_time "Consultation time (mins)"
+  rename clientcarewithinconsultation care_time 
+  label variable                      care_time ///
+    "Client care time within consultation (mins)"
 
   // Transform times to the log scale.
   foreach y of varlist $time_outcomes {
