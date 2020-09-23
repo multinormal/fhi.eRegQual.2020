@@ -57,6 +57,8 @@ frame time {
   label variable               paper_w_him_time "Time spent writing files and records (mins)"
   rename computerfindhim       comp_f_him_time
   label variable               comp_f_him_time "Time spent finding files in the eRegistry (mins)"
+  rename computerreadhim       comp_r_him_time
+  label variable               comp_r_him_time "Time spent reading files in the eRegistry (mins)"
 
   // Transform times to the log scale.
   foreach y of varlist $time_outcomes {

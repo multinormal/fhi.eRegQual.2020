@@ -11,8 +11,9 @@ global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 // Define the names of the time outcomes.
 global time_outcomes ""
 global time_outcomes $time_outcomes him_time consult_time care_time 
-global time_outcomes $time_outcomes paper_f_him_time paper_r_him_time paper_w_him_time
-global time_outcomes $time_outcomes paper_w_him_time comp_f_him_time
+global time_outcomes $time_outcomes paper_f_him_time paper_r_him_time 
+global time_outcomes $time_outcomes paper_w_him_time paper_w_him_time
+global time_outcomes $time_outcomes comp_f_him_time comp_r_him_time
 
 // The variables to adjust for in the "main" analyses, with their "types". See
 // the generated report for an explanation of why these variables are adjusted
