@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}23 Sep 2020, 17:28:30
+ {txt}opened on:  {res}23 Sep 2020, 17:31:35
 {txt}
 {com}. 
 . // Set up Stata.
@@ -57,7 +57,9 @@
 {txt}
 {com}. global time_outcomes $time_outcomes him_time consult_time care_time 
 {txt}
-{com}. global time_outcomes $time_outcomes paper_f_him_time paper_r_him_time
+{com}. global time_outcomes $time_outcomes paper_f_him_time paper_r_him_time paper_w_him_time
+{txt}
+{com}. global time_outcomes $time_outcomes paper_w_him_time
 {txt}
 {com}. 
 . // The variables to adjust for in the "main" analyses, with their "types". See
@@ -778,6 +780,8 @@ Contains data
 {res}{com}.   label variable               paper_f_him_time "Time spent finding files and records (mins)"
 .   rename paperreadhim          paper_r_him_time
 {res}{com}.   label variable               paper_r_him_time "Time spent reading files and records (mins)"
+.   rename paperwritinghim       paper_w_him_time
+{res}{com}.   label variable               paper_w_him_time "Time spent writing files and records (mins)"
 . 
 .   // Transform times to the log scale.
 .   foreach y of varlist $time_outcomes {c -(}
@@ -788,6 +792,8 @@ Contains data
 (237 real changes made)
 (102 real changes made)
 (86 real changes made)
+(220 real changes made)
+(220 real changes made, 44 to missing)
 {com}. 
 .   // Keep only the variables of interest.
 .   //// TODO: REINSTATE
@@ -1154,6 +1160,124 @@ LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.00{
 {col 16}var(Residual){col 30}{c |}{res}{col 33}     0.51{col 44}     0.08{col 58}     0.37{col 70}     0.68
 {txt}{hline 29}{c BT}{hline 48}
 LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.00{col 55}{txt}Prob >= chibar2 = {col 73}{res}1.0000
+
+{txt}Performing EM optimization: 
+{res}
+{txt}Performing gradient-based optimization: 
+{res}
+{txt}Iteration 0:{space 3}log likelihood = {res:-327.95776}  
+{res}{txt}Iteration 1:{space 3}log likelihood = {res:-327.91466}  
+{res}{txt}Iteration 2:{space 3}log likelihood = {res:-327.91466}  
+{res}
+{txt}Computing standard errors:
+{res}
+{txt}Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       175
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        21
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         1
+{txt}{col 63}avg{col 67}={col 69}{res}       8.3
+{txt}{col 63}max{col 67}={col 69}{res}        25
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}    50.00
+{txt}Log likelihood = {res}-327.91466{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}paper_w_him_time{col 18}{c |}      Coef.{col 30}   Std. Err.{col 42}      z{col 50}   P>|z|{col 58}     [95% Con{col 71}f. Interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 13}arm {c |}
+{space 14}B  {c |}{col 18}{res}{space 2}    -1.53{col 30}{space 2}     0.36{col 41}{space 1}   -4.31{col 50}{space 3} 0.00{col 58}{space 4}    -2.23{col 71}{space 3}    -0.84
+{txt}{space 16} {c |}
+{space 7}strat_var {c |}
+{space 7}Ramallah  {c |}{col 18}{res}{space 2}    -0.40{col 30}{space 2}     0.83{col 41}{space 1}   -0.48{col 50}{space 3} 0.63{col 58}{space 4}    -2.04{col 71}{space 3}     1.23
+{txt}{space 9}Nablus  {c |}{col 18}{res}{space 2}    -0.56{col 30}{space 2}     0.85{col 41}{space 1}   -0.65{col 50}{space 3} 0.51{col 58}{space 4}    -2.23{col 71}{space 3}     1.12
+{txt}{space 9}Salfit  {c |}{col 18}{res}{space 2}     1.02{col 30}{space 2}     0.80{col 41}{space 1}    1.28{col 50}{space 3} 0.20{col 58}{space 4}    -0.54{col 71}{space 3}     2.59
+{txt}{space 10}Jenin  {c |}{col 18}{res}{space 2}     0.81{col 30}{space 2}     0.75{col 41}{space 1}    1.08{col 50}{space 3} 0.28{col 58}{space 4}    -0.66{col 71}{space 3}     2.28
+{txt}{space 16} {c |}
+{space 4}cluster_size {c |}{col 18}{res}{space 2}     5.19{col 30}{space 2}     5.71{col 41}{space 1}    0.91{col 50}{space 3} 0.36{col 58}{space 4}    -6.00{col 71}{space 3}    16.39
+{txt}{space 16} {c |}
+{space 3}lab_available {c |}
+{space 12}Lab  {c |}{col 18}{res}{space 2}    -0.47{col 30}{space 2}     0.38{col 41}{space 1}   -1.22{col 50}{space 3} 0.22{col 58}{space 4}    -1.22{col 71}{space 3}     0.28
+{txt}{space 16} {c |}
+{space 4}bookingvisit {c |}
+{space 2}Booking visit  {c |}{col 18}{res}{space 2}     0.60{col 30}{space 2}     0.35{col 41}{space 1}    1.73{col 50}{space 3} 0.08{col 58}{space 4}    -0.08{col 71}{space 3}     1.28
+{txt}{space 16} {c |}
+{space 8}observer {c |}
+{space 14}2  {c |}{col 18}{res}{space 2}     0.32{col 30}{space 2}     0.59{col 41}{space 1}    0.55{col 50}{space 3} 0.58{col 58}{space 4}    -0.83{col 71}{space 3}     1.47
+{txt}{space 14}3  {c |}{col 18}{res}{space 2}     1.60{col 30}{space 2}     0.62{col 41}{space 1}    2.60{col 50}{space 3} 0.01{col 58}{space 4}     0.39{col 71}{space 3}     2.81
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}     0.54{col 30}{space 2}     0.48{col 41}{space 1}    1.14{col 50}{space 3} 0.25{col 58}{space 4}    -0.39{col 71}{space 3}     1.47
+{txt}{space 16} {c |}
+{space 11}_cons {c |}{col 18}{res}{space 2}    -1.07{col 30}{space 2}     0.97{col 41}{space 1}   -1.10{col 50}{space 3} 0.27{col 58}{space 4}    -2.96{col 71}{space 3}     0.83
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.11{col 44}     0.21{col 58}     0.00{col 70}     4.47
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     2.39{col 44}     0.29{col 58}     1.88{col 70}     3.04
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.31{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.2874
+
+{txt}Performing EM optimization: 
+{res}
+{txt}Performing gradient-based optimization: 
+{res}
+{txt}Iteration 0:{space 3}log likelihood = {res:-327.95776}  
+{res}{txt}Iteration 1:{space 3}log likelihood = {res:-327.91466}  
+{res}{txt}Iteration 2:{space 3}log likelihood = {res:-327.91466}  
+{res}
+{txt}Computing standard errors:
+{res}
+{txt}Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       175
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        21
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         1
+{txt}{col 63}avg{col 67}={col 69}{res}       8.3
+{txt}{col 63}max{col 67}={col 69}{res}        25
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}    50.00
+{txt}Log likelihood = {res}-327.91466{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}paper_w_him_time{col 18}{c |}      Coef.{col 30}   Std. Err.{col 42}      z{col 50}   P>|z|{col 58}     [95% Con{col 71}f. Interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 13}arm {c |}
+{space 14}B  {c |}{col 18}{res}{space 2}    -1.53{col 30}{space 2}     0.36{col 41}{space 1}   -4.31{col 50}{space 3} 0.00{col 58}{space 4}    -2.23{col 71}{space 3}    -0.84
+{txt}{space 16} {c |}
+{space 7}strat_var {c |}
+{space 7}Ramallah  {c |}{col 18}{res}{space 2}    -0.40{col 30}{space 2}     0.83{col 41}{space 1}   -0.48{col 50}{space 3} 0.63{col 58}{space 4}    -2.04{col 71}{space 3}     1.23
+{txt}{space 9}Nablus  {c |}{col 18}{res}{space 2}    -0.56{col 30}{space 2}     0.85{col 41}{space 1}   -0.65{col 50}{space 3} 0.51{col 58}{space 4}    -2.23{col 71}{space 3}     1.12
+{txt}{space 9}Salfit  {c |}{col 18}{res}{space 2}     1.02{col 30}{space 2}     0.80{col 41}{space 1}    1.28{col 50}{space 3} 0.20{col 58}{space 4}    -0.54{col 71}{space 3}     2.59
+{txt}{space 10}Jenin  {c |}{col 18}{res}{space 2}     0.81{col 30}{space 2}     0.75{col 41}{space 1}    1.08{col 50}{space 3} 0.28{col 58}{space 4}    -0.66{col 71}{space 3}     2.28
+{txt}{space 16} {c |}
+{space 4}cluster_size {c |}{col 18}{res}{space 2}     5.19{col 30}{space 2}     5.71{col 41}{space 1}    0.91{col 50}{space 3} 0.36{col 58}{space 4}    -6.00{col 71}{space 3}    16.39
+{txt}{space 16} {c |}
+{space 3}lab_available {c |}
+{space 12}Lab  {c |}{col 18}{res}{space 2}    -0.47{col 30}{space 2}     0.38{col 41}{space 1}   -1.22{col 50}{space 3} 0.22{col 58}{space 4}    -1.22{col 71}{space 3}     0.28
+{txt}{space 16} {c |}
+{space 4}bookingvisit {c |}
+{space 2}Booking visit  {c |}{col 18}{res}{space 2}     0.60{col 30}{space 2}     0.35{col 41}{space 1}    1.73{col 50}{space 3} 0.08{col 58}{space 4}    -0.08{col 71}{space 3}     1.28
+{txt}{space 16} {c |}
+{space 8}observer {c |}
+{space 14}2  {c |}{col 18}{res}{space 2}     0.32{col 30}{space 2}     0.59{col 41}{space 1}    0.55{col 50}{space 3} 0.58{col 58}{space 4}    -0.83{col 71}{space 3}     1.47
+{txt}{space 14}3  {c |}{col 18}{res}{space 2}     1.60{col 30}{space 2}     0.62{col 41}{space 1}    2.60{col 50}{space 3} 0.01{col 58}{space 4}     0.39{col 71}{space 3}     2.81
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}     0.54{col 30}{space 2}     0.48{col 41}{space 1}    1.14{col 50}{space 3} 0.25{col 58}{space 4}    -0.39{col 71}{space 3}     1.47
+{txt}{space 16} {c |}
+{space 11}_cons {c |}{col 18}{res}{space 2}    -1.07{col 30}{space 2}     0.97{col 41}{space 1}   -1.10{col 50}{space 3} 0.27{col 58}{space 4}    -2.96{col 71}{space 3}     0.83
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.11{col 44}     0.21{col 58}     0.00{col 70}     4.47
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     2.39{col 44}     0.29{col 58}     1.88{col 70}     3.04
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.31{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.2874
 {com}. {c )-}
 {txt}
 {com}. 
@@ -1585,6 +1709,114 @@ Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}        86
 {col 16}var(Residual){col 30}{c |}{res}{col 33}     0.51{col 44}     0.08{col 58}     0.37{col 70}     0.68
 {txt}{hline 29}{c BT}{hline 48}
 LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.00{col 55}{txt}Prob >= chibar2 = {col 73}{res}1.0000
+{txt}(results {stata estimates replay paper_w_him_time_estimates:paper_w_him_time_estimates} are active now)
+
+{hline}
+{p 0 8}Model {hi:paper_w_him_time_estimates}{p_end}
+{hline}
+
+Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       175
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        21
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         1
+{txt}{col 63}avg{col 67}={col 69}{res}       8.3
+{txt}{col 63}max{col 67}={col 69}{res}        25
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}    50.00
+{txt}Log likelihood = {res}-327.91466{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}paper_w_him_time{col 18}{c |}      Coef.{col 30}   Std. Err.{col 42}      z{col 50}   P>|z|{col 58}     [95% Con{col 71}f. Interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 13}arm {c |}
+{space 14}B  {c |}{col 18}{res}{space 2}    -1.53{col 30}{space 2}     0.36{col 41}{space 1}   -4.31{col 50}{space 3} 0.00{col 58}{space 4}    -2.23{col 71}{space 3}    -0.84
+{txt}{space 16} {c |}
+{space 7}strat_var {c |}
+{space 7}Ramallah  {c |}{col 18}{res}{space 2}    -0.40{col 30}{space 2}     0.83{col 41}{space 1}   -0.48{col 50}{space 3} 0.63{col 58}{space 4}    -2.04{col 71}{space 3}     1.23
+{txt}{space 9}Nablus  {c |}{col 18}{res}{space 2}    -0.56{col 30}{space 2}     0.85{col 41}{space 1}   -0.65{col 50}{space 3} 0.51{col 58}{space 4}    -2.23{col 71}{space 3}     1.12
+{txt}{space 9}Salfit  {c |}{col 18}{res}{space 2}     1.02{col 30}{space 2}     0.80{col 41}{space 1}    1.28{col 50}{space 3} 0.20{col 58}{space 4}    -0.54{col 71}{space 3}     2.59
+{txt}{space 10}Jenin  {c |}{col 18}{res}{space 2}     0.81{col 30}{space 2}     0.75{col 41}{space 1}    1.08{col 50}{space 3} 0.28{col 58}{space 4}    -0.66{col 71}{space 3}     2.28
+{txt}{space 16} {c |}
+{space 4}cluster_size {c |}{col 18}{res}{space 2}     5.19{col 30}{space 2}     5.71{col 41}{space 1}    0.91{col 50}{space 3} 0.36{col 58}{space 4}    -6.00{col 71}{space 3}    16.39
+{txt}{space 16} {c |}
+{space 3}lab_available {c |}
+{space 12}Lab  {c |}{col 18}{res}{space 2}    -0.47{col 30}{space 2}     0.38{col 41}{space 1}   -1.22{col 50}{space 3} 0.22{col 58}{space 4}    -1.22{col 71}{space 3}     0.28
+{txt}{space 16} {c |}
+{space 4}bookingvisit {c |}
+{space 2}Booking visit  {c |}{col 18}{res}{space 2}     0.60{col 30}{space 2}     0.35{col 41}{space 1}    1.73{col 50}{space 3} 0.08{col 58}{space 4}    -0.08{col 71}{space 3}     1.28
+{txt}{space 16} {c |}
+{space 8}observer {c |}
+{space 14}2  {c |}{col 18}{res}{space 2}     0.32{col 30}{space 2}     0.59{col 41}{space 1}    0.55{col 50}{space 3} 0.58{col 58}{space 4}    -0.83{col 71}{space 3}     1.47
+{txt}{space 14}3  {c |}{col 18}{res}{space 2}     1.60{col 30}{space 2}     0.62{col 41}{space 1}    2.60{col 50}{space 3} 0.01{col 58}{space 4}     0.39{col 71}{space 3}     2.81
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}     0.54{col 30}{space 2}     0.48{col 41}{space 1}    1.14{col 50}{space 3} 0.25{col 58}{space 4}    -0.39{col 71}{space 3}     1.47
+{txt}{space 16} {c |}
+{space 11}_cons {c |}{col 18}{res}{space 2}    -1.07{col 30}{space 2}     0.97{col 41}{space 1}   -1.10{col 50}{space 3} 0.27{col 58}{space 4}    -2.96{col 71}{space 3}     0.83
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.11{col 44}     0.21{col 58}     0.00{col 70}     4.47
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     2.39{col 44}     0.29{col 58}     1.88{col 70}     3.04
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.31{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.2874
+{txt}(results {stata estimates replay paper_w_him_time_estimates:paper_w_him_time_estimates} are active now)
+
+{hline}
+{p 0 8}Model {hi:paper_w_him_time_estimates}{p_end}
+{hline}
+
+Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       175
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        21
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         1
+{txt}{col 63}avg{col 67}={col 69}{res}       8.3
+{txt}{col 63}max{col 67}={col 69}{res}        25
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}    50.00
+{txt}Log likelihood = {res}-327.91466{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}paper_w_him_time{col 18}{c |}      Coef.{col 30}   Std. Err.{col 42}      z{col 50}   P>|z|{col 58}     [95% Con{col 71}f. Interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 13}arm {c |}
+{space 14}B  {c |}{col 18}{res}{space 2}    -1.53{col 30}{space 2}     0.36{col 41}{space 1}   -4.31{col 50}{space 3} 0.00{col 58}{space 4}    -2.23{col 71}{space 3}    -0.84
+{txt}{space 16} {c |}
+{space 7}strat_var {c |}
+{space 7}Ramallah  {c |}{col 18}{res}{space 2}    -0.40{col 30}{space 2}     0.83{col 41}{space 1}   -0.48{col 50}{space 3} 0.63{col 58}{space 4}    -2.04{col 71}{space 3}     1.23
+{txt}{space 9}Nablus  {c |}{col 18}{res}{space 2}    -0.56{col 30}{space 2}     0.85{col 41}{space 1}   -0.65{col 50}{space 3} 0.51{col 58}{space 4}    -2.23{col 71}{space 3}     1.12
+{txt}{space 9}Salfit  {c |}{col 18}{res}{space 2}     1.02{col 30}{space 2}     0.80{col 41}{space 1}    1.28{col 50}{space 3} 0.20{col 58}{space 4}    -0.54{col 71}{space 3}     2.59
+{txt}{space 10}Jenin  {c |}{col 18}{res}{space 2}     0.81{col 30}{space 2}     0.75{col 41}{space 1}    1.08{col 50}{space 3} 0.28{col 58}{space 4}    -0.66{col 71}{space 3}     2.28
+{txt}{space 16} {c |}
+{space 4}cluster_size {c |}{col 18}{res}{space 2}     5.19{col 30}{space 2}     5.71{col 41}{space 1}    0.91{col 50}{space 3} 0.36{col 58}{space 4}    -6.00{col 71}{space 3}    16.39
+{txt}{space 16} {c |}
+{space 3}lab_available {c |}
+{space 12}Lab  {c |}{col 18}{res}{space 2}    -0.47{col 30}{space 2}     0.38{col 41}{space 1}   -1.22{col 50}{space 3} 0.22{col 58}{space 4}    -1.22{col 71}{space 3}     0.28
+{txt}{space 16} {c |}
+{space 4}bookingvisit {c |}
+{space 2}Booking visit  {c |}{col 18}{res}{space 2}     0.60{col 30}{space 2}     0.35{col 41}{space 1}    1.73{col 50}{space 3} 0.08{col 58}{space 4}    -0.08{col 71}{space 3}     1.28
+{txt}{space 16} {c |}
+{space 8}observer {c |}
+{space 14}2  {c |}{col 18}{res}{space 2}     0.32{col 30}{space 2}     0.59{col 41}{space 1}    0.55{col 50}{space 3} 0.58{col 58}{space 4}    -0.83{col 71}{space 3}     1.47
+{txt}{space 14}3  {c |}{col 18}{res}{space 2}     1.60{col 30}{space 2}     0.62{col 41}{space 1}    2.60{col 50}{space 3} 0.01{col 58}{space 4}     0.39{col 71}{space 3}     2.81
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}     0.54{col 30}{space 2}     0.48{col 41}{space 1}    1.14{col 50}{space 3} 0.25{col 58}{space 4}    -0.39{col 71}{space 3}     1.47
+{txt}{space 16} {c |}
+{space 11}_cons {c |}{col 18}{res}{space 2}    -1.07{col 30}{space 2}     0.97{col 41}{space 1}   -1.10{col 50}{space 3} 0.27{col 58}{space 4}    -2.96{col 71}{space 3}     0.83
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.11{col 44}     0.21{col 58}     0.00{col 70}     4.47
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     2.39{col 44}     0.29{col 58}     1.88{col 70}     3.04
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.31{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.2874
 {com}. {c )-}
 {txt}
 {com}. 
@@ -1899,6 +2131,114 @@ Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}        86
 {col 16}var(Residual){col 30}{c |}{res}{col 33}     0.51{col 44}     0.08{col 58}     0.37{col 70}     0.68
 {txt}{hline 29}{c BT}{hline 48}
 LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.00{col 55}{txt}Prob >= chibar2 = {col 73}{res}1.0000
+{txt}(results {stata estimates replay paper_w_him_time_estimates:paper_w_him_time_estimates} are active now)
+
+{hline}
+{p 0 8}Model {hi:paper_w_him_time_estimates}{p_end}
+{hline}
+
+Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       175
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        21
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         1
+{txt}{col 63}avg{col 67}={col 69}{res}       8.3
+{txt}{col 63}max{col 67}={col 69}{res}        25
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}    50.00
+{txt}Log likelihood = {res}-327.91466{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}paper_w_him_time{col 18}{c |}      Coef.{col 30}   Std. Err.{col 42}      z{col 50}   P>|z|{col 58}     [95% Con{col 71}f. Interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 13}arm {c |}
+{space 14}B  {c |}{col 18}{res}{space 2}    -1.53{col 30}{space 2}     0.36{col 41}{space 1}   -4.31{col 50}{space 3} 0.00{col 58}{space 4}    -2.23{col 71}{space 3}    -0.84
+{txt}{space 16} {c |}
+{space 7}strat_var {c |}
+{space 7}Ramallah  {c |}{col 18}{res}{space 2}    -0.40{col 30}{space 2}     0.83{col 41}{space 1}   -0.48{col 50}{space 3} 0.63{col 58}{space 4}    -2.04{col 71}{space 3}     1.23
+{txt}{space 9}Nablus  {c |}{col 18}{res}{space 2}    -0.56{col 30}{space 2}     0.85{col 41}{space 1}   -0.65{col 50}{space 3} 0.51{col 58}{space 4}    -2.23{col 71}{space 3}     1.12
+{txt}{space 9}Salfit  {c |}{col 18}{res}{space 2}     1.02{col 30}{space 2}     0.80{col 41}{space 1}    1.28{col 50}{space 3} 0.20{col 58}{space 4}    -0.54{col 71}{space 3}     2.59
+{txt}{space 10}Jenin  {c |}{col 18}{res}{space 2}     0.81{col 30}{space 2}     0.75{col 41}{space 1}    1.08{col 50}{space 3} 0.28{col 58}{space 4}    -0.66{col 71}{space 3}     2.28
+{txt}{space 16} {c |}
+{space 4}cluster_size {c |}{col 18}{res}{space 2}     5.19{col 30}{space 2}     5.71{col 41}{space 1}    0.91{col 50}{space 3} 0.36{col 58}{space 4}    -6.00{col 71}{space 3}    16.39
+{txt}{space 16} {c |}
+{space 3}lab_available {c |}
+{space 12}Lab  {c |}{col 18}{res}{space 2}    -0.47{col 30}{space 2}     0.38{col 41}{space 1}   -1.22{col 50}{space 3} 0.22{col 58}{space 4}    -1.22{col 71}{space 3}     0.28
+{txt}{space 16} {c |}
+{space 4}bookingvisit {c |}
+{space 2}Booking visit  {c |}{col 18}{res}{space 2}     0.60{col 30}{space 2}     0.35{col 41}{space 1}    1.73{col 50}{space 3} 0.08{col 58}{space 4}    -0.08{col 71}{space 3}     1.28
+{txt}{space 16} {c |}
+{space 8}observer {c |}
+{space 14}2  {c |}{col 18}{res}{space 2}     0.32{col 30}{space 2}     0.59{col 41}{space 1}    0.55{col 50}{space 3} 0.58{col 58}{space 4}    -0.83{col 71}{space 3}     1.47
+{txt}{space 14}3  {c |}{col 18}{res}{space 2}     1.60{col 30}{space 2}     0.62{col 41}{space 1}    2.60{col 50}{space 3} 0.01{col 58}{space 4}     0.39{col 71}{space 3}     2.81
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}     0.54{col 30}{space 2}     0.48{col 41}{space 1}    1.14{col 50}{space 3} 0.25{col 58}{space 4}    -0.39{col 71}{space 3}     1.47
+{txt}{space 16} {c |}
+{space 11}_cons {c |}{col 18}{res}{space 2}    -1.07{col 30}{space 2}     0.97{col 41}{space 1}   -1.10{col 50}{space 3} 0.27{col 58}{space 4}    -2.96{col 71}{space 3}     0.83
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.11{col 44}     0.21{col 58}     0.00{col 70}     4.47
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     2.39{col 44}     0.29{col 58}     1.88{col 70}     3.04
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.31{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.2874
+{txt}(results {stata estimates replay paper_w_him_time_estimates:paper_w_him_time_estimates} are active now)
+
+{hline}
+{p 0 8}Model {hi:paper_w_him_time_estimates}{p_end}
+{hline}
+
+Mixed-effects ML regression{col 49}Number of obs{col 67}={col 69}{res}       175
+{txt}Group variable: {res}clusterid{col 49}{txt}Number of groups{col 67}={col 69}{res}        21
+
+{txt}{col 49}Obs per group:
+{col 63}min{col 67}={col 69}{res}         1
+{txt}{col 63}avg{col 67}={col 69}{res}       8.3
+{txt}{col 63}max{col 67}={col 69}{res}        25
+
+{col 49}{txt}Wald chi2({res}11{txt}){col 67}={col 70}{res}    50.00
+{txt}Log likelihood = {res}-327.91466{col 49}{txt}Prob > chi2{col 67}={col 73}{res}0.0000
+
+{txt}{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 1}paper_w_him_time{col 18}{c |}      Coef.{col 30}   Std. Err.{col 42}      z{col 50}   P>|z|{col 58}     [95% Con{col 71}f. Interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 13}arm {c |}
+{space 14}B  {c |}{col 18}{res}{space 2}    -1.53{col 30}{space 2}     0.36{col 41}{space 1}   -4.31{col 50}{space 3} 0.00{col 58}{space 4}    -2.23{col 71}{space 3}    -0.84
+{txt}{space 16} {c |}
+{space 7}strat_var {c |}
+{space 7}Ramallah  {c |}{col 18}{res}{space 2}    -0.40{col 30}{space 2}     0.83{col 41}{space 1}   -0.48{col 50}{space 3} 0.63{col 58}{space 4}    -2.04{col 71}{space 3}     1.23
+{txt}{space 9}Nablus  {c |}{col 18}{res}{space 2}    -0.56{col 30}{space 2}     0.85{col 41}{space 1}   -0.65{col 50}{space 3} 0.51{col 58}{space 4}    -2.23{col 71}{space 3}     1.12
+{txt}{space 9}Salfit  {c |}{col 18}{res}{space 2}     1.02{col 30}{space 2}     0.80{col 41}{space 1}    1.28{col 50}{space 3} 0.20{col 58}{space 4}    -0.54{col 71}{space 3}     2.59
+{txt}{space 10}Jenin  {c |}{col 18}{res}{space 2}     0.81{col 30}{space 2}     0.75{col 41}{space 1}    1.08{col 50}{space 3} 0.28{col 58}{space 4}    -0.66{col 71}{space 3}     2.28
+{txt}{space 16} {c |}
+{space 4}cluster_size {c |}{col 18}{res}{space 2}     5.19{col 30}{space 2}     5.71{col 41}{space 1}    0.91{col 50}{space 3} 0.36{col 58}{space 4}    -6.00{col 71}{space 3}    16.39
+{txt}{space 16} {c |}
+{space 3}lab_available {c |}
+{space 12}Lab  {c |}{col 18}{res}{space 2}    -0.47{col 30}{space 2}     0.38{col 41}{space 1}   -1.22{col 50}{space 3} 0.22{col 58}{space 4}    -1.22{col 71}{space 3}     0.28
+{txt}{space 16} {c |}
+{space 4}bookingvisit {c |}
+{space 2}Booking visit  {c |}{col 18}{res}{space 2}     0.60{col 30}{space 2}     0.35{col 41}{space 1}    1.73{col 50}{space 3} 0.08{col 58}{space 4}    -0.08{col 71}{space 3}     1.28
+{txt}{space 16} {c |}
+{space 8}observer {c |}
+{space 14}2  {c |}{col 18}{res}{space 2}     0.32{col 30}{space 2}     0.59{col 41}{space 1}    0.55{col 50}{space 3} 0.58{col 58}{space 4}    -0.83{col 71}{space 3}     1.47
+{txt}{space 14}3  {c |}{col 18}{res}{space 2}     1.60{col 30}{space 2}     0.62{col 41}{space 1}    2.60{col 50}{space 3} 0.01{col 58}{space 4}     0.39{col 71}{space 3}     2.81
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}     0.54{col 30}{space 2}     0.48{col 41}{space 1}    1.14{col 50}{space 3} 0.25{col 58}{space 4}    -0.39{col 71}{space 3}     1.47
+{txt}{space 16} {c |}
+{space 11}_cons {c |}{col 18}{res}{space 2}    -1.07{col 30}{space 2}     0.97{col 41}{space 1}   -1.10{col 50}{space 3} 0.27{col 58}{space 4}    -2.96{col 71}{space 3}     0.83
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{hline 29}{c TT}{hline 48}
+{col 3}Random-effects Parameters{col 30}{c |}{col 34}Estimate{col 45}Std. Err.{col 59}[95% Conf. Interval]
+{hline 29}{c +}{hline 48}
+{res}clusterid{txt}: Identity{col 30}{c |}
+{space 18}var(_cons) {c |}{res}{col 33}     0.11{col 44}     0.21{col 58}     0.00{col 70}     4.47
+{txt}{hline 29}{c +}{hline 48}
+{col 16}var(Residual){col 30}{c |}{res}{col 33}     2.39{col 44}     0.29{col 58}     1.88{col 70}     3.04
+{txt}{hline 29}{c BT}{hline 48}
+LR test vs. linear model:{col 27}{help j_chibar##|_new:chibar2(01) =} {res}0.31{col 55}{txt}Prob >= chibar2 = {col 73}{res}0.2874
 {com}. {c )-}
 {txt}
 {com}. 

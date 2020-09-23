@@ -53,6 +53,8 @@ frame time {
   label variable               paper_f_him_time "Time spent finding files and records (mins)"
   rename paperreadhim          paper_r_him_time
   label variable               paper_r_him_time "Time spent reading files and records (mins)"
+  rename paperwritinghim       paper_w_him_time
+  label variable               paper_w_him_time "Time spent writing files and records (mins)"
 
   // Transform times to the log scale.
   foreach y of varlist $time_outcomes {
