@@ -168,7 +168,10 @@ as it is plausible that systematic differences may exist between observers.
 putdocx textblock end
 
 `heading'
-putdocx text ("Appendix 3 — Full Regression Results")
+putdocx text ("Appendix 2 — Full Regression Results")
+
+`subhead'
+putdocx text ("Comparisons of time used")
 
 `newpara'
 The following tables show the full regression results. Note that time was 
@@ -187,6 +190,26 @@ frame time {
     estimates replay
     putdocx table tbl_`tbl_num' = etable, title("`title'") note(`note')
   }
+}
+
+`subhead'
+putdocx text ("Estimates of time spent on various activities")
+
+`newpara'
+The following tables shows the full regression result for the analysis of time 
+spent on each activity. Note that time was modelled on the log scale and the 
+full estimation results have not been exponentiated.
+putdocx textblock end
+
+frame activities {
+  local note  "Data were analyzed on the log scale."
+  local note  "`note' Estimates have not been exponentiated."
+  local ++tbl_num
+  local var_label : variable label time
+  local title "Table `tbl_num'. `var_label'"
+  estimates restore activity_estimates
+  estimates replay
+  putdocx table tbl_`tbl_num' = etable, title("`title'") note(`note')
 }
 
 // Save the report to the specified filename.

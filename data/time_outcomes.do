@@ -80,13 +80,19 @@ frame time {
   //// assert r(N_lt_dot) == .
 }
 
+// TODO: Move the following to its own do file?
+
 // Make a version of the time frame that is long, and has "activity" and "time"
 // variables, specifying what kind of activity time is being used on.
 frame copy time activities 
 frame activities {
+  // Observation number corresponds to a consultation.
+  rename observationnumber consultation
+  label variable consultation "Consultation"
+
   // Reshape to long format, creating a temporary activity and a time variable.
   tempvar activity
-  reshape long @_time, i(observationnumber) j(`activity') string
+  reshape long @_time, i(consultation) j(`activity') string
   rename _time time
   label variable time "Time used (mins)"
 
@@ -109,5 +115,5 @@ frame activities {
   encode `activity', generate(activity) label(activity_label)
 
   // Drop columns that are not of interest.
-  keep observationnumber arm clusterid observer time activity $time_adj_var_names
+  keep consultation arm clusterid observer time activity $time_adj_var_names
 }
