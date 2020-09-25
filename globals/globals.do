@@ -17,12 +17,12 @@ global activities             paper_f_him paper_r_him paper_w_him
 global activities $activities  comp_f_him  comp_r_him  comp_w_him
 
 // Define value labels for the activities.
-global paper_f_him_lbl "Time spent finding files and records (mins)"
-global paper_r_him_lbl "Time spent reading files and records (mins)"
-global paper_w_him_lbl "Time spent writing files and records (mins)"
-global comp_f_him_lbl  "Time spent finding files in the eRegistry (mins)"
-global comp_r_him_lbl  "Time spent reading files in the eRegistry (mins)"
-global comp_w_him_lbl  "Time spent writing files in the eRegistry (mins)"
+global paper_f_him_lbl "Finding files (paper)"
+global paper_r_him_lbl "Reading files (paper)"
+global paper_w_him_lbl "Writing files (paper)"
+global comp_f_him_lbl  "Finding files (eRegistry)"
+global comp_r_him_lbl  "Reading files (eRegistry)"
+global comp_w_him_lbl  "Writing files (eRegistry)"
 
 // The variables to adjust for in the "main" analyses, with their "types". See
 // the generated report for an explanation of why these variables are adjusted
