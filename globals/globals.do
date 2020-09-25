@@ -11,10 +11,18 @@ global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 // Define the names of the time outcomes.
 global time_outcomes ""
 global time_outcomes $time_outcomes him_time consult_time care_time
-global time_outcomes $time_outcomes paper_f_him_time paper_r_him_time 
-global time_outcomes $time_outcomes paper_w_him_time
-global time_outcomes $time_outcomes comp_f_him_time comp_r_him_time
-global time_outcomes $time_outcomes comp_w_him_time
+
+// Define the paper- and computer-based activities that are of interest.
+global activities             paper_f_him paper_r_him paper_w_him
+global activities $activities  comp_f_him  comp_r_him  comp_w_him
+
+// Define value labels for the activities.
+global paper_f_him_lbl "Time spent finding files and records (mins)"
+global paper_r_him_lbl "Time spent reading files and records (mins)"
+global paper_w_him_lbl "Time spent writing files and records (mins)"
+global comp_f_him_lbl  "Time spent finding files in the eRegistry (mins)"
+global comp_r_him_lbl  "Time spent reading files in the eRegistry (mins)"
+global comp_w_him_lbl  "Time spent writing files in the eRegistry (mins)"
 
 // The variables to adjust for in the "main" analyses, with their "types". See
 // the generated report for an explanation of why these variables are adjusted

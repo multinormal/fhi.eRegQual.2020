@@ -56,24 +56,14 @@ frame time {
   rename proceduresclientcare  proc_care_time
   label variable               proc_care_time   ///
                                "Time spent on client care procedures (mins)"
+  
+  // Rename the outcomes used for the analysis of time spent on activities.
   rename paperfindhim          paper_f_him_time
-  label variable               paper_f_him_time ///
-                               "Time spent finding files and records (mins)"
   rename paperreadhim          paper_r_him_time
-  label variable               paper_r_him_time ///
-                               "Time spent reading files and records (mins)"
   rename paperwritinghim       paper_w_him_time
-  label variable               paper_w_him_time ///
-                               "Time spent writing files and records (mins)"
   rename computerfindhim       comp_f_him_time
-  label variable               comp_f_him_time  ///
-                               "Time spent finding files in the eRegistry (mins)"
   rename computerreadhim       comp_r_him_time
-  label variable               comp_r_him_time  ///
-                               "Time spent reading files in the eRegistry (mins)"
   rename computerwritinghim    comp_w_him_time
-  label variable               comp_w_him_time  ///
-                               "Time spent writing files in the eRegistry (mins)"
 
   // Transform times to the log scale.
   foreach y of varlist $time_outcomes {
@@ -88,4 +78,34 @@ frame time {
   //// TODO: REINSTATE
   //// misstable summarize
   //// assert r(N_lt_dot) == .
+}
+
+// Make a version of the time frame that is long, and has "activity" and "time"
+// variables, specifying what kind of activity time is being used on.
+frame copy time activities 
+frame activities {
+  // Reshape to long format, creating a temporary activity and a time variable.
+  tempvar activity
+  reshape long @_time, i(observationnumber) j(`activity') string
+  rename _time time
+  label variable time "Time used (mins)"
+
+  // Keep only those activities of interest. 
+  tempvar to_keep
+  generate `to_keep' = 0
+  foreach x of global activities {
+    replace `to_keep' = `to_keep' | `activity' == "`x'"
+  }
+  keep if `to_keep'
+
+  // Replace the activities with more useful level names.
+  foreach x of global activities {
+    replace `activity' = "${`x'_lbl}" if `activity' == "`x'"
+  }
+
+  // Encode the activity variable, creating the actual activity variable.
+  encode `activity', generate(activity) label(activity_label)
+
+  // Drop columns that are not of interest.
+  keep observationnumber arm clusterid observer time activity $time_adj_var_names
 }
