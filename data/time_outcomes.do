@@ -94,12 +94,11 @@ frame activities {
   replace time = log(epsfloat()) if missing(time)
 
   // Keep only those activities of interest. 
-  tempvar to_keep
-  generate `to_keep' = 0
+  generate to_keep = 0
   foreach x of global activities {
-    replace `to_keep' = `to_keep' | `activity' == "`x'"
+    replace to_keep = to_keep | `activity' == "`x'"
   }
-  keep if `to_keep'
+  keep if to_keep
 
   // Replace the activities with more useful level names.
   foreach x of global activities {
