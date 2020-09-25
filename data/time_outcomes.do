@@ -41,28 +41,39 @@ frame time {
   // one enrollment per visit rather than pregnancy.
   by clusterid, sort: generate cluster_size = _N / 100
 
+  //TODO: Some of the data are missing for some outcomes. Should it be set to zero time?
+
   // Rename and relabel the outcomes.
   rename himperconsultation    him_time
-  label variable               him_time     "HIM time per consultation (mins)"
+  label variable               him_time         ///
+                               "HIM time per consultation (mins)"
   rename consultationtime      consult_time
-  label variable               consult_time "Consultation time (mins)"
+  label variable               consult_time     ///
+                               "Consultation time (mins)"
   rename clientcarewithinconsultation care_time 
-  label variable                      care_time ///
-    "Client care time within consultation (mins)"
-  rename paperfindhim          paper_f_him_time
-  label variable               paper_f_him_time "Time spent finding files and records (mins)"
-  rename paperreadhim          paper_r_him_time
-  label variable               paper_r_him_time "Time spent reading files and records (mins)"
-  rename paperwritinghim       paper_w_him_time
-  label variable               paper_w_him_time "Time spent writing files and records (mins)"
-  rename computerfindhim       comp_f_him_time
-  label variable               comp_f_him_time "Time spent finding files in the eRegistry (mins)"
-  rename computerreadhim       comp_r_him_time
-  label variable               comp_r_him_time "Time spent reading files in the eRegistry (mins)"
-  rename computerwritinghim    comp_w_him_time
-  label variable               comp_w_him_time "Time spent writing files in the eRegistry (mins)"
+  label variable               care_time        ///
+                               "Client care time within consultation (mins)"
   rename proceduresclientcare  proc_care_time
-  label variable               proc_care_time "Time spent on client care procedures (mins)"
+  label variable               proc_care_time   ///
+                               "Time spent on client care procedures (mins)"
+  rename paperfindhim          paper_f_him_time
+  label variable               paper_f_him_time ///
+                               "Time spent finding files and records (mins)"
+  rename paperreadhim          paper_r_him_time
+  label variable               paper_r_him_time ///
+                               "Time spent reading files and records (mins)"
+  rename paperwritinghim       paper_w_him_time
+  label variable               paper_w_him_time ///
+                               "Time spent writing files and records (mins)"
+  rename computerfindhim       comp_f_him_time
+  label variable               comp_f_him_time  ///
+                               "Time spent finding files in the eRegistry (mins)"
+  rename computerreadhim       comp_r_him_time
+  label variable               comp_r_him_time  ///
+                               "Time spent reading files in the eRegistry (mins)"
+  rename computerwritinghim    comp_w_him_time
+  label variable               comp_w_him_time  ///
+                               "Time spent writing files in the eRegistry (mins)"
 
   // Transform times to the log scale.
   foreach y of varlist $time_outcomes {
