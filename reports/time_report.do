@@ -38,7 +38,8 @@ putdocx textblock end
 putdocx text ("Introduction")
 
 `newpara'
-TODO: Write this.
+This document presents analyses for the time and motion component of the 
+eRegQual trial.
 putdocx textblock end
 
 // Methods section
@@ -101,7 +102,8 @@ putdocx text ("Results")
 putdocx text ("Health information management, client consultation, and care")
 
 `newpara'
-TODO: Write this.
+The following tables present comparisons of time used on health information 
+management, client consultation, and care.
 putdocx textblock end
 
 frame time {
@@ -173,7 +175,6 @@ and writing in the treatment versus control conditions. Values greater than
 unity corresponding to more use of time in the treatment condition.
 putdocx textblock end
 
-// TODO: Add methods description for this analysis.
 frame activities {
   local ++tbl_num
   local var_label : variable label activity
