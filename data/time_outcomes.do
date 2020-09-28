@@ -96,8 +96,11 @@ frame activities {
   rename _time time
   label variable time "Time used (mins)"
 
-  // Measurements of zero time were coded as missing.
-  replace time = log(epsfloat()) if missing(time)
+  // Transform times to log scale, preventing missing data due to log(0).
+  replace time = log(time + epsfloat()) if !missing(time)
+
+  // Measurements of zero time were coded as missing; i.e. did not happen.
+  drop if missing(time)
 
   // Keep only those activities of interest. 
   generate to_keep = 0

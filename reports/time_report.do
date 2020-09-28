@@ -75,6 +75,9 @@ putdocx textblock end
 `heading'
 putdocx text ("Results")
 
+`subhead'
+putdocx text ("Health information management, client consultation, and care")
+
 `newpara'
 TODO: Write this.
 putdocx textblock end
@@ -109,8 +112,7 @@ frame time {
     local lb_str = string(`lb', "`e_fmt'") // Lower-bound on CI.
     local ub_str = string(`ub', "`e_fmt'") // Upper-bound on CI.
 
-    // Make the table manually - it does not seem possible to use the "=etable"
-    // method after nlcom.
+    // Make the table manually.
     putdocx table tbl_`tbl_num' = (3, 7), title("`title'") note("`note'") ///
                                           border(all, nil)
     // Column titles.
@@ -138,6 +140,90 @@ frame time {
     putdocx table tbl_`tbl_num'(4, .),   border(bottom)
     putdocx table tbl_`tbl_num'(2/4, 1), border(right)
   }
+}
+
+`subhead'
+putdocx text ("Activities")
+
+`newpara'
+The following table shows relative differences in time used finding, reading, 
+and writing in the treatment versus control conditions. Values greater than 
+unity corresponding to more use of time in the treatment condition.
+putdocx textblock end
+
+// TODO: Add methods description for this analysis.
+frame activities {
+  local ++tbl_num
+  local var_label : variable label activity
+  local title "Table `tbl_num'. Comparison of relative times spent finding,"
+  local title "`title' reading, and writing files"
+  local activity_label_name = "`: value label activity'"
+  
+  estimates restore activity_estimates
+  estimates replay
+
+  // Make the table manually - it does not seem possible to use the "=etable"
+  // method after nlcom.
+  putdocx table tbl_`tbl_num' = (4, 7), title("`title'") ///
+                                        border(all, nil)
+  // Column titles.
+  putdocx table tbl_`tbl_num'(2, 2) = ("Rel. Time"),  halign(right)
+  putdocx table tbl_`tbl_num'(2, 3) = ("Std. Err."),  halign(right)
+  putdocx table tbl_`tbl_num'(2, 4) = ("z"),          halign(right)
+  putdocx table tbl_`tbl_num'(2, 5) = ("P>|z|"),      halign(right)
+  putdocx table tbl_`tbl_num'(2, 6) = ("[95% Conf. Interval]"),     ///
+                                                      halign(right) ///
+                                                      colspan(2)
+  local activity_types f r w // Finding, reading, writing.
+  local f_activity "Finding"
+  local r_activity "Reading"
+  local w_activity "Writing"
+  local row = 3
+  foreach activity_type of local activity_types {
+    // Get the control and treatment activity codes.
+    local control   = "${paper_`activity_type'_him_lbl}":`activity_label_name'
+    local treatment = "${comp_`activity_type'_him_lbl}":`activity_label_name'
+
+    // Compare the activties between the trial arms, and exponentiate to get
+    // relative difference in time used.
+    nlcom exp(_b[`treatment'.activity] - _b[`control'.activity])
+
+    // Get the relavant quantities - this has been checked against the result
+    // reported by nlcom.
+    local beta = r(b)[1, 1]
+    local se   = sqrt(r(V)[1, 1])
+    local z    = `beta' / `se'
+    local p    = 2 * normal(-abs(`z'))
+    local lb   = `beta' - (1.96 * `se')
+    local ub   = `beta' + (1.96 * `se')
+
+    // Make strings for the table.
+    local activity = "``activity_type'_activity'"
+    local x_str  = string(`beta', "`e_fmt'") // Point estimate.
+    local se_str = string(`se',   "`e_fmt'") // Std. Err.
+    local z_str  = string(`z',    "`e_fmt'") // z.
+    local p_str  = string(`p',    "`p_fmt'") // P-value.
+    local lb_str = string(`lb',   "`e_fmt'") // Lower-bound on CI.
+    local ub_str = string(`ub',   "`e_fmt'") // Upper-bound on CI.
+
+    // Values.
+    putdocx table tbl_`tbl_num'(`row', 1) = ("`activity'"), halign(right)
+    putdocx table tbl_`tbl_num'(`row', 2) = ("`x_str'"),    halign(right)
+    putdocx table tbl_`tbl_num'(`row', 3) = ("`se_str'"),   halign(right)
+    putdocx table tbl_`tbl_num'(`row', 4) = ("`z_str'"),    halign(right)
+    putdocx table tbl_`tbl_num'(`row', 5) = ("`p_str'"),    halign(right)
+    putdocx table tbl_`tbl_num'(`row', 6) = ("`lb_str'"),   halign(right)
+    putdocx table tbl_`tbl_num'(`row', 7) = ("`ub_str'"),   halign(right)
+
+    // Move to the next row.
+    local row = `row' + 1
+  }
+
+  // Borders.
+  putdocx table tbl_`tbl_num'(2, .),   border(top)
+  putdocx table tbl_`tbl_num'(3, .),   border(top)
+  putdocx table tbl_`tbl_num'(5, .),   border(bottom)
+  putdocx table tbl_`tbl_num'(2/5, 1), border(right)
 }
 
 // References
@@ -193,7 +279,7 @@ frame time {
 }
 
 `subhead'
-putdocx text ("Estimates of time spent on various activities")
+putdocx text ("Estimates of time spent finding, reading, and writing files")
 
 `newpara'
 The following tables shows the full regression result for the analysis of time 
