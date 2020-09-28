@@ -26,6 +26,7 @@ do estimation/mcar             // Test the MCAR hypothesis.
 // TODO: REINSTATE do estimation/process_outcomes // Analyze process outcome data.
 // TODO: REINSTATE do estimation/margins          // Compute marginal probabilities.
 do estimation/time_outcomes                       // Analyze time and motion data.
+do estimation/activity_outcomes                   // Analyze time and motion data.
 
 // Make figures
 // TODO: REINSTATE do figures/imputation
