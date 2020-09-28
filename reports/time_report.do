@@ -56,13 +56,10 @@ relative differences in time used on health information management, client
 consultation, and client care, comparing treatment to control. We adjusted for 
 the stratification variable (CHMP 2015) and the variables used to constrain 
 randomization (cluster size and lab availability; Li 2016) as fixed effects. 
-We estimated the effects of observer and whether a visit was a booking visit 
-(fixed effects) because we anticipated that these would affect time 
-use. We modelled cluster as a random effect. It was not possible to 
-obtain reliable variance estimates using a model that adjusted for observer as a 
-random effect. However, an exploratory analysis that modelled observer as a 
-random effect showed that point estimates and confidence intervals comparing 
-treatment to control were almost identical for the primary outcome.
+We also adjusted for the possible effect of whether a visit was a booking visit 
+because we anticipated these visits would be longer than subsequent visits. We 
+modelled the cluster-randomized design as a random effect, and adjusted 
+confidence intervals for clustering of measurements of time within observers.
 putdocx textblock end
 
 `newpara'

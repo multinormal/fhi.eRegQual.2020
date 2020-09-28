@@ -5,6 +5,7 @@ frame activities {
   // clinic. Note that it is necessary to include arm because while the
   // control arm could not use a computer, the intervention arm could use
   // both the computer and paper files.
-  mixed time i.arm i.activity $time_adj_vars || clusterid: || consultation:
+  mixed time i.arm i.activity $time_adj_vars || clusterid: || consultation:, ///
+    vce(cluster observer)
   estimates store activity_estimates
 }
