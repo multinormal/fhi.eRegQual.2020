@@ -46,28 +46,50 @@ putdocx textblock end
 putdocx text ("Methods")
 
 `newpara'
-Times (durations) are non-negative and their distributions are positively 
+Times (durations) are non-negative and their distributions are often positively 
 skewed (e.g., there are many consultations of “typical” duration, but some 
-that are much longer). Further, we anticipated that the intervention is likely 
+are much longer). Further, we anticipated that the intervention is likely 
 to have a multiplicative rather than additive effect. We therefore analyzed 
 times on the log scale. We used mixed-effects linear regression to estimate 
-relative differences in time between treatment and control. We adjusted for 
+relative differences in time used on health information management, client 
+consultation, and client care, comparing treatment to control. We adjusted for 
 the stratification variable (CHMP 2015) and the variables used to constrain 
 randomization (cluster size and lab availability; Li 2016) as fixed effects. 
-We estimated the effect of observer and whether a visit was a booking visit 
+We estimated the effects of observer and whether a visit was a booking visit 
 (fixed effects) because we anticipated that these would affect time 
-measurements. We modelled cluster as a random effect. It was not possible to 
+use. We modelled cluster as a random effect. It was not possible to 
 obtain reliable variance estimates using a model that adjusted for observer as a 
 random effect. However, an exploratory analysis that modelled observer as a 
 random effect showed that point estimates and confidence intervals comparing 
-treatment to control were almost identical for the primary outcome. 
-We exponentiated to obtain estimates of relative difference and 95% confidence 
-intervals. We followed the intention-to-treat principle for all analyses: 
-participants were analyzed in the arms to which they were randomized, and all 
-participants were included in the analyses. No data were missing. Statistical 
-analyses were performed using Stata 16 (StataCorp LLC, College Station, Texas, 
-USA). The statistician was not involved in data collection and was blinded to 
-treatment allocation during analysis. Protocol deviations are documented in 
+treatment to control were almost identical for the primary outcome.
+putdocx textblock end
+
+`newpara'
+Similarly, we used mixed-effects linear regression to estimate time used 
+finding, reading, and writing files using paper or the eRegistry. This 
+analysis was identical to the previous one, with the exceptions that 
+activity (finding, reading, etc.) was modelled as a fixed effect and clustering 
+of activities within consultations within clinic was modelled using nested 
+random effects. Note that it was necessary to retain treatment allocation as a 
+fixed effect because while participants in the control arm could not use the 
+eRegistry, those in the treatment arm could use computer- and paper-based 
+methods.
+putdocx textblock end
+
+`newpara'
+We exponentiated to obtain estimates of relative differences in 
+time used, and computed predictive margins of mean time spent finding, reading, 
+and writing files. We report uncertainty on estimates and predictions using 
+95% confidence intervals. We followed the intention-to-treat principle for all 
+analyses: participants were analyzed in the arms to which they were randomized, 
+and all participants were included in the analyses. No data were missing. 
+Statistical analyses were performed using Stata 16 (StataCorp LLC, College 
+Station, Texas, USA). The statistician was not involved in data collection and 
+was blinded to treatment allocation for the analyses of relative differences in 
+time used on health information management, client consultation, and client 
+care. It was not possible to blind the statistician to treatment allocation for 
+the analyses of time used finding, reading, and writing files because the 
+treatment allocation was obvious. Protocol deviations are documented in 
 Appendix 1.
 putdocx textblock end
 
@@ -155,7 +177,7 @@ putdocx textblock end
 frame activities {
   local ++tbl_num
   local var_label : variable label activity
-  local title "Table `tbl_num'. Comparison of relative times spent finding,"
+  local title "Table `tbl_num'. Comparison of relative times used finding,"
   local title "`title' reading, and writing files"
   local activity_label_name = "`: value label activity'"
   
@@ -226,6 +248,24 @@ frame activities {
   putdocx table tbl_`tbl_num'(2/5, 1), border(right)
 }
 
+`newpara'
+The following table shows predictions of mean times used finding, reading, and 
+writing files per consultation. Estimates are expressed in minutes.
+putdocx textblock end
+
+frame activities {
+  local ++tbl_num
+  local var_label : variable label activity
+  local title "Table `tbl_num'. Predictions of mean times used finding,"
+  local title "`title' reading, and writing files per consultation (mins)"
+  local activity_label_name = "`: value label activity'"
+  
+  estimates restore activity_estimates
+  estimates replay
+  margins i.activity, expression(exp(predict(xb))) post
+  putdocx table tbl_`tbl_num' = etable, title("`title'")
+}
+
 // References
 `heading'
 putdocx text ("References")
@@ -248,9 +288,10 @@ putdocx textblock end
 putdocx text ("Appendix 1 — Protocol Deviations")
 
 `newpara'
-We did not originally plan to model relative times via transformation to the 
-log scale. Nor did we originally plan to adjust for observer but chose to do so 
-as it is plausible that systematic differences may exist between observers.
+We did not plan to model relative times via transformation to the log scale. 
+Nor did we plan to adjust for observer but chose to do so as it is plausible 
+that systematic differences may exist between observers. We did not plan in 
+detail how time used finding, reading, or writing files would be analyzed.
 putdocx textblock end
 
 `heading'
@@ -279,11 +320,11 @@ frame time {
 }
 
 `subhead'
-putdocx text ("Estimates of time spent finding, reading, and writing files")
+putdocx text ("Estimates of time used finding, reading, and writing files")
 
 `newpara'
 The following tables shows the full regression result for the analysis of time 
-spent on each activity. Note that time was modelled on the log scale and the 
+used on each activity. Note that time was modelled on the log scale and the 
 full estimation results have not been exponentiated.
 putdocx textblock end
 
