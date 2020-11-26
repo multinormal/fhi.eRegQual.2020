@@ -9,20 +9,33 @@ global process_outcomes $process_outcomes attendance hypertension diabetes
 global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 
 // Define the names of the time outcomes.
+// TODO: Are these used?
 global time_outcomes ""
 global time_outcomes $time_outcomes him_time consult_time care_time
 
-// Define the paper- and computer-based activities that are of interest.
-global activities             paper_f_him paper_r_him paper_w_him
+// Define the activities that are of interest.
+global activities              paper_f_him paper_r_him paper_w_him
 global activities $activities  comp_f_him  comp_r_him  comp_w_him
+global activities $activities  after_consult_him
+global activities $activities  talk_him
+global activities $activities  proc_care
+global activities $activities  talk_care
+global activities $activities  outside_care
+global activities $activities  misc_consult
 
 // Define value labels for the activities.
-global paper_f_him_lbl "Finding files (paper)"
-global paper_r_him_lbl "Reading files (paper)"
-global paper_w_him_lbl "Writing files (paper)"
-global comp_f_him_lbl  "Finding files (eRegistry)"
-global comp_r_him_lbl  "Reading files (eRegistry)"
-global comp_w_him_lbl  "Writing files (eRegistry)"
+global paper_f_him_lbl       "Finding files (paper)"
+global paper_r_him_lbl       "Reading files (paper)"
+global paper_w_him_lbl       "Writing files (paper)"
+global comp_f_him_lbl        "Finding files (eRegistry)"
+global comp_r_him_lbl        "Reading files (eRegistry)"
+global comp_w_him_lbl        "Writing files (eRegistry)"
+global after_consult_him_lbl "Post-consultation HIM"
+global talk_him_lbl          "Talking (HIM)"
+global proc_care_lbl         "Client care procedures"
+global talk_care_lbl         "Talking (client care)"
+global outside_care_lbl      "Outside client care"
+global misc_consult_lbl      "Miscellaneous"
 
 // The variables to adjust for in the "main" analyses, with their "types". See
 // the generated report for an explanation of why these variables are adjusted

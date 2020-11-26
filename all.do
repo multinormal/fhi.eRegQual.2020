@@ -25,8 +25,8 @@ do data/time_outcomes
 // TODO: REINSTATE do estimation/birth_outcomes   // Analyze the birth outcome data.
 // TODO: REINSTATE do estimation/process_outcomes // Analyze process outcome data.
 // TODO: REINSTATE do estimation/margins          // Compute marginal probabilities.
-do estimation/time_outcomes                       // Analyze time and motion data.
-do estimation/activity_outcomes                   // Analyze time and motion data.
+// TODO: REINSTATE do estimation/time_outcomes                       // Analyze time and motion data.
+// TODO: REINSTATE do estimation/activity_outcomes                   // Analyze time and motion data.
 
 // Make figures
 // TODO: REINSTATE do figures/imputation
@@ -42,4 +42,4 @@ global git_revision = "`macval(line)'"
 
 // Make the reports
 // TODO: REINSTATE do reports/report products/report.docx
-do reports/time_report products/time_report.docx
+// TODO: REINSTATE do reports/time_report products/time_report.docx

@@ -14,8 +14,8 @@ frame activities {
 
   // Encode/rename booking visit variable.
   label variable bookingvisit "Booking visit"
-  label define bookingvisit_label 1 "Booking visit" 0 "Non-booking visit"
-  label values bookingvisit bookingvisit_label
+  label define bookingvisit 1 "Booking visit" 0 "Non-booking visit"
+  label values bookingvisit bookingvisit
 
   // Rename observer variable.
   rename observercode observer
@@ -40,28 +40,23 @@ frame activities {
   // done before the data set is reshaped to long format, or we will count
   // one enrollment per visit rather than pregnancy.
   by clusterid, sort: generate cluster_size = _N / 100
-
-  // Rename and relabel the outcomes.
-  rename himperconsultation    him_time
-  label variable               him_time         ///
-                               "HIM time per consultation (mins)"
-  rename consultationtime      consult_time
-  label variable               consult_time     ///
-                               "Consultation time (mins)"
-  rename clientcarewithinconsultation care_time 
-  label variable               care_time        ///
-                               "Client care time within consultation (mins)"
-  rename proceduresclientcare  proc_care_time
-  label variable               proc_care_time   ///
-                               "Time spent on client care procedures (mins)"
   
-  // Rename the outcomes used for the analysis of time spent on activities.
-  rename paperfindhim          paper_f_him_time
-  rename paperreadhim          paper_r_him_time
-  rename paperwritinghim       paper_w_him_time
-  rename computerfindhim       comp_f_him_time
-  rename computerreadhim       comp_r_him_time
-  rename computerwritinghim    comp_w_him_time
+  // Rename the outcomes used for the analysis of time spent on activities:
+  // Activties related to health information management (HIM):
+  rename paperfindhim          paper_f_him_time // Finding
+  rename paperreadhim          paper_r_him_time // Reading
+  rename paperwritinghim       paper_w_him_time // Writing
+  rename computerfindhim       comp_f_him_time  // Finding
+  rename computerreadhim       comp_r_him_time  // Reading
+  rename computerwritinghim    comp_w_him_time  // Writing
+  rename afterconsultationhim  after_consult_him_time
+  rename talkinghim            talk_him_time
+  // Activities related to client care.
+  rename proceduresclientcare  proc_care_time
+  rename talkingclientcare     talk_care_time
+  rename outsideclientcare     outside_care_time
+  // Other activities. 
+  rename miscellaneouswithinconsultatio misc_consult_time
 
   // Observation number corresponds to a consultation.
   rename observationnumber consultation
@@ -71,10 +66,10 @@ frame activities {
   tempvar activity
   reshape long @_time, i(consultation) j(`activity') string
   rename _time time
-  label variable time "Time used (mins)"
 
   // Transform times to log scale, preventing missing data due to log(0).
   replace time = log(time + epsfloat()) if !missing(time)
+  label variable time "Time used (log mins)"
 
   // Measurements of zero time were coded as missing; i.e. did not happen.
   drop if missing(time)
@@ -97,8 +92,8 @@ frame activities {
   // Drop columns that are not of interest.
   keep consultation arm clusterid observer time activity $time_adj_var_names
 
-  // Fix a single incorrect observation. This correct coding has been verified.
-  replace bookingvisit = "Booking visit":bookingvisit_label if missing(bookingvisit)
+  // Fix a single incorrect observation - this has been verified as correct.
+  replace bookingvisit = "Booking visit":bookingvisit if missing(bookingvisit)
 
   // Verify that no data are missing.
   misstable summarize
