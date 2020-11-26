@@ -10,6 +10,7 @@ local heading putdocx paragraph, style(Heading1)
 local subhead putdocx paragraph, style(Heading2)
 local newpara putdocx textblock begin, halign(both)
 local putdocx textblock end putdocx textblock end
+local table_cell "putdocx table tbl_\`tbl_num'"
 
 local p_fmt  %5.2f // Format used for P-values.
 local e_fmt  %5.2f // Format used for estimates.
@@ -106,6 +107,45 @@ The following tables present comparisons of time used on health information
 management, client consultation, and care.
 putdocx textblock end
 
+frame time {
+  local ++tbl_num
+  local title "Table `tbl_num'. TODO"
+  local note  "TODO"
+
+  estimates restore time_estimates
+  estimates replay
+
+  // Make the table manually.
+  local n_rows 4
+  putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
+  // Column titles.
+  `table_cell'(2, 2) = ("Control (sample mean)"),      halign(right)
+  `table_cell'(2, 3) = ("Intervention (sample mean)"), halign(right)
+  `table_cell'(2, 4) = ("Rel. Time"),                  halign(right)
+  `table_cell'(2, 5) = ("[95% Conf. Interval]"),       halign(center) colspan(2)  
+  `table_cell'(2, 6) = ("P-value"),                    halign(right)
+
+  // Primary outcomes table section.
+  `table_cell'(3, 1) = ("Primary outcomes"),           halign(center) colspan(8)
+
+  // Primary outcome results.
+  `table_cell'(4, 1) = ("TODO: Name of the activity")
+  `table_cell'(4, 2) = ("TODO: Sample mean")
+  `table_cell'(4, 3) = ("TODO: Sample mean")
+  `table_cell'(4, 4) = ("TODO: Rel. Time.")
+  `table_cell'(4, 5) = ("TODO: Lower bound")
+  `table_cell'(4, 6) = ("TODO: Upper bound")
+  `table_cell'(4, 7) = ("TODO: P-value")
+
+  // Borders.
+  `table_cell'(2, .),   border(top)    // Across the top of the table.
+  `table_cell'(3, .),   border(top)    // Across the top of the section.
+  `table_cell'(3, .),   border(bottom) // Across the top of the section.
+  //`table_cell'(3, .),   border(top)
+  `table_cell'(`n_rows', .),   border(bottom)
+  //`table_cell'(2/4, 1), border(right)
+}
+
 // TODO: Replace this table with one of the new tables?
 //// frame time {
 ////   local note "* The standard error, z-score, and P-value are from the analysis"
@@ -138,32 +178,32 @@ putdocx textblock end
 ////     local ub_str = string(`ub', "`e_fmt'") // Upper-bound on CI.
 //// 
 ////     // Make the table manually.
-////     putdocx table tbl_`tbl_num' = (3, 7), title("`title'") note("`note'") ///
+////     `table_cell' = (3, 7), title("`title'") note("`note'") ///
 ////                                           border(all, nil)
 ////     // Column titles.
-////     putdocx table tbl_`tbl_num'(2, 2) = ("Rel. Time"), halign(right)
-////     putdocx table tbl_`tbl_num'(2, 3) = ("Std. Err.*"), halign(right)
-////     putdocx table tbl_`tbl_num'(2, 4) = ("z*"),         halign(right)
-////     putdocx table tbl_`tbl_num'(2, 5) = ("P>|z|*"),     halign(right)
-////     putdocx table tbl_`tbl_num'(2, 6) = ("[95% Conf. Interval]"),     ///
+////     `table_cell'(2, 2) = ("Rel. Time"), halign(right)
+////     `table_cell'(2, 3) = ("Std. Err.*"), halign(right)
+////     `table_cell'(2, 4) = ("z*"),         halign(right)
+////     `table_cell'(2, 5) = ("P>|z|*"),     halign(right)
+////     `table_cell'(2, 6) = ("[95% Conf. Interval]"),     ///
 ////                                                        halign(right)  ///
 ////                                                        colspan(2)
 ////     // Row titles.
-////     putdocx table tbl_`tbl_num'(3, 1) = ("arm"),       halign(right)
+////     `table_cell'(3, 1) = ("arm"),       halign(right)
 ////     // Values.
-////     putdocx table tbl_`tbl_num'(4, 1) = ("`arm'"),     halign(right)
-////     putdocx table tbl_`tbl_num'(4, 2) = ("`x_str'"),   halign(right)
-////     putdocx table tbl_`tbl_num'(4, 3) = ("`se_str'"),  halign(right)
-////     putdocx table tbl_`tbl_num'(4, 4) = ("`z_str'"),   halign(right)
-////     putdocx table tbl_`tbl_num'(4, 5) = ("`p_str'"),   halign(right)
-////     putdocx table tbl_`tbl_num'(4, 6) = ("`lb_str'"),  halign(right)
-////     putdocx table tbl_`tbl_num'(4, 7) = ("`ub_str'"),  halign(right)
+////     `table_cell'(4, 1) = ("`arm'"),     halign(right)
+////     `table_cell'(4, 2) = ("`x_str'"),   halign(right)
+////     `table_cell'(4, 3) = ("`se_str'"),  halign(right)
+////     `table_cell'(4, 4) = ("`z_str'"),   halign(right)
+////     `table_cell'(4, 5) = ("`p_str'"),   halign(right)
+////     `table_cell'(4, 6) = ("`lb_str'"),  halign(right)
+////     `table_cell'(4, 7) = ("`ub_str'"),  halign(right)
 //// 
 ////     // Borders.
-////     putdocx table tbl_`tbl_num'(2, .),   border(top)
-////     putdocx table tbl_`tbl_num'(3, .),   border(top)
-////     putdocx table tbl_`tbl_num'(4, .),   border(bottom)
-////     putdocx table tbl_`tbl_num'(2/4, 1), border(right)
+////     `table_cell'(2, .),   border(top)
+////     `table_cell'(3, .),   border(top)
+////     `table_cell'(4, .),   border(bottom)
+////     `table_cell'(2/4, 1), border(right)
 ////   }
 //// }
 
@@ -189,14 +229,14 @@ putdocx textblock end
 //// 
 ////   // Make the table manually - it does not seem possible to use the "=etable"
 ////   // method after nlcom.
-////   putdocx table tbl_`tbl_num' = (4, 7), title("`title'") ///
+////   `table_cell' = (4, 7), title("`title'") ///
 ////                                         border(all, nil)
 ////   // Column titles.
-////   putdocx table tbl_`tbl_num'(2, 2) = ("Rel. Time"),  halign(right)
-////   putdocx table tbl_`tbl_num'(2, 3) = ("Std. Err."),  halign(right)
-////   putdocx table tbl_`tbl_num'(2, 4) = ("z"),          halign(right)
-////   putdocx table tbl_`tbl_num'(2, 5) = ("P>|z|"),      halign(right)
-////   putdocx table tbl_`tbl_num'(2, 6) = ("[95% Conf. Interval]"),     ///
+////   `table_cell'(2, 2) = ("Rel. Time"),  halign(right)
+////   `table_cell'(2, 3) = ("Std. Err."),  halign(right)
+////   `table_cell'(2, 4) = ("z"),          halign(right)
+////   `table_cell'(2, 5) = ("P>|z|"),      halign(right)
+////   `table_cell'(2, 6) = ("[95% Conf. Interval]"),     ///
 ////                                                       halign(right) ///
 ////                                                       colspan(2)
 ////   local activity_types f r w // Finding, reading, writing.
@@ -232,23 +272,23 @@ putdocx textblock end
 ////     local ub_str = string(`ub',   "`e_fmt'") // Upper-bound on CI.
 //// 
 ////     // Values.
-////     putdocx table tbl_`tbl_num'(`row', 1) = ("`activity'"), halign(right)
-////     putdocx table tbl_`tbl_num'(`row', 2) = ("`x_str'"),    halign(right)
-////     putdocx table tbl_`tbl_num'(`row', 3) = ("`se_str'"),   halign(right)
-////     putdocx table tbl_`tbl_num'(`row', 4) = ("`z_str'"),    halign(right)
-////     putdocx table tbl_`tbl_num'(`row', 5) = ("`p_str'"),    halign(right)
-////     putdocx table tbl_`tbl_num'(`row', 6) = ("`lb_str'"),   halign(right)
-////     putdocx table tbl_`tbl_num'(`row', 7) = ("`ub_str'"),   halign(right)
+////     `table_cell'(`row', 1) = ("`activity'"), halign(right)
+////     `table_cell'(`row', 2) = ("`x_str'"),    halign(right)
+////     `table_cell'(`row', 3) = ("`se_str'"),   halign(right)
+////     `table_cell'(`row', 4) = ("`z_str'"),    halign(right)
+////     `table_cell'(`row', 5) = ("`p_str'"),    halign(right)
+////     `table_cell'(`row', 6) = ("`lb_str'"),   halign(right)
+////     `table_cell'(`row', 7) = ("`ub_str'"),   halign(right)
 //// 
 ////     // Move to the next row.
 ////     local row = `row' + 1
 ////   }
 //// 
 ////   // Borders.
-////   putdocx table tbl_`tbl_num'(2, .),   border(top)
-////   putdocx table tbl_`tbl_num'(3, .),   border(top)
-////   putdocx table tbl_`tbl_num'(5, .),   border(bottom)
-////   putdocx table tbl_`tbl_num'(2/5, 1), border(right)
+////   `table_cell'(2, .),   border(top)
+////   `table_cell'(3, .),   border(top)
+////   `table_cell'(5, .),   border(bottom)
+////   `table_cell'(2/5, 1), border(right)
 //// }
 
 `newpara'
@@ -267,7 +307,7 @@ putdocx textblock end
 ////   estimates restore activity_estimates
 ////   estimates replay
 ////   margins i.activity, expression(exp(predict(xb))) post
-////   putdocx table tbl_`tbl_num' = etable, title("`title'")
+////   `table_cell' = etable, title("`title'")
 //// }
 
 // References
@@ -317,7 +357,7 @@ frame time {
   local title "Table `tbl_num'. Full regression results"
   estimates restore time_estimates
   estimates replay
-  putdocx table tbl_`tbl_num' = etable, title("`title'") note(`note')
+  `table_cell' = etable, title("`title'") note(`note')
 }
 
 // Save the report to the specified filename.
