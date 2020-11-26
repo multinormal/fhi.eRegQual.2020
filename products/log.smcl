@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res}28 Sep 2020, 17:11:02
+ {txt}opened on:  {res}26 Nov 2020, 10:54:48
 {txt}
 {com}. 
 . // Set up Stata.
@@ -1270,7 +1270,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.58{col 28}{space 2}     0.15{co
 . // Title.
 . putdocx paragraph, style(Title)
 {res}{txt}
-{com}. putdocx text ("eRegQual analysis - Time and motion study analysis")
+{com}. putdocx text ("eRegTime analysis - Time and motion study analysis")
 {res}{txt}
 {com}. 
 . // Author and revision information.
