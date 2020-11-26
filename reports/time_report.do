@@ -50,16 +50,17 @@ putdocx text ("Methods")
 Times (durations) are non-negative and their distributions are often positively 
 skewed (e.g., there are many consultations of “typical” duration, but some 
 are much longer). Further, we anticipated that the intervention is likely 
-to have a multiplicative rather than additive effect. We therefore analyzed 
-times on the log scale. We used mixed-effects linear regression to estimate 
-relative differences in time used on health information management, client 
-consultation, and client care, comparing treatment to control. We adjusted for 
-the stratification variable (CHMP 2015) and the variables used to constrain 
-randomization (cluster size and lab availability; Li 2016) as fixed effects. 
-We also adjusted for the possible effect of whether a visit was a booking visit 
-because we anticipated these visits would be longer than subsequent visits. We 
-modelled the cluster-randomized design as a random effect, and adjusted 
-confidence intervals for clustering of measurements of time within observers.
+to have a multiplicative rather than additive effect on time use. We therefore 
+analyzed times on the log scale. We used mixed-effects linear regression to 
+estimate relative differences in time used on health information management, 
+client consultation, and client care, comparing treatment to control. We 
+adjusted for the stratification variable (CHMP 2015) and the variables used to 
+constrain randomization (cluster size and lab availability; Li 2016) as fixed 
+effects. We also adjusted for the possible effect of whether a visit was a 
+booking visit because we anticipated these visits would be longer than 
+subsequent visits. We modelled the cluster-randomized design as a random effect, 
+and adjusted confidence intervals for clustering of measurements of time within 
+observers.
 putdocx textblock end
 
 `newpara'
