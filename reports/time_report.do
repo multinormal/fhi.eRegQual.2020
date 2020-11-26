@@ -116,31 +116,33 @@ frame time {
   estimates replay
 
   // Make the table manually.
-  local n_rows 4
+  local n_rows 5
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
   // Column titles.
-  `table_cell'(2, 2) = ("Control (sample mean)"),      halign(right)
-  `table_cell'(2, 3) = ("Intervention (sample mean)"), halign(right)
-  `table_cell'(2, 4) = ("Rel. Time"),                  halign(right)
-  `table_cell'(2, 5) = ("[95% Conf. Interval]"),       halign(center) colspan(2)  
-  `table_cell'(2, 6) = ("P-value"),                    halign(right)
+  `table_cell'(2, 2) = ("Sample means"),               halign(center) colspan(2)
+
+  `table_cell'(3, 2) = ("Control"),                    halign(center)
+  `table_cell'(3, 3) = ("Intervention"),               halign(center)
+  `table_cell'(3, 4) = ("Rel. Time"),                  halign(center)
+  `table_cell'(3, 5) = ("[95% Conf. Interval]"),       halign(center) colspan(2)  
+  `table_cell'(3, 6) = ("P-value"),                    halign(center)
 
   // Primary outcomes table section.
-  `table_cell'(3, 1) = ("Primary outcomes"),           halign(center) colspan(8)
+  `table_cell'(4, 1) = ("Primary outcomes"),           halign(left) colspan(8)
 
   // Primary outcome results.
-  `table_cell'(4, 1) = ("TODO: Name of the activity")
-  `table_cell'(4, 2) = ("TODO: Sample mean")
-  `table_cell'(4, 3) = ("TODO: Sample mean")
-  `table_cell'(4, 4) = ("TODO: Rel. Time.")
-  `table_cell'(4, 5) = ("TODO: Lower bound")
-  `table_cell'(4, 6) = ("TODO: Upper bound")
-  `table_cell'(4, 7) = ("TODO: P-value")
+  `table_cell'(5, 1) = ("TODO: Name of the activity"), halign(center)
+  `table_cell'(5, 2) = ("TODO: Sample mean"), halign(center)
+  `table_cell'(5, 3) = ("TODO: Sample mean"), halign(center)
+  `table_cell'(5, 4) = ("TODO: Rel. Time."),  halign(center)
+  `table_cell'(5, 5) = ("TODO: Lower bound"), halign(center)
+  `table_cell'(5, 6) = ("TODO: Upper bound"), halign(center)
+  `table_cell'(5, 7) = ("TODO: P-value"),     halign(center)
 
   // Borders.
   `table_cell'(2, .),   border(top)    // Across the top of the table.
-  `table_cell'(3, .),   border(top)    // Across the top of the section.
-  `table_cell'(3, .),   border(bottom) // Across the top of the section.
+  `table_cell'(4, .),   border(top)    // Across the top of the section.
+  `table_cell'(4, .),   border(bottom) // Across the top of the section.
   //`table_cell'(3, .),   border(top)
   `table_cell'(`n_rows', .),   border(bottom)
   //`table_cell'(2/4, 1), border(right)
