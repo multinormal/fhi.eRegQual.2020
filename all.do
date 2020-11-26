@@ -41,4 +41,4 @@ global git_revision = "`macval(line)'"
 
 // Make the reports
 // TODO: REINSTATE do reports/report products/report.docx
-// TODO: REINSTATE do reports/time_report products/time_report.docx
+do reports/time_report products/time_report.docx
