@@ -12,8 +12,8 @@ do setup/setup
 do globals/globals
 
 // Import the data.
-do data/process_outcomes
-do data/birth_outcomes
+// TODO: REINSTATE do data/process_outcomes
+// TODO: REINSTATE do data/birth_outcomes
 do data/time_outcomes
 
 // Perform imputation.
@@ -21,7 +21,7 @@ do data/time_outcomes
 
 // Do estimation.
 // TODO: REINSTATE do estimation/missing          // Calculate percentage of data missing.
-do estimation/mcar             // Test the MCAR hypothesis.
+// TODO: REINSTATE do estimation/mcar             // Test the MCAR hypothesis.
 // TODO: REINSTATE do estimation/birth_outcomes   // Analyze the birth outcome data.
 // TODO: REINSTATE do estimation/process_outcomes // Analyze process outcome data.
 // TODO: REINSTATE do estimation/margins          // Compute marginal probabilities.

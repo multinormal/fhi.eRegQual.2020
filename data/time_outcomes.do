@@ -1,8 +1,8 @@
 version 16.1
 
 // Load the data and check its signature is as expected.
-frame create time
-frame time {
+frame create activities
+frame activities {
   // Import the data and verify its signature.
   use "${fname_time}", replace
   datasignature
@@ -41,8 +41,6 @@ frame time {
   // one enrollment per visit rather than pregnancy.
   by clusterid, sort: generate cluster_size = _N / 100
 
-  //TODO: Some of the data are missing for some outcomes. Should it be set to zero time?
-
   // Rename and relabel the outcomes.
   rename himperconsultation    him_time
   label variable               him_time         ///
@@ -65,27 +63,6 @@ frame time {
   rename computerreadhim       comp_r_him_time
   rename computerwritinghim    comp_w_him_time
 
-  // Transform times to the log scale.
-  foreach y of varlist $time_outcomes {
-    replace `y' = log(`y' + epsfloat()) // Prevent missing data due to log(0).
-  }
-
-  // Keep only the variables of interest.
-  //// TODO: REINSTATE
-  //// keep $time_outcomes arm clusterid observer $time_adj_var_names
-
-  // Verify that no data are missing.
-  //// TODO: REINSTATE
-  //// misstable summarize
-  //// assert r(N_lt_dot) == .
-}
-
-// TODO: Move the following to its own do file?
-
-// Make a version of the time frame that is long, and has "activity" and "time"
-// variables, specifying what kind of activity time is being used on.
-frame copy time activities 
-frame activities {
   // Observation number corresponds to a consultation.
   rename observationnumber consultation
   label variable consultation "Consultation"
@@ -119,4 +96,9 @@ frame activities {
 
   // Drop columns that are not of interest.
   keep consultation arm clusterid observer time activity $time_adj_var_names
+
+  // Verify that no data are missing.
+  //// TODO: REINSTATE
+  //// misstable summarize
+  //// assert r(N_lt_dot) == .
 }
