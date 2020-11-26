@@ -1,8 +1,8 @@
 version 16.1
 
 // Load the data and check its signature is as expected.
-frame create activities
-frame activities {
+frame create time
+frame time {
   // Import the data and verify its signature.
   use "${fname_time}", replace
   datasignature

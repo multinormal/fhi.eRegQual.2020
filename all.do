@@ -25,8 +25,7 @@ do data/time_outcomes
 // TODO: REINSTATE do estimation/birth_outcomes   // Analyze the birth outcome data.
 // TODO: REINSTATE do estimation/process_outcomes // Analyze process outcome data.
 // TODO: REINSTATE do estimation/margins          // Compute marginal probabilities.
-// TODO: REINSTATE do estimation/time_outcomes                       // Analyze time and motion data.
-// TODO: REINSTATE do estimation/activity_outcomes                   // Analyze time and motion data.
+do estimation/time_outcomes                       // Analyze time and motion data.
 
 // Make figures
 // TODO: REINSTATE do figures/imputation
