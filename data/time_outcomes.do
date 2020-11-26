@@ -97,8 +97,10 @@ frame activities {
   // Drop columns that are not of interest.
   keep consultation arm clusterid observer time activity $time_adj_var_names
 
+  // Fix a single incorrect observation. This correct coding has been verified.
+  replace bookingvisit = "Booking visit":bookingvisit_label if missing(bookingvisit)
+
   // Verify that no data are missing.
-  //// TODO: REINSTATE
-  //// misstable summarize
-  //// assert r(N_lt_dot) == .
+  misstable summarize
+  assert r(N_lt_dot) == .
 }
