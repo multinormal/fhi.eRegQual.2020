@@ -22,7 +22,7 @@ putdocx begin
 
 // Title.
 putdocx paragraph, style(Title)
-putdocx text ("eRegQual analysis - Time and motion study analysis")
+putdocx text ("eRegTime analysis - Time and motion study analysis")
 
 // Author and revision information.
 `newpara'
@@ -39,7 +39,7 @@ putdocx text ("Introduction")
 
 `newpara'
 This document presents analyses for the time and motion component of the 
-eRegQual trial.
+eRegTime trial.
 putdocx textblock end
 
 // Methods section
