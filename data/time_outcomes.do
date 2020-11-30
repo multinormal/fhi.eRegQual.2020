@@ -8,7 +8,11 @@ frame time {
   datasignature
   assert r(datasignature) == "${datasignature_time}"
 
-  // Encode/rename arm variable.
+  // Encode/rename the arm variable. We recode here, and note that it is not
+  // possible to blind the analyst because use of the intervention in one arm
+  // and non-use in the other makes treatment assignment obvious.
+  replace exposure = "Control"      if exposure == "A"
+  replace exposure = "Intervention" if exposure == "B"
   encode exposure, generate(arm)
   label variable arm Arm
 
