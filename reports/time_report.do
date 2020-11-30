@@ -119,11 +119,11 @@ frame time {
   local n_rows 5
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
   // Column titles.
-  `table_cell'(2, 2) = ("Sample means"),               halign(center) colspan(2)
+  `table_cell'(2, 2) = ("Sample mean times (mins)"),   halign(center) colspan(2)
 
   `table_cell'(3, 2) = ("Control"),                    halign(center)
   `table_cell'(3, 3) = ("Intervention"),               halign(center)
-  `table_cell'(3, 4) = ("Rel. Time"),                  halign(center)
+  `table_cell'(3, 4) = ("Adj. Rel. Time"),             halign(center)
   `table_cell'(3, 5) = ("[95% Conf. Interval]"),       halign(center) colspan(2)  
   `table_cell'(3, 6) = ("P-value"),                    halign(center)
 
