@@ -63,7 +63,8 @@ frame time {
   rename miscellaneouswithinconsultatio misc_consult_time
 
   // Observation number corresponds to a consultation.
-  rename observationnumber consultation
+  generate observation_level = strofreal(observationnumber)
+  encode observation_level, generate(consultation)
   label variable consultation "Consultation"
 
   // Reshape to long format, creating a temporary activity and a time variable.
@@ -91,7 +92,7 @@ frame time {
   }
 
   // Encode the activity variable, creating the actual activity variable.
-  encode `activity', generate(activity) label(activity_label)
+  encode `activity', generate(activity) label(activity)
 
   // Drop columns that are not of interest.
   keep consultation arm clusterid observer time activity $time_adj_var_names
