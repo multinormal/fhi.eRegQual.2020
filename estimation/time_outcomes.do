@@ -7,6 +7,23 @@ frame time {
   estimates store time_estimates
 }
 
+// Define the time outcomes. TODO: Move to globals?
+global time_outcomes him
+
+
+
+// Definitions of HIM:
+global him_name "HIM"
+local him_acts            activity == "Finding files (eRegistry)":activity |
+local him_acts `him_acts' activity == "Finding files (paper)":activity     |
+local him_acts `him_acts' activity == "Reading files (eRegistry)":activity |
+local him_acts `him_acts' activity == "Reading files (paper)":activity     |
+local him_acts `him_acts' activity == "Writing files (eRegistry)":activity |
+local him_acts `him_acts' activity == "Writing files (paper)":activity     |
+local him_acts `him_acts' activity == "Post-consultation HIM":activity     |
+local him_acts `him_acts' activity == "Talking (HIM)":activity
+
+
 // Sample means for HIM.
 frame time {
   tempvar mins
@@ -18,21 +35,14 @@ frame time {
   levelsof consultation if arm == "Intervention":arm
   local intervention_consulations = r(r)
 
-  // Create an indicator for whether activity is one of the HIM time activities.
-  tempvar include
-  generate `include' = activity == "Finding files (eRegistry)":activity |    ///
-                       activity == "Finding files (paper)":activity     |    ///
-                       activity == "Reading files (eRegistry)":activity |    ///
-                       activity == "Reading files (paper)":activity     |    ///
-                       activity == "Writing files (eRegistry)":activity |    ///
-                       activity == "Writing files (paper)":activity     |    ///
-                       activity == "Post-consultation HIM":activity     |    ///
-                       activity == "Talking (HIM)":activity
-  total `mins' if arm == "Control":arm & `include'
-  local mean_him_control = e(b)[1,1] / `control_consulations'
-  total `mins' if arm == "Intervention":arm & `include'
-  local mean_him_intervention = e(b)[1,1] / `intervention_consulations'
-
-  display "C: `mean_him_control', I: `mean_him_intervention'"
+  // Compute sample means and adjusted estimates for each outome.
+  foreach outcome of global time_outcomes {
+    // Compute the mean number of minutes for the activity in each arm, storing
+    // the results in globals.
+    total `mins' if arm == "Control":arm & ``outcome'_acts'
+    global samp_mean_`outcome'_con = e(b)[1,1] / `control_consulations'
+    total `mins' if arm == "Intervention":arm & ``outcome'_acts'
+    global samp_mean_`outcome'_int = e(b)[1,1] / `intervention_consulations'
+  }
 
 }

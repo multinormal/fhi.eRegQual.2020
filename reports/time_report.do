@@ -117,27 +117,37 @@ frame time {
 
   // Make the table manually.
   local n_rows 5
+  local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
+  
   // Column titles.
-  `table_cell'(2, 2) = ("Sample mean times (mins)"),   halign(center) colspan(2)
+  local r = `r' + 1
+  `table_cell'(`r', 2) = ("Sample mean times (mins)"), halign(center) colspan(2)
 
-  `table_cell'(3, 2) = ("Control"),                    halign(center)
-  `table_cell'(3, 3) = ("Intervention"),               halign(center)
-  `table_cell'(3, 4) = ("Adj. Rel. Time"),             halign(center)
-  `table_cell'(3, 5) = ("[95% Conf. Interval]"),       halign(center) colspan(2)  
-  `table_cell'(3, 6) = ("P-value"),                    halign(center)
+  local r = `r' + 1
+  `table_cell'(`r', 2) = ("Control"),                  halign(center)
+  `table_cell'(`r', 3) = ("Intervention"),             halign(center)
+  `table_cell'(`r', 4) = ("Adj. Rel. Time"),           halign(center)
+  `table_cell'(`r', 5) = ("[95% Conf. Interval]"),     halign(center) colspan(2)  
+  `table_cell'(`r', 6) = ("P-value"),                  halign(center)
 
   // Primary outcomes table section.
-  `table_cell'(4, 1) = ("Primary outcomes"),           halign(left) colspan(8)
+  local r = `r' + 1
+  `table_cell'(`r', 1) = ("Primary outcomes"),         halign(left) colspan(8)
 
   // Primary outcome results.
-  `table_cell'(5, 1) = ("TODO: Name of the activity"), halign(center)
-  `table_cell'(5, 2) = ("TODO: Sample mean"), halign(center)
-  `table_cell'(5, 3) = ("TODO: Sample mean"), halign(center)
-  `table_cell'(5, 4) = ("TODO: Rel. Time."),  halign(center)
-  `table_cell'(5, 5) = ("TODO: Lower bound"), halign(center)
-  `table_cell'(5, 6) = ("TODO: Upper bound"), halign(center)
-  `table_cell'(5, 7) = ("TODO: P-value"),     halign(center)
+  foreach outcome of global time_outcomes {
+    local r = `r' + 1
+    local samp_mean_con = string(${samp_mean_`outcome'_con}, "`e_fmt'")
+    local samp_mean_int = string(${samp_mean_`outcome'_int}, "`e_fmt'")
+    `table_cell'(`r', 1) = ("${`outcome'_name}"), halign(left)
+    `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
+    `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
+    `table_cell'(`r', 4) = ("TODO: Rel. Time."),  halign(center)
+    `table_cell'(`r', 5) = ("TODO: Lower bound"), halign(center)
+    `table_cell'(`r', 6) = ("TODO: Upper bound"), halign(center)
+    `table_cell'(`r', 7) = ("TODO: P-value"),     halign(center)
+  }
 
   // Borders.
   `table_cell'(2, .),   border(top)    // Across the top of the table.
