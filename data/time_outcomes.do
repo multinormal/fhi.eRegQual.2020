@@ -46,56 +46,41 @@ frame time {
   by clusterid, sort: generate cluster_size = _N / 100
   
   // Rename the outcomes used for the analysis of time spent on activities:
-  // Activties related to health information management (HIM):
-  rename paperfindhim          paper_f_him_time // Finding
-  rename paperreadhim          paper_r_him_time // Reading
-  rename paperwritinghim       paper_w_him_time // Writing
-  rename computerfindhim       comp_f_him_time  // Finding
-  rename computerreadhim       comp_r_him_time  // Reading
-  rename computerwritinghim    comp_w_him_time  // Writing
-  rename afterconsultationhim  after_consult_him_time
-  rename talkinghim            talk_him_time
-  // Activities related to client care.
-  rename proceduresclientcare  proc_care_time
-  rename talkingclientcare     talk_care_time
-  rename outsideclientcare     outside_care_time
-  // Other activities. 
-  rename miscellaneouswithinconsultatio misc_consult_time
+  rename himperconsultation him_time
+
+
+
+
+  //// // Activties related to health information management (HIM):
+  //// rename paperfindhim          paper_f_him_time // Finding
+  //// rename paperreadhim          paper_r_him_time // Reading
+  //// rename paperwritinghim       paper_w_him_time // Writing
+  //// rename computerfindhim       comp_f_him_time  // Finding
+  //// rename computerreadhim       comp_r_him_time  // Reading
+  //// rename computerwritinghim    comp_w_him_time  // Writing
+  //// rename afterconsultationhim  after_consult_him_time
+  //// rename talkinghim            talk_him_time
+  //// // Activities related to client care.
+  //// rename proceduresclientcare  proc_care_time
+  //// rename talkingclientcare     talk_care_time
+  //// rename outsideclientcare     outside_care_time
+  //// // Other activities. 
+  //// rename miscellaneouswithinconsultatio misc_consult_time
 
   // Observation number corresponds to a consultation.
   generate observation_level = strofreal(observationnumber)
   encode observation_level, generate(consultation)
   label variable consultation "Consultation"
 
-  // Reshape to long format, creating a temporary activity and a time variable.
-  tempvar activity
-  reshape long @_time, i(consultation) j(`activity') string
-  rename _time time
-
   // Transform times to log scale, preventing missing data due to log(0).
-  replace time = log(time + epsfloat()) if !missing(time)
-  label variable time "Time used (log mins)"
-
-  // Measurements of zero time were coded as missing; i.e. did not happen.
-  drop if missing(time)
-
-  // Keep only those activities of interest. 
-  generate to_keep = 0
-  foreach x of global activities {
-    replace to_keep = to_keep | `activity' == "`x'"
+  // Drop any missing observations, which is how zero time was coded.
+  foreach outcome of global time_outcomes {
+    replace `outcome' = log(`outcome' + epsfloat()) if !missing(`outcome')
+    drop if missing(`outcome')
   }
-  keep if to_keep
-
-  // Replace the activities with more useful level names.
-  foreach x of global activities {
-    replace `activity' = "${`x'_lbl}" if `activity' == "`x'"
-  }
-
-  // Encode the activity variable, creating the actual activity variable.
-  encode `activity', generate(activity) label(activity)
 
   // Drop columns that are not of interest.
-  keep consultation arm clusterid observer time activity $time_adj_var_names
+  keep consultation arm clusterid observer $time_outcomes $time_adj_var_names
 
   // Fix a single incorrect observation - this has been verified as correct.
   replace bookingvisit = "Booking visit":bookingvisit if missing(bookingvisit)

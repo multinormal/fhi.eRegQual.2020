@@ -12,7 +12,7 @@ local newpara putdocx textblock begin, halign(both)
 local putdocx textblock end putdocx textblock end
 local table_cell "putdocx table tbl_\`tbl_num'"
 
-local p_fmt  %5.2f // Format used for P-values.
+local p_fmt  %5.3f // Format used for P-values.
 local e_fmt  %5.2f // Format used for estimates.
 local pc_fmt %8.1f // Format used for percentages.
 
@@ -108,45 +108,68 @@ management, client consultation, and care.
 putdocx textblock end
 
 frame time {
-  local ++tbl_num
-  local title "Table `tbl_num'. TODO"
-  local note  "TODO"
-
-  estimates restore time_estimates
-  estimates replay
+  // Determine which level of the arm variable corresponds to the intervention.
+  local int_level = "Intervention":arm
 
   // Make the table manually.
-  local n_rows 5
+  local ++tbl_num
+  local title "Table `tbl_num'. TODO"
+  local note "*Sample means were computed on the log scale and then back-transformed."
+  local note "`note' †Relative differences in time used were adjusted for"
+  local note "`note' the stratification variable, cluster size, lab availability,"
+  local note "`note' and booking visit; confidence intervals and"
+  local note "`note' P-values were adjusted for possible cluster effects due to"
+  local note "`note' the cluster design and observer."
+  local n_rows = 3 + wordcount("$time_outcomes")
   local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
   
   // Column titles.
   local r = `r' + 1
-  `table_cell'(`r', 2) = ("Sample mean times (mins)"), halign(center) colspan(2)
+  `table_cell'(`r', 2) = ("Sample means (mins)*"), halign(center) colspan(2)
 
   local r = `r' + 1
-  `table_cell'(`r', 2) = ("Control"),                  halign(center)
-  `table_cell'(`r', 3) = ("Intervention"),             halign(center)
-  `table_cell'(`r', 4) = ("Adj. Rel. Time"),           halign(center)
-  `table_cell'(`r', 5) = ("[95% Conf. Interval]"),     halign(center) colspan(2)  
-  `table_cell'(`r', 6) = ("P-value"),                  halign(center)
+  `table_cell'(`r', 2) = ("Control"),                       halign(center)
+  `table_cell'(`r', 3) = ("Intervention"),                  halign(center)
+  `table_cell'(`r', 4) = ("Adj. Rel. Time†"), halign(center)
+  `table_cell'(`r', 5) = ("[95% Conf. Interval]"),          halign(center) colspan(2)  
+  `table_cell'(`r', 6) = ("P-value"),                       halign(center)
 
   // Primary outcomes table section.
   local r = `r' + 1
   `table_cell'(`r', 1) = ("Primary outcomes"),         halign(left) colspan(8)
 
   // Primary outcome results.
-  foreach outcome of global time_outcomes {
+  foreach y of global time_outcomes {
     local r = `r' + 1
-    local samp_mean_con = string(${samp_mean_`outcome'_con}, "`e_fmt'")
-    local samp_mean_int = string(${samp_mean_`outcome'_int}, "`e_fmt'")
-    `table_cell'(`r', 1) = ("${`outcome'_name}"), halign(left)
+    local label : variable label `y'
+
+    // Format the sample means.
+    local samp_mean_con = string(${samp_mean_`y'_con}, "`e_fmt'")
+    local samp_mean_int = string(${samp_mean_`y'_int}, "`e_fmt'")
+
+    // Format the estimates.
+    estimates restore `y'_estimates
+    local beta = _b[`int_level'.arm]
+    local se = _se[`int_level'.arm]
+    local z  = `beta' / `se'
+    local p = 2 * normal(-abs(`z'))
+    local p = string(`p', "`p_fmt'")
+    if `p' < 0.01 local p = "<0.001"
+    local lb = `beta' - (1.96 * `se')
+    local ub = `beta' + (1.96 * `se')
+    local rel_diff = string(exp(`beta'), "`e_fmt'")
+    local lb = string(exp(`lb'), "`e_fmt'")
+    local ub = string(exp(`ub'), "`e_fmt'")
+
+    // Make a row for these results.
+    `table_cell'(`r', 1) = ("`label'"),           halign(left)
     `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
     `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
-    `table_cell'(`r', 4) = ("TODO: Rel. Time."),  halign(center)
-    `table_cell'(`r', 5) = ("TODO: Lower bound"), halign(center)
-    `table_cell'(`r', 6) = ("TODO: Upper bound"), halign(center)
-    `table_cell'(`r', 7) = ("TODO: P-value"),     halign(center)
+    `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
+    `table_cell'(`r', 5) = ("`lb'"),              halign(center)
+    `table_cell'(`r', 6) = ("`ub'"),              halign(center)
+    `table_cell'(`r', 7) = ("`p'"),               halign(center)
   }
 
   // Borders.
@@ -357,19 +380,23 @@ putdocx text ("Appendix 2 — Full Regression Results")
 putdocx text ("Comparisons of time used")
 
 `newpara'
-The following table shows the full regression result. Note that time was 
+The following tables show the full regression results. Note that time was 
 modelled on the log scale and the full estimation results have not been 
-exponentiated.
+exponentiated here.
 putdocx textblock end
 
 frame time {
   local note  "Data were analyzed on the log scale."
   local note  "`note' Estimates have not been exponentiated."
-  local ++tbl_num
-  local title "Table `tbl_num'. Full regression results"
-  estimates restore time_estimates
-  estimates replay
-  `table_cell' = etable, title("`title'") note(`note')
+
+  foreach y of global time_outcomes {
+    local ++tbl_num
+    local label : variable label `y'
+    local title "Table `tbl_num'. Full regression results for `label'"
+    estimates restore `y'_estimates
+    estimates replay
+    `table_cell' = etable, title("`title'") note(`note')
+  }
 }
 
 // Save the report to the specified filename.
