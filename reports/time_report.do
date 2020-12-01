@@ -100,11 +100,11 @@ putdocx textblock end
 putdocx text ("Results")
 
 `subhead'
-putdocx text ("Health information management, client consultation, and care")
+putdocx text ("Health information management and client care")
 
 `newpara'
-The following tables present comparisons of time used on health information 
-management, client consultation, and care.
+The following table presents comparisons of time used on health information 
+management and client care.
 putdocx textblock end
 
 frame time {
@@ -115,9 +115,9 @@ frame time {
   local ++tbl_num
   local title "Table `tbl_num'. TODO"
   local note "*Sample means were computed on the log scale and then back-transformed."
-  local note "`note' †Relative differences in time used were adjusted for"
+  local note "`note' †Estimates of relative differences in time used were adjusted for"
   local note "`note' the stratification variable, cluster size, lab availability,"
-  local note "`note' and booking visit; confidence intervals and"
+  local note "`note' and booking visit. ‡Confidence intervals and"
   local note "`note' P-values were adjusted for possible cluster effects due to"
   local note "`note' the cluster design and observer."
   local n_rows = 4 + wordcount("$time_outcomes")
@@ -131,13 +131,13 @@ frame time {
   local r = `r' + 1
   `table_cell'(`r', 2) = ("Control"),                       halign(center)
   `table_cell'(`r', 3) = ("Intervention"),                  halign(center)
-  `table_cell'(`r', 4) = ("Adj. Rel. Time†"), halign(center)
-  `table_cell'(`r', 5) = ("[95% Conf. Interval]"),          halign(center) colspan(2)  
-  `table_cell'(`r', 6) = ("P-value"),                       halign(center)
+  `table_cell'(`r', 4) = ("Relative Time†"), halign(center)
+  `table_cell'(`r', 5) = ("[95% Conf. Interval]‡"),          halign(center) colspan(2)  
+  `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
 
   // Primary outcome results.
   foreach outcome_group in primary_time_outcomes secondary_time_outcomes {
-    // Table section.
+    // Table section, with borders at top and bottom.
     local r = `r' + 1
     `table_cell'(`r', 1) = ("${`outcome_group'_section}"),  halign(left) colspan(8)
     `table_cell'(`r', .),   border(top)    // Across the top of the section.
@@ -177,9 +177,7 @@ frame time {
 
     // Borders.
     `table_cell'(2, .),   border(top)    // Across the top of the table.
-    //`table_cell'(3, .),   border(top)
-    `table_cell'(`r', .),   border(bottom)
-    //`table_cell'(2/4, 1), border(right)
+    `table_cell'(`r', .), border(bottom)
   }
 }
 

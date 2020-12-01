@@ -12,8 +12,8 @@ global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 global primary_time_outcomes   him_time him_booking_time him_followup_time
 global secondary_time_outcomes care_time care_booking_time care_followup_time
 global time_outcomes           $primary_time_outcomes $secondary_time_outcomes
-global primary_time_outcomes_section   "Primary outcomes"
-global secondary_time_outcomes_section "Secondary outcomes"
+global primary_time_outcomes_section   "Health Information Management"
+global secondary_time_outcomes_section "Client Care"
 
 // Define predicates for the outcomes that need them.
 local is_booking     if bookingvisit == "Booking visit":bookingvisit
