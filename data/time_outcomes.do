@@ -48,8 +48,9 @@ frame time {
   // Rename the outcomes used for the analysis of time spent on activities:
   rename himperconsultation him_time
 
-
-
+  // Generate a version of him_time that is limited to booking visits.
+  generate him_booking_time = him_time $him_booking_time_pred
+  label variable him_booking_time "HIM (booking visit)"
 
   //// // Activties related to health information management (HIM):
   //// rename paperfindhim          paper_f_him_time // Finding
@@ -73,10 +74,8 @@ frame time {
   label variable consultation "Consultation"
 
   // Transform times to log scale, preventing missing data due to log(0).
-  // Drop any missing observations, which is how zero time was coded.
   foreach outcome of global time_outcomes {
     replace `outcome' = log(`outcome' + epsfloat()) if !missing(`outcome')
-    drop if missing(`outcome')
   }
 
   // Drop columns that are not of interest.
@@ -84,8 +83,4 @@ frame time {
 
   // Fix a single incorrect observation - this has been verified as correct.
   replace bookingvisit = "Booking visit":bookingvisit if missing(bookingvisit)
-
-  // Verify that no data are missing.
-  misstable summarize
-  assert r(N_lt_dot) == .
 }

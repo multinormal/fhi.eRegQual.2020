@@ -1,7 +1,8 @@
 version 16.1
 
-// Specify the model.
-local model mixed \`y' i.arm $time_adj_vars || clusterid:, vce(cluster observer)
+// Specify the model. Note some of the estimates must be limited to certain
+// conditions (e.g. booking visits), which is specified by a global variable.
+local model mixed \`y' i.arm $time_adj_vars ${\`y'_pred} || clusterid:, vce(cluster observer)
 
 frame time {
   // Determine the control and intervention levels of the arm variable.
@@ -9,8 +10,9 @@ frame time {
   local int_level = "Intervention":arm
 
   foreach y of global time_outcomes {
-    // Compute the sample means (recall that data were logged).
-    mean `y', over(arm)
+    // Compute the sample means (recall that data were logged). As in the model,
+    // some sample means must be limited to certain conditions.
+    mean `y' ${`y'_pred}, over(arm)
     global samp_mean_`y'_con = exp(e(b)["y1", "`y'@`con_level'.arm"])
     global samp_mean_`y'_int = exp(e(b)["y1", "`y'@`int_level'.arm"])
 
