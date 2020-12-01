@@ -19,7 +19,7 @@ frame time {
     // Fit the model for each variable of interest, storing the estimates.
     `model'
     assert e(converged) == 1
-    estimates store `y'_estimates
+    estimates store `y'
   }
 }
 

@@ -59,9 +59,13 @@ frame time {
   // Rename the client care variable.
   rename clientcarewit~n care_time
 
-  // Generate a version of care_time that is limited to followup visits.
+  // Generate a version of care_time that is limited to booking visits.
   generate care_booking_time = care_time $care_booking_time_pred
   label variable care_booking_time "Client care (booking visit)"
+
+  // Generate a version of care_time that is limited to followup visits.
+  generate care_followup_time = care_time $care_followup_time_pred
+  label variable care_followup_time "Client care (follow-up visit)"
 
   //// TODO: For each outcome: create a variable for it here and label it. Then
   //// add it to time_outcomes in globals.do. If we need to limit the outcome to

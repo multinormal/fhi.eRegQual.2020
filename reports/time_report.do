@@ -152,7 +152,7 @@ frame time {
       local samp_mean_int = string(${samp_mean_`y'_int}, "`e_fmt'")
 
       // Format the estimates.
-      estimates restore `y'_estimates
+      estimates restore `y'
       local beta = _b[`int_level'.arm]
       local se = _se[`int_level'.arm]
       local z  = `beta' / `se'
@@ -334,7 +334,7 @@ frame time {
     local ++tbl_num
     local label : variable label `y'
     local title "Table `tbl_num'. Full regression results for `label'"
-    estimates restore `y'_estimates
+    estimates restore `y'
     estimates replay
     `table_cell' = etable, title("`title'") note(`note')
   }
