@@ -9,11 +9,11 @@ global process_outcomes $process_outcomes attendance hypertension diabetes
 global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 
 // Define the time outcomes.
-global time_outcomes                him_time him_booking_time
+global time_outcomes                him_time him_booking_time him_followup_time
 
 // Define predicates for outcomes, if applicable.
-global him_booking_time_pred if bookingvisit == "Booking visit":bookingvisit
-
+global him_booking_time_pred  if bookingvisit == "Booking visit":bookingvisit
+global him_followup_time_pred if bookingvisit != "Booking visit":bookingvisit
 
 //global time_outcomes $time_outcomes him_time consult_time care_time
 

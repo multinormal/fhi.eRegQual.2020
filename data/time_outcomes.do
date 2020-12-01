@@ -52,6 +52,10 @@ frame time {
   generate him_booking_time = him_time $him_booking_time_pred
   label variable him_booking_time "HIM (booking visit)"
 
+  // Generate a version of him_time that is limited to followup visits.
+  generate him_followup_time = him_time $him_followup_time_pred
+  label variable him_followup_time "HIM (follow-up visit)"
+
   //// // Activties related to health information management (HIM):
   //// rename paperfindhim          paper_f_him_time // Finding
   //// rename paperreadhim          paper_r_him_time // Reading
