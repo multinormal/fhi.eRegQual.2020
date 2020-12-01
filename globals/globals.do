@@ -9,9 +9,13 @@ global process_outcomes $process_outcomes attendance hypertension diabetes
 global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 
 // Define the time outcomes.
-global time_outcomes                him_time him_booking_time him_followup_time
+global primary_time_outcomes   him_time him_booking_time him_followup_time
+global secondary_time_outcomes client_care_time
+global time_outcomes           $primary_time_outcomes $secondary_time_outcomes
+global primary_time_outcomes_section   "Primary outcomes"
+global secondary_time_outcomes_section "Secondary outcomes"
 
-// Define predicates for outcomes, if applicable.
+// Define predicates for the outcomes that need them.
 global him_booking_time_pred  if bookingvisit == "Booking visit":bookingvisit
 global him_followup_time_pred if bookingvisit != "Booking visit":bookingvisit
 

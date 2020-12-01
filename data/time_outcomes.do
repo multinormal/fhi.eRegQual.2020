@@ -45,7 +45,7 @@ frame time {
   // one enrollment per visit rather than pregnancy.
   by clusterid, sort: generate cluster_size = _N / 100
   
-  // Rename the outcomes used for the analysis of time spent on activities:
+  // Rename the HIM time variable.
   rename himperconsultation him_time
 
   // Generate a version of him_time that is limited to booking visits.
@@ -56,11 +56,14 @@ frame time {
   generate him_followup_time = him_time $him_followup_time_pred
   label variable him_followup_time "HIM (follow-up visit)"
 
-  TODO: For each outcome: create a variable for it here and label it. Then
-  add it to time_outcomes in globals.do. If we need to limit the outcome to
-  booking visits, for example, also create a predicate in globals.do that is
-  named using the naming scheme there. The table of results dhould then just
-  update itself automatically.
+  // Rename the client care variable.
+  rename clientcarewit~n client_care_time
+
+  //// TODO: For each outcome: create a variable for it here and label it. Then
+  //// add it to time_outcomes in globals.do. If we need to limit the outcome to
+  //// booking visits, for example, also create a predicate in globals.do that is
+  //// named using the naming scheme there. The table of results dhould then just
+  //// update itself automatically.
 
   //// // Activties related to health information management (HIM):
   //// rename paperfindhim          paper_f_him_time // Finding

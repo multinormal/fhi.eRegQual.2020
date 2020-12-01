@@ -120,7 +120,7 @@ frame time {
   local note "`note' and booking visit; confidence intervals and"
   local note "`note' P-values were adjusted for possible cluster effects due to"
   local note "`note' the cluster design and observer."
-  local n_rows = 3 + wordcount("$time_outcomes")
+  local n_rows = 4 + wordcount("$time_outcomes")
   local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
   
@@ -135,112 +135,53 @@ frame time {
   `table_cell'(`r', 5) = ("[95% Conf. Interval]"),          halign(center) colspan(2)  
   `table_cell'(`r', 6) = ("P-value"),                       halign(center)
 
-  // Primary outcomes table section.
-  local r = `r' + 1
-  `table_cell'(`r', 1) = ("Primary outcomes"),         halign(left) colspan(8)
-
   // Primary outcome results.
-  foreach y of global time_outcomes {
+  foreach outcome_group in primary_time_outcomes secondary_time_outcomes {
+    // Table section.
     local r = `r' + 1
-    local label : variable label `y'
+    `table_cell'(`r', 1) = ("${`outcome_group'_section}"),  halign(left) colspan(8)
+    `table_cell'(`r', .),   border(top)    // Across the top of the section.
+    `table_cell'(`r', .),   border(bottom) // Across the bottom of the section.
 
-    // Format the sample means.
-    local samp_mean_con = string(${samp_mean_`y'_con}, "`e_fmt'")
-    local samp_mean_int = string(${samp_mean_`y'_int}, "`e_fmt'")
+    foreach y of global `outcome_group' {
+      local r = `r' + 1
+      local label : variable label `y'
 
-    // Format the estimates.
-    estimates restore `y'_estimates
-    local beta = _b[`int_level'.arm]
-    local se = _se[`int_level'.arm]
-    local z  = `beta' / `se'
-    local p = 2 * normal(-abs(`z'))
-    local p = string(`p', "`p_fmt'")
-    if `p' < 0.01 local p = "<0.001"
-    local lb = `beta' - (1.96 * `se')
-    local ub = `beta' + (1.96 * `se')
-    local rel_diff = string(exp(`beta'), "`e_fmt'")
-    local lb = string(exp(`lb'), "`e_fmt'")
-    local ub = string(exp(`ub'), "`e_fmt'")
+      // Format the sample means.
+      local samp_mean_con = string(${samp_mean_`y'_con}, "`e_fmt'")
+      local samp_mean_int = string(${samp_mean_`y'_int}, "`e_fmt'")
 
-    // Make a row for these results.
-    `table_cell'(`r', 1) = ("`label'"),           halign(left)
-    `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
-    `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
-    `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
-    `table_cell'(`r', 5) = ("`lb'"),              halign(center)
-    `table_cell'(`r', 6) = ("`ub'"),              halign(center)
-    `table_cell'(`r', 7) = ("`p'"),               halign(center)
+      // Format the estimates.
+      estimates restore `y'_estimates
+      local beta = _b[`int_level'.arm]
+      local se = _se[`int_level'.arm]
+      local z  = `beta' / `se'
+      local p = 2 * normal(-abs(`z'))
+      local p = string(`p', "`p_fmt'")
+      if `p' < 0.01 local p = "<0.001"
+      local lb = `beta' - (1.96 * `se')
+      local ub = `beta' + (1.96 * `se')
+      local rel_diff = string(exp(`beta'), "`e_fmt'")
+      local lb = string(exp(`lb'), "`e_fmt'")
+      local ub = string(exp(`ub'), "`e_fmt'")
+
+      // Make a row for these results.
+      `table_cell'(`r', 1) = ("`label'"),           halign(left)
+      `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
+      `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
+      `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
+      `table_cell'(`r', 5) = ("`lb'"),              halign(center)
+      `table_cell'(`r', 6) = ("`ub'"),              halign(center)
+      `table_cell'(`r', 7) = ("`p'"),               halign(center)
+    }
+
+    // Borders.
+    `table_cell'(2, .),   border(top)    // Across the top of the table.
+    //`table_cell'(3, .),   border(top)
+    `table_cell'(`r', .),   border(bottom)
+    //`table_cell'(2/4, 1), border(right)
   }
-
-  // Borders.
-  `table_cell'(2, .),   border(top)    // Across the top of the table.
-  `table_cell'(4, .),   border(top)    // Across the top of the section.
-  `table_cell'(4, .),   border(bottom) // Across the top of the section.
-  //`table_cell'(3, .),   border(top)
-  `table_cell'(`n_rows', .),   border(bottom)
-  //`table_cell'(2/4, 1), border(right)
 }
-
-// TODO: Replace this table with one of the new tables?
-//// frame time {
-////   local note "* The standard error, z-score, and P-value are from the analysis"
-////   local note "`note' performed on the log scale."
-//// 
-////   foreach var of global time_outcomes {
-////     local ++tbl_num
-////     local var_label : variable label `var'
-////     local title "Table `tbl_num'. `var_label'"
-////     estimates restore `var'_estimates
-////     estimates replay
-//// 
-////     // Get arm label and estimates for the table.
-////     // We assume that level 1 is the reference for arm.
-////     local arm : label (arm) 2 
-////     local beta = e(b)["y1", "`var':2.arm"]
-////     local x  = exp(`beta')
-////     local se = sqrt(e(V)["`var':2.arm", "`var':2.arm"])
-////     local z  = `beta' / `se'
-////     local p  = 2 * normal(-abs(`z'))
-////     local lb = exp(`beta' - (1.96 * `se'))
-////     local ub = exp(`beta' + (1.96 * `se'))
-//// 
-////     // Make strings for the table.
-////     local x_str  = string(`x',  "`e_fmt'") // Point estimate.
-////     local se_str = string(`se', "`e_fmt'") // Std. Err.
-////     local z_str  = string(`z',  "`e_fmt'")  // z.
-////     local p_str  = string(`p',  "`p_fmt'") // P-value.
-////     local lb_str = string(`lb', "`e_fmt'") // Lower-bound on CI.
-////     local ub_str = string(`ub', "`e_fmt'") // Upper-bound on CI.
-//// 
-////     // Make the table manually.
-////     `table_cell' = (3, 7), title("`title'") note("`note'") ///
-////                                           border(all, nil)
-////     // Column titles.
-////     `table_cell'(2, 2) = ("Rel. Time"), halign(right)
-////     `table_cell'(2, 3) = ("Std. Err.*"), halign(right)
-////     `table_cell'(2, 4) = ("z*"),         halign(right)
-////     `table_cell'(2, 5) = ("P>|z|*"),     halign(right)
-////     `table_cell'(2, 6) = ("[95% Conf. Interval]"),     ///
-////                                                        halign(right)  ///
-////                                                        colspan(2)
-////     // Row titles.
-////     `table_cell'(3, 1) = ("arm"),       halign(right)
-////     // Values.
-////     `table_cell'(4, 1) = ("`arm'"),     halign(right)
-////     `table_cell'(4, 2) = ("`x_str'"),   halign(right)
-////     `table_cell'(4, 3) = ("`se_str'"),  halign(right)
-////     `table_cell'(4, 4) = ("`z_str'"),   halign(right)
-////     `table_cell'(4, 5) = ("`p_str'"),   halign(right)
-////     `table_cell'(4, 6) = ("`lb_str'"),  halign(right)
-////     `table_cell'(4, 7) = ("`ub_str'"),  halign(right)
-//// 
-////     // Borders.
-////     `table_cell'(2, .),   border(top)
-////     `table_cell'(3, .),   border(top)
-////     `table_cell'(4, .),   border(bottom)
-////     `table_cell'(2/4, 1), border(right)
-////   }
-//// }
 
 `subhead'
 putdocx text ("Activities")
