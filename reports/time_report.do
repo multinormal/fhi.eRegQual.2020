@@ -148,7 +148,6 @@ frame time {
 
     foreach y of global `group' {
       local r = `r' + 1
-      local label : variable label `y'
 
       // Format the sample means.
       local samp_mean_con = string(${samp_mean_`y'_con}, "`e_fmt'")
@@ -169,7 +168,7 @@ frame time {
       local ub = string(exp(`ub'), "`e_fmt'")
 
       // Make a row for these results.
-      `table_cell'(`r', 1) = ("`label'"),           halign(left)
+      `table_cell'(`r', 1) = ("${`y'_row_lbl}"),           halign(left)
       `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
       `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
       `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
@@ -334,7 +333,7 @@ frame time {
   foreach y of global time_outcomes {
     local ++tbl_num
     local label : variable label `y'
-    local title "Table `tbl_num'. Full regression results for `label'"
+    local title "Table `tbl_num'. `label' — full regression results"
     estimates restore `y'
     estimates replay
     `table_cell' = etable, title("`title'") note(`note')

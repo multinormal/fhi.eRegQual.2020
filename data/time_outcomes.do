@@ -47,39 +47,48 @@ frame time {
   
   // Rename the HIM time variable.
   rename himperconsultation him_time
-  label variable him_time "Any visit"
+  label variable him_time "HIM time (any visit)"
+  global him_time_row_lbl "Any visit"
 
   // Generate a version of him_time that is limited to booking visits.
   generate him_booking_time = him_time $him_booking_time_pred
-  label variable him_booking_time "Booking"
+  label variable him_booking_time "HIM time (booking visit)"
+  global him_booking_time_row_lbl "Booking"
 
   // Generate a version of him_time that is limited to followup visits.
   generate him_fup_time = him_time $him_fup_time_pred
-  label variable him_fup_time "Follow-up"
+  label variable him_fup_time "HIM time (follow-up visit)"
+  global him_fup_time_row_lbl "Follow-up"
 
   // Rename the client care variable.
   rename clientcarewit~n care_time
-  label variable care_time "Any visit"
+  label variable care_time "Client care time (any visit)"
+  global care_time_row_lbl "Any visit"
 
   // Generate a version of care_time that is limited to booking visits.
   generate care_booking_time = care_time $care_booking_time_pred
-  label variable care_booking_time "Booking"
+  label variable care_booking_time "Client care time (booking visit)"
+  global care_booking_time_row_lbl "Booking"
 
   // Generate a version of care_time that is limited to followup visits.
   generate care_fup_time = care_time $care_fup_time_pred
-  label variable care_fup_time "Follow-up"
+  label variable care_fup_time "Client care time (follow-up visit)"
+  global care_fup_time_row_lbl "Follow-up"
 
   // Rename the total time variable.
   rename consulttime_withreporting total_time
-  label variable total_time "Any visit"
+  label variable total_time "Total time (any visit)"
+  global total_time_row_lbl "Any visit"
 
   // Generate a version of total_time that is limited to booking visits.
   generate total_booking_time = total_time $total_booking_time_pred
-  label variable total_booking_time "Booking"
+  label variable total_booking_time "Total time (booking visit)"
+  global total_booking_time_row_lbl "Booking"
 
   // Generate a version of total_time that is limited to followup visits.
   generate total_fup_time = total_time $total_fup_time_pred
-  label variable total_fup_time "Follow-up"
+  label variable total_fup_time "Total time (follow-up visit)"
+  global total_fup_time_row_lbl "Follow-up"
 
   //// TODO: For each outcome: create a variable for it here and label it. Then
   //// add it to time_outcomes in globals.do. If we need to limit the outcome to
