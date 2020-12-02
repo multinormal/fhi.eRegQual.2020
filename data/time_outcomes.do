@@ -117,6 +117,11 @@ frame time {
   label variable write_booking_time "Writing (booking visit)"
   global write_booking_time_row_lbl "Booking"
 
+  // Generate a version of write_time that is limited to followup visits.
+  generate write_fup_time = write_time $write_fup_time_pred
+  label variable write_fup_time "Writing (follow-up visit)"
+  global write_fup_time_row_lbl "Follow-up"
+
   //// rename afterconsultationhim  after_consult_him_time
   //// rename talkinghim            talk_him_time
 
