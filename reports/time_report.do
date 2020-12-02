@@ -119,7 +119,9 @@ frame time {
   local note "`note' the stratification variable, cluster size, lab availability,"
   local note "`note' and booking visit. ‡Confidence intervals and"
   local note "`note' P-values were adjusted for possible cluster effects due to"
-  local note "`note' the cluster RCT design and observer."
+  local note "`note' the cluster RCT design and observer. §Total time includes"
+  local note "`note' activities not accounted for in health information management"
+  local note "`note' and client care."
   local n_rows = 5 + wordcount("$time_outcomes")
   local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)

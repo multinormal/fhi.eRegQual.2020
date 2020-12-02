@@ -15,7 +15,7 @@ global total_time_outcomes total_time
 global time_outcomes       $him_time_outcomes $care_time_outcomes $total_time_outcomes
 global him_time_outcomes_section   "Health Information Management"
 global care_time_outcomes_section  "Client Care"
-global total_time_outcomes_section "Total Time"
+global total_time_outcomes_section "Total Time§"
 
 // Define predicates for the outcomes that need them.
 local is_booking     if bookingvisit == "Booking visit":bookingvisit
