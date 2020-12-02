@@ -54,8 +54,8 @@ frame time {
   label variable him_booking_time "Booking"
 
   // Generate a version of him_time that is limited to followup visits.
-  generate him_followup_time = him_time $him_followup_time_pred
-  label variable him_followup_time "Follow-up"
+  generate him_fup_time = him_time $him_fup_time_pred
+  label variable him_fup_time "Follow-up"
 
   // Rename the client care variable.
   rename clientcarewit~n care_time
@@ -66,8 +66,8 @@ frame time {
   label variable care_booking_time "Booking"
 
   // Generate a version of care_time that is limited to followup visits.
-  generate care_followup_time = care_time $care_followup_time_pred
-  label variable care_followup_time "Follow-up"
+  generate care_fup_time = care_time $care_fup_time_pred
+  label variable care_fup_time "Follow-up"
 
   // Rename the total time variable.
   rename consulttime_withreporting total_time
@@ -76,6 +76,10 @@ frame time {
   // Generate a version of total_time that is limited to booking visits.
   generate total_booking_time = total_time $total_booking_time_pred
   label variable total_booking_time "Booking"
+
+  // Generate a version of total_time that is limited to followup visits.
+  generate total_fup_time = total_time $total_fup_time_pred
+  label variable total_fup_time "Follow-up"
 
   //// TODO: For each outcome: create a variable for it here and label it. Then
   //// add it to time_outcomes in globals.do. If we need to limit the outcome to

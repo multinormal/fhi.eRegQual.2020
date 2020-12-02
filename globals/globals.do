@@ -9,9 +9,9 @@ global process_outcomes $process_outcomes attendance hypertension diabetes
 global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 
 // Define the time outcomes.
-global him_time_outcomes   him_time him_booking_time him_followup_time
-global care_time_outcomes  care_time care_booking_time care_followup_time
-global total_time_outcomes total_time total_booking_time
+global him_time_outcomes   him_time   him_booking_time   him_fup_time
+global care_time_outcomes  care_time  care_booking_time  care_fup_time
+global total_time_outcomes total_time total_booking_time total_fup_time
 global time_outcomes       $him_time_outcomes $care_time_outcomes $total_time_outcomes
 global him_time_outcomes_section   "Health Information Management"
 global care_time_outcomes_section  "Client Care"
@@ -20,11 +20,12 @@ global total_time_outcomes_section "Total Time§"
 // Define predicates for the outcomes that need them.
 local is_booking     if bookingvisit == "Booking visit":bookingvisit
 local is_not_booking if bookingvisit != "Booking visit":bookingvisit
-global him_booking_time_pred  `is_booking'
-global him_followup_time_pred `is_not_booking'
-global care_booking_time_pred `is_booking'
-global care_followup_time_pred `is_not_booking'
+global him_booking_time_pred   `is_booking'
+global him_fup_time_pred       `is_not_booking'
+global care_booking_time_pred  `is_booking'
+global care_fup_time_pred      `is_not_booking'
 global total_booking_time_pred `is_booking'
+global total_fup_time_pred     `is_not_booking'
 
 //global time_outcomes $time_outcomes him_time consult_time care_time
 
