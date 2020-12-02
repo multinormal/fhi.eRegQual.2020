@@ -119,8 +119,8 @@ frame time {
   local note "`note' the stratification variable, cluster size, lab availability,"
   local note "`note' and booking visit. ‡Confidence intervals and"
   local note "`note' P-values were adjusted for possible cluster effects due to"
-  local note "`note' the cluster design and observer."
-  local n_rows = 4 + wordcount("$time_outcomes")
+  local note "`note' the cluster RCT design and observer."
+  local n_rows = 5 + wordcount("$time_outcomes")
   local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
   
@@ -136,14 +136,15 @@ frame time {
   `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
 
   // Primary outcome results.
-  foreach outcome_group in primary_time_outcomes secondary_time_outcomes {
+  local outcome_groups him_time_outcomes care_time_outcomes total_time_outcomes
+  foreach group in `outcome_groups' {
     // Table section, with borders at top and bottom.
     local r = `r' + 1
-    `table_cell'(`r', 1) = ("${`outcome_group'_section}"),  halign(left) colspan(8)
+    `table_cell'(`r', 1) = ("${`group'_section}"),  halign(left) colspan(8)
     `table_cell'(`r', .),   border(top)    // Across the top of the section.
     `table_cell'(`r', .),   border(bottom) // Across the bottom of the section.
 
-    foreach y of global `outcome_group' {
+    foreach y of global `group' {
       local r = `r' + 1
       local label : variable label `y'
 

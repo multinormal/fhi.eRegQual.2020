@@ -9,11 +9,13 @@ global process_outcomes $process_outcomes attendance hypertension diabetes
 global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 
 // Define the time outcomes.
-global primary_time_outcomes   him_time him_booking_time him_followup_time
-global secondary_time_outcomes care_time care_booking_time care_followup_time
-global time_outcomes           $primary_time_outcomes $secondary_time_outcomes
-global primary_time_outcomes_section   "Health Information Management"
-global secondary_time_outcomes_section "Client Care"
+global him_time_outcomes   him_time him_booking_time him_followup_time
+global care_time_outcomes  care_time care_booking_time care_followup_time
+global total_time_outcomes total_time
+global time_outcomes       $him_time_outcomes $care_time_outcomes $total_time_outcomes
+global him_time_outcomes_section   "Health Information Management"
+global care_time_outcomes_section  "Client Care"
+global total_time_outcomes_section "Total Time"
 
 // Define predicates for the outcomes that need them.
 local is_booking     if bookingvisit == "Booking visit":bookingvisit
@@ -83,7 +85,7 @@ global fname_anemia          "data/raw/02July2020_eRegQual process outcomes_anem
 global fname_fetalgrowth     "data/raw/10August2020_eRegQual process outcomes_fetalgrowth.dta"
 
 // Define paths to the time outcome file.
-global fname_time            "data/raw/02Sep2020_eRegTime.dta"
+global fname_time            "data/raw/13Oct20_eRegTime.dta"
 
 // Define data signatures for the process outcome files.
 global datasignature_attendance          "6367:39(51496):3578513271:2127801624"
@@ -94,7 +96,7 @@ global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
 global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
 
 // Define data signature for the time data.
-global datasignature_time                "241:25(46964):1322369528:1413582791"
+global datasignature_time                "241:26(73043):3342897650:3191572784"
 
 // Define recoding rules for the arm variables of the process outcomes; the 
 // coding of control and intervention vary by outcome. We will adopt the 

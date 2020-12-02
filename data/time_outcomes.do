@@ -69,6 +69,10 @@ frame time {
   generate care_followup_time = care_time $care_followup_time_pred
   label variable care_followup_time "Follow-up"
 
+  // Rename the total time variable.
+  rename consulttime_withreporting total_time
+  label variable total_time "Any visit"
+
   //// TODO: For each outcome: create a variable for it here and label it. Then
   //// add it to time_outcomes in globals.do. If we need to limit the outcome to
   //// booking visits, for example, also create a predicate in globals.do that is
