@@ -11,7 +11,7 @@ global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 // Define the time outcomes.
 global him_time_outcomes   him_time him_booking_time him_followup_time
 global care_time_outcomes  care_time care_booking_time care_followup_time
-global total_time_outcomes total_time
+global total_time_outcomes total_time total_booking_time
 global time_outcomes       $him_time_outcomes $care_time_outcomes $total_time_outcomes
 global him_time_outcomes_section   "Health Information Management"
 global care_time_outcomes_section  "Client Care"
@@ -24,6 +24,7 @@ global him_booking_time_pred  `is_booking'
 global him_followup_time_pred `is_not_booking'
 global care_booking_time_pred `is_booking'
 global care_followup_time_pred `is_not_booking'
+global total_booking_time_pred `is_booking'
 
 //global time_outcomes $time_outcomes him_time consult_time care_time
 

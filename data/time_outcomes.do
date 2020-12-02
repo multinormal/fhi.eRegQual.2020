@@ -73,6 +73,10 @@ frame time {
   rename consulttime_withreporting total_time
   label variable total_time "Any visit"
 
+  // Generate a version of total_time that is limited to booking visits.
+  generate total_booking_time = total_time $total_booking_time_pred
+  label variable total_booking_time "Booking"
+
   //// TODO: For each outcome: create a variable for it here and label it. Then
   //// add it to time_outcomes in globals.do. If we need to limit the outcome to
   //// booking visits, for example, also create a predicate in globals.do that is
