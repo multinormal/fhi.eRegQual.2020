@@ -48,52 +48,58 @@ putdocx textblock end
 putdocx text ("Methods")
 
 // TODO: Rewrite the methods text.
-
 `newpara'
-Times (durations) are non-negative and their distributions are often positively 
-skewed (e.g., there are many consultations of “typical” duration, but some 
-are much longer). Further, we anticipated that the intervention is likely 
-to have a multiplicative rather than additive effect on time use. We therefore 
-analyzed times on the log scale. We used mixed-effects linear regression to 
-estimate relative differences in time used on health information management, 
-client consultation, and client care, comparing treatment to control. We 
-adjusted for the stratification variable (CHMP 2015) and the variables used to 
-constrain randomization (cluster size and lab availability; Li 2016) as fixed 
-effects. We anticipated that booking visits would be longer than subsequent 
-visits, and therefore adjusted for visity type as a fixed effect. We modelled 
-the cluster-randomized design using a random intercept for each clinic, and 
-also adjusted confidence intervals for within-observer clustering of 
-time measurement.
+TODO: Write this.
 putdocx textblock end
 
-`newpara'
-Similarly, we used mixed-effects linear regression to estimate time used 
-finding, reading, and writing files using paper or the eRegistry. This 
-analysis was identical to the previous one, with the exceptions that 
-activity (finding, reading, etc.) was modelled as a fixed effect and clustering 
-of activities within consultations within clinic was modelled using nested 
-random effects. Note that it was necessary to retain treatment allocation as a 
-fixed effect because while participants in the control arm could not use the 
-eRegistry, those in the treatment arm could use computer- and paper-based 
-methods.
-putdocx textblock end
+// `newpara'
+// Times (durations) are non-negative and their distributions are often positively 
+// skewed (e.g., there are many consultations of “typical” duration, but some 
+// are much longer). Further, we anticipated that the intervention is likely 
+// to have a multiplicative rather than additive effect on time use. We therefore 
+// analyzed times on the log scale. We used mixed-effects linear regression to 
+// estimate relative differences in time used on health information management, 
+// client consultation, and client care, comparing treatment to control. We 
+// adjusted for the stratification variable (CHMP 2015) and the variables used to 
+// constrain randomization (cluster size and lab availability; Li 2016) as fixed 
+// effects. We anticipated that booking visits would be longer than subsequent 
+// visits, and therefore adjusted for visity type as a fixed effect. We modelled 
+// the cluster-randomized design using a random intercept for each clinic, and 
+// also adjusted confidence intervals for within-observer clustering of 
+// time measurement.
+// putdocx textblock end
 
-`newpara'
-We exponentiated to obtain estimates of relative differences in 
-time used, and computed predictive margins of mean time spent finding, reading, 
-and writing files. We report uncertainty on estimates and predictions using 
-95% confidence intervals. We followed the intention-to-treat principle for all 
-analyses: participants were analyzed in the arms to which they were randomized, 
-and all participants were included in the analyses. No data were missing. 
-Statistical analyses were performed using Stata 16 (StataCorp LLC, College 
-Station, Texas, USA). The statistician was not involved in data collection and 
-was blinded to treatment allocation for the analyses of relative differences in 
-time used on health information management, client consultation, and client 
-care. It was not possible to blind the statistician to treatment allocation for 
-the analyses of time used finding, reading, and writing files because the 
-treatment allocation was obvious. Protocol deviations are documented in 
-Appendix 1.
-putdocx textblock end
+// `newpara'
+// Similarly, we used mixed-effects linear regression to estimate time used 
+// finding, reading, and writing files using paper or the eRegistry. This 
+// analysis was identical to the previous one, with the exceptions that 
+// activity (finding, reading, etc.) was modelled as a fixed effect and clustering 
+// of activities within consultations within clinic was modelled using nested 
+// random effects. Note that it was necessary to retain treatment allocation as a 
+// fixed effect because while participants in the control arm could not use the 
+// eRegistry, those in the treatment arm could use computer- and paper-based 
+// methods.
+// putdocx textblock end
+
+// `newpara'
+// We exponentiated to obtain estimates of relative differences in 
+// time used, and computed predictive margins of mean time spent finding, reading, 
+// and writing files. We report uncertainty on estimates and predictions using 
+// 95% confidence intervals. We followed the intention-to-treat principle for all 
+// analyses: participants were analyzed in the arms to which they were randomized, 
+// and all participants were included in the analyses. No data were missing. 
+// Statistical analyses were performed using Stata 16 (StataCorp LLC, College 
+// Station, Texas, USA). The statistician was not involved in data collection and 
+// was blinded to treatment allocation for the analyses of relative differences in 
+// time used on health information management, client consultation, and client 
+// care. It was not possible to blind the statistician to treatment allocation for 
+// the analyses of time used finding, reading, and writing files because the 
+// treatment allocation was obvious. Protocol deviations are documented in 
+// Appendix 1.
+// putdocx textblock end
+
+// Show results on next page.
+putdocx pagebreak
 
 // Results section
 `heading'
@@ -124,8 +130,8 @@ frame time {
 
   // Make the table manually.
   local ++tbl_num
-  local title "Table `tbl_num'. TODO"
-  local n_rows = 5 + wordcount("$time_outcomes")
+  local title "Table `tbl_num'. Analysis of total time use, and time use on health information management and client care."
+  local n_rows = 5 + wordcount("$main_time_outcomes")
   local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
   
@@ -141,7 +147,7 @@ frame time {
   `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
 
   // Primary outcome results.
-  local outcome_groups him_time_outcomes care_time_outcomes total_time_outcomes
+  local outcome_groups total_time_outcomes him_time_outcomes care_time_outcomes
   foreach group in `outcome_groups' {
     // Table section, with borders at top and bottom.
     local r = `r' + 1
@@ -203,8 +209,8 @@ frame time {
 
   // Make the table manually.
   local ++tbl_num
-  local title "Table `tbl_num'. TODO"
-  local n_rows = 5 + wordcount("$time_outcomes")
+  local title "Table `tbl_num'. Analysis of time used finding, reading, and writing."
+  local n_rows = 5 + wordcount("$minor_time_outcomes")
   local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
   
@@ -220,7 +226,8 @@ frame time {
   `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
 
   // Primary outcome results.
-  local outcome_groups find_time_outcomes read_time_outcomes write_time_outcomes
+  local outcome_groups                  find_time_outcomes read_time_outcomes 
+  local outcome_groups `outcome_groups' write_time_outcomes // TODO: REINSTATE??? post_cons_time_outcomes
   foreach group in `outcome_groups' {
     // Table section, with borders at top and bottom.
     local r = `r' + 1
@@ -264,102 +271,6 @@ frame time {
     `table_cell'(`r', .), border(bottom)
   }
 }
-
-
-
-// TODO: Replace this table with one of the new tables?
-//// frame activities {
-////   local ++tbl_num
-////   local var_label : variable label activity
-////   local title "Table `tbl_num'. Comparison of relative times used finding,"
-////   local title "`title' reading, and writing files"
-////   local activity_label_name = "`: value label activity'"
-////   
-////   estimates restore activity_estimates
-////   estimates replay
-//// 
-////   // Make the table manually - it does not seem possible to use the "=etable"
-////   // method after nlcom.
-////   `table_cell' = (4, 7), title("`title'") ///
-////                                         border(all, nil)
-////   // Column titles.
-////   `table_cell'(2, 2) = ("Rel. Time"),  halign(right)
-////   `table_cell'(2, 3) = ("Std. Err."),  halign(right)
-////   `table_cell'(2, 4) = ("z"),          halign(right)
-////   `table_cell'(2, 5) = ("P>|z|"),      halign(right)
-////   `table_cell'(2, 6) = ("[95% Conf. Interval]"),     ///
-////                                                       halign(right) ///
-////                                                       colspan(2)
-////   local activity_types f r w // Finding, reading, writing.
-////   local f_activity "Finding"
-////   local r_activity "Reading"
-////   local w_activity "Writing"
-////   local row = 3
-////   foreach activity_type of local activity_types {
-////     // Get the control and treatment activity codes.
-////     local control   = "${paper_`activity_type'_him_lbl}":`activity_label_name'
-////     local treatment = "${comp_`activity_type'_him_lbl}":`activity_label_name'
-//// 
-////     // Compare the activties between the trial arms, and exponentiate to get
-////     // relative difference in time used.
-////     nlcom exp(_b[`treatment'.activity] - _b[`control'.activity])
-//// 
-////     // Get the relavant quantities - this has been checked against the result
-////     // reported by nlcom.
-////     local beta = r(b)[1, 1]
-////     local se   = sqrt(r(V)[1, 1])
-////     local z    = `beta' / `se'
-////     local p    = 2 * normal(-abs(`z'))
-////     local lb   = `beta' - (1.96 * `se')
-////     local ub   = `beta' + (1.96 * `se')
-//// 
-////     // Make strings for the table.
-////     local activity = "``activity_type'_activity'"
-////     local x_str  = string(`beta', "`e_fmt'") // Point estimate.
-////     local se_str = string(`se',   "`e_fmt'") // Std. Err.
-////     local z_str  = string(`z',    "`e_fmt'") // z.
-////     local p_str  = string(`p',    "`p_fmt'") // P-value.
-////     local lb_str = string(`lb',   "`e_fmt'") // Lower-bound on CI.
-////     local ub_str = string(`ub',   "`e_fmt'") // Upper-bound on CI.
-//// 
-////     // Values.
-////     `table_cell'(`row', 1) = ("`activity'"), halign(right)
-////     `table_cell'(`row', 2) = ("`x_str'"),    halign(right)
-////     `table_cell'(`row', 3) = ("`se_str'"),   halign(right)
-////     `table_cell'(`row', 4) = ("`z_str'"),    halign(right)
-////     `table_cell'(`row', 5) = ("`p_str'"),    halign(right)
-////     `table_cell'(`row', 6) = ("`lb_str'"),   halign(right)
-////     `table_cell'(`row', 7) = ("`ub_str'"),   halign(right)
-//// 
-////     // Move to the next row.
-////     local row = `row' + 1
-////   }
-//// 
-////   // Borders.
-////   `table_cell'(2, .),   border(top)
-////   `table_cell'(3, .),   border(top)
-////   `table_cell'(5, .),   border(bottom)
-////   `table_cell'(2/5, 1), border(right)
-//// }
-
-`newpara'
-The following table shows predictions of mean times used finding, reading, and 
-writing files per consultation. Estimates are expressed in minutes.
-putdocx textblock end
-
-// TODO: Replace this table with one of the new tables?
-//// frame activities {
-////   local ++tbl_num
-////   local var_label : variable label activity
-////   local title "Table `tbl_num'. Predictions of mean times used finding,"
-////   local title "`title' reading, and writing files per consultation (mins)"
-////   local activity_label_name = "`: value label activity'"
-////   
-////   estimates restore activity_estimates
-////   estimates replay
-////   margins i.activity, expression(exp(predict(xb))) post
-////   `table_cell' = etable, title("`title'")
-//// }
 
 // References
 `heading'

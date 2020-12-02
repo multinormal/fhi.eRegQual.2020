@@ -9,22 +9,21 @@ global process_outcomes $process_outcomes attendance hypertension diabetes
 global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 
 // Define the main time outcomes.
+global total_time_outcomes total_time total_booking_time total_fup_time
 global him_time_outcomes   him_time   him_booking_time   him_fup_time
 global care_time_outcomes  care_time  care_booking_time  care_fup_time
-global total_time_outcomes total_time total_booking_time total_fup_time
+global main_time_outcomes $total_time_outcomes $him_time_outcomes $care_time_outcomes
 
 // Define the minor time outcomes.
-global find_time_outcomes find_time
-global read_time_outcomes read_time
-global write_time_outcomes write_time write_booking_time write_fup_time
+global find_time_outcomes          find_time
+global read_time_outcomes          read_time
+global write_time_outcomes         write_time write_booking_time write_fup_time
+// TODO: REINSTATE global post_cons_time_outcomes     post_cons_time
+global minor_time_outcomes $find_time_outcomes $read_time_outcomes $write_time_outcomes
 
 // Define all the time outcomes.
-global time_outcomes                $him_time_outcomes 
-global time_outcomes $time_outcomes $care_time_outcomes 
-global time_outcomes $time_outcomes $total_time_outcomes
-global time_outcomes $time_outcomes $find_time_outcomes
-global time_outcomes $time_outcomes $read_time_outcomes
-global time_outcomes $time_outcomes $write_time_outcomes
+global time_outcomes $main_time_outcomes $minor_time_outcomes
+// TODO: REINSTATE global time_outcomes $time_outcomes $post_cons_time_outcomes
 
 // Table section titles.
 global him_time_outcomes_section   "Health Information Management"
@@ -33,6 +32,7 @@ global total_time_outcomes_section "Total Time§"
 global find_time_outcomes_section  "Finding"
 global read_time_outcomes_section  "Reading"
 global write_time_outcomes_section "Writing"
+// TODO: REINSTATE global post_cons_time_outcomes_section "Post-consultation Health Information Management" 
 
 // Define predicates for the outcomes that need them.
 local is_booking     if bookingvisit == "Booking visit":bookingvisit
