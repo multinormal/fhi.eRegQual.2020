@@ -90,21 +90,27 @@ frame time {
   label variable total_fup_time "Total time (follow-up visit)"
   global total_fup_time_row_lbl "Follow-up"
 
-  //// TODO: For each outcome: create a variable for it here and label it. Then
-  //// add it to time_outcomes in globals.do. If we need to limit the outcome to
-  //// booking visits, for example, also create a predicate in globals.do that is
-  //// named using the naming scheme there. The table of results dhould then just
-  //// update itself automatically.
+  // Activties related to health information management (HIM):
+  replace paperfindhim = 0 if missing(paperfindhim)       // Zero time was coded missing.
+  replace computerfindhim = 0 if missing(computerfindhim) // Zero time was coded missing.
+  generate find_time = paperfindhim + computerfindhim
+  label variable find_time "Finding (any visit)"
+  global find_time_row_lbl "Any visit"
 
-  //// // Activties related to health information management (HIM):
   //// rename paperfindhim          paper_f_him_time // Finding
-  //// rename paperreadhim          paper_r_him_time // Reading
-  //// rename paperwritinghim       paper_w_him_time // Writing
   //// rename computerfindhim       comp_f_him_time  // Finding
+  //// rename paperreadhim          paper_r_him_time // Reading
   //// rename computerreadhim       comp_r_him_time  // Reading
+  //// rename paperwritinghim       paper_w_him_time // Writing
   //// rename computerwritinghim    comp_w_him_time  // Writing
+
+
+  
+  
   //// rename afterconsultationhim  after_consult_him_time
   //// rename talkinghim            talk_him_time
+
+
   //// // Activities related to client care.
   //// rename proceduresclientcare  proc_care_time
   //// rename talkingclientcare     talk_care_time

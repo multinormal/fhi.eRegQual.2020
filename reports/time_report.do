@@ -187,10 +187,87 @@ frame time {
 putdocx text ("Activities")
 
 `newpara'
-The following table shows relative differences in time used finding, reading, 
-and writing in the treatment versus control conditions. Values greater than 
-unity corresponding to more use of time in the treatment condition.
+The following table shows relative differences in time used on activities such 
+as finding, reading, and writing in the treatment versus control conditions.
 putdocx textblock end
+
+frame time {
+  // Determine which level of the arm variable corresponds to the intervention.
+  local int_level = "Intervention":arm
+
+  // Make the table manually.
+  local ++tbl_num
+  local title "Table `tbl_num'. TODO"
+  local note "*Sample means were computed on the log scale and then back-transformed."
+  local note "`note' †Estimates of relative differences in time used were adjusted for"
+  local note "`note' the stratification variable, cluster size, lab availability,"
+  local note "`note' and booking visit. ‡Confidence intervals and"
+  local note "`note' P-values were adjusted for possible cluster effects due to"
+  local note "`note' the cluster RCT design and observer. §Total time includes"
+  local note "`note' activities not accounted for in health information management"
+  local note "`note' and client care."
+  local n_rows = 5 + wordcount("$time_outcomes")
+  local r = 1 // A row counter.
+  putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
+  
+  // Column titles.
+  local r = `r' + 1
+  `table_cell'(`r', 2) = ("Sample means (mins)*"), halign(center) colspan(2)
+
+  local r = `r' + 1
+  `table_cell'(`r', 2) = ("Control"),                       halign(center)
+  `table_cell'(`r', 3) = ("Intervention"),                  halign(center)
+  `table_cell'(`r', 4) = ("Relative Time†"), halign(center)
+  `table_cell'(`r', 5) = ("[95% Conf. Interval]‡"),          halign(center) colspan(2)  
+  `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
+
+  // Primary outcome results.
+  local outcome_groups find_time_outcomes
+  foreach group in `outcome_groups' {
+    // Table section, with borders at top and bottom.
+    local r = `r' + 1
+    `table_cell'(`r', 1) = ("${`group'_section}"),  halign(left) colspan(8)
+    `table_cell'(`r', .),   border(top)    // Across the top of the section.
+    `table_cell'(`r', .),   border(bottom) // Across the bottom of the section.
+
+    foreach y of global `group' {
+      local r = `r' + 1
+
+      // Format the sample means.
+      local samp_mean_con = string(${samp_mean_`y'_con}, "`e_fmt'")
+      local samp_mean_int = string(${samp_mean_`y'_int}, "`e_fmt'")
+
+      // Format the estimates.
+      estimates restore `y'
+      local beta = _b[`int_level'.arm]
+      local se = _se[`int_level'.arm]
+      local z  = `beta' / `se'
+      local p = 2 * normal(-abs(`z'))
+      local p = string(`p', "`p_fmt'")
+      if `p' < 0.01 local p = "<0.001"
+      local lb = `beta' - (1.96 * `se')
+      local ub = `beta' + (1.96 * `se')
+      local rel_diff = string(exp(`beta'), "`e_fmt'")
+      local lb = string(exp(`lb'), "`e_fmt'")
+      local ub = string(exp(`ub'), "`e_fmt'")
+
+      // Make a row for these results.
+      `table_cell'(`r', 1) = ("${`y'_row_lbl}"),           halign(left)
+      `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
+      `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
+      `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
+      `table_cell'(`r', 5) = ("`lb'"),              halign(center)
+      `table_cell'(`r', 6) = ("`ub'"),              halign(center)
+      `table_cell'(`r', 7) = ("`p'"),               halign(center)
+    }
+
+    // Borders.
+    `table_cell'(2, .),   border(top)    // Across the top of the table.
+    `table_cell'(`r', .), border(bottom)
+  }
+}
+
+
 
 // TODO: Replace this table with one of the new tables?
 //// frame activities {

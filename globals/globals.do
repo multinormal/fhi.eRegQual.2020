@@ -8,14 +8,25 @@ global process_outcomes ""
 global process_outcomes $process_outcomes attendance hypertension diabetes
 global process_outcomes $process_outcomes malpresentation anemia fetalgrowth
 
-// Define the time outcomes.
+// Define the main time outcomes.
 global him_time_outcomes   him_time   him_booking_time   him_fup_time
 global care_time_outcomes  care_time  care_booking_time  care_fup_time
 global total_time_outcomes total_time total_booking_time total_fup_time
-global time_outcomes       $him_time_outcomes $care_time_outcomes $total_time_outcomes
+
+// Define the minor time outcomes.
+global find_time_outcomes find_time
+
+// Define all the time outcomes.
+global time_outcomes                $him_time_outcomes 
+global time_outcomes $time_outcomes $care_time_outcomes 
+global time_outcomes $time_outcomes $total_time_outcomes
+global time_outcomes $time_outcomes $find_time_outcomes
+
+// Table section titles.
 global him_time_outcomes_section   "Health Information Management"
 global care_time_outcomes_section  "Client Care"
 global total_time_outcomes_section "Total Time§"
+global find_time_outcomes_section "Finding"
 
 // Define predicates for the outcomes that need them.
 local is_booking     if bookingvisit == "Booking visit":bookingvisit
