@@ -98,19 +98,24 @@ frame time {
   replace computerfindhim = 0 if missing(computerfindhim) // Zero time was coded missing.
   generate find_time = paperfindhim + computerfindhim
   label variable find_time "Finding (any visit)"
-  global find_time_row_lbl "" // Any visit
+  global find_time_row_lbl "Any visit"
 
   replace paperreadhim = 0 if missing(paperreadhim)       // Zero time was coded missing.
   replace computerreadhim = 0 if missing(computerreadhim) // Zero time was coded missing.
   generate read_time = paperreadhim + computerreadhim
   label variable read_time "Reading (any visit)"
-  global read_time_row_lbl "" // Any visit
+  global read_time_row_lbl "Any visit"
 
   replace paperwritinghim = 0 if missing(paperwritinghim)       // Zero time was coded missing.
   replace computerwritinghim = 0 if missing(computerwritinghim) // Zero time was coded missing.
   generate write_time = paperwritinghim + computerwritinghim
   label variable write_time "Writing (any visit)"
-  global write_time_row_lbl "" // Any visit
+  global write_time_row_lbl "Any visit"
+
+  // Generate a version of write_time that is limited to booking visits.
+  generate write_booking_time = write_time $write_booking_time_pred
+  label variable write_booking_time "Writing (booking visit)"
+  global write_booking_time_row_lbl "Booking"
 
   //// rename afterconsultationhim  after_consult_him_time
   //// rename talkinghim            talk_him_time

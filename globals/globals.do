@@ -16,7 +16,7 @@ global total_time_outcomes total_time total_booking_time total_fup_time
 // Define the minor time outcomes.
 global find_time_outcomes find_time
 global read_time_outcomes read_time
-global write_time_outcomes write_time
+global write_time_outcomes write_time write_booking_time
 
 // Define all the time outcomes.
 global time_outcomes                $him_time_outcomes 
@@ -43,6 +43,7 @@ global care_booking_time_pred  `is_booking'
 global care_fup_time_pred      `is_not_booking'
 global total_booking_time_pred `is_booking'
 global total_fup_time_pred     `is_not_booking'
+global write_booking_time_pred `is_booking'
 
 //global time_outcomes $time_outcomes him_time consult_time care_time
 
