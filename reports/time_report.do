@@ -113,7 +113,7 @@ The following table presents comparisons of time used on health information
 management and client care.
 putdocx textblock end
 
-// Define a note for the tables (this is also used below!).
+// Define a note for the table.
 local note "*Sample means were not computed on the log scale."
 local note "`note' †Estimates of relative differences in time used were adjusted for"
 local note "`note' the stratification variable, cluster size, lab availability,"
@@ -202,6 +202,14 @@ putdocx text ("Activities")
 The following table shows relative differences in time used on activities such 
 as finding, reading, and writing in the treatment versus control conditions.
 putdocx textblock end
+
+// Define a note for the table.
+local note "*Sample means were not computed on the log scale."
+local note "`note' †Estimates of relative differences in time used were adjusted for"
+local note "`note' the stratification variable, cluster size, lab availability,"
+local note "`note' and booking visit. ‡Confidence intervals and"
+local note "`note' P-values were adjusted for possible cluster effects due to"
+local note "`note' the cluster RCT design and observer."
 
 frame time {
   // Determine which level of the arm variable corresponds to the intervention.
