@@ -90,7 +90,10 @@ frame time {
   label variable total_fup_time "Total time (follow-up visit)"
   global total_fup_time_row_lbl "Follow-up"
 
-  // Activties related to health information management (HIM):
+  // Activties related to health information management (HIM). We sum the time
+  // spent using paper and computer because in the control arm it was not
+  // possible to use a computer, and in the intervention arm it was also
+  // possible to write on paper.
   replace paperfindhim = 0 if missing(paperfindhim)       // Zero time was coded missing.
   replace computerfindhim = 0 if missing(computerfindhim) // Zero time was coded missing.
   generate find_time = paperfindhim + computerfindhim
@@ -103,14 +106,12 @@ frame time {
   label variable read_time "Reading (any visit)"
   global read_time_row_lbl "" // Any visit
 
-  //// rename paperreadhim          paper_r_him_time // Reading
-  //// rename computerreadhim       comp_r_him_time  // Reading
-  //// rename paperwritinghim       paper_w_him_time // Writing
-  //// rename computerwritinghim    comp_w_him_time  // Writing
+  replace paperwritinghim = 0 if missing(paperwritinghim)       // Zero time was coded missing.
+  replace computerwritinghim = 0 if missing(computerwritinghim) // Zero time was coded missing.
+  generate write_time = paperwritinghim + computerwritinghim
+  label variable write_time "Writing (any visit)"
+  global write_time_row_lbl "" // Any visit
 
-
-  
-  
   //// rename afterconsultationhim  after_consult_him_time
   //// rename talkinghim            talk_him_time
 

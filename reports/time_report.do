@@ -186,6 +186,9 @@ frame time {
   }
 }
 
+// Show next table on next page.
+putdocx pagebreak
+
 `subhead'
 putdocx text ("Activities")
 
@@ -217,7 +220,7 @@ frame time {
   `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
 
   // Primary outcome results.
-  local outcome_groups find_time_outcomes read_time_outcomes
+  local outcome_groups find_time_outcomes read_time_outcomes write_time_outcomes
   foreach group in `outcome_groups' {
     // Table section, with borders at top and bottom.
     local r = `r' + 1
