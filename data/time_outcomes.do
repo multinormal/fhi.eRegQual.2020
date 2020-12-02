@@ -95,10 +95,14 @@ frame time {
   replace computerfindhim = 0 if missing(computerfindhim) // Zero time was coded missing.
   generate find_time = paperfindhim + computerfindhim
   label variable find_time "Finding (any visit)"
-  global find_time_row_lbl "Any visit"
+  global find_time_row_lbl "" // Any visit
 
-  //// rename paperfindhim          paper_f_him_time // Finding
-  //// rename computerfindhim       comp_f_him_time  // Finding
+  replace paperreadhim = 0 if missing(paperreadhim)       // Zero time was coded missing.
+  replace computerreadhim = 0 if missing(computerreadhim) // Zero time was coded missing.
+  generate read_time = paperreadhim + computerreadhim
+  label variable read_time "Reading (any visit)"
+  global read_time_row_lbl "" // Any visit
+
   //// rename paperreadhim          paper_r_him_time // Reading
   //// rename computerreadhim       comp_r_him_time  // Reading
   //// rename paperwritinghim       paper_w_him_time // Writing

@@ -107,6 +107,17 @@ The following table presents comparisons of time used on health information
 management and client care.
 putdocx textblock end
 
+// Define a note for the tables (this is also used below!).
+local note "*Sample means were not computed on the log scale."
+local note "`note' †Estimates of relative differences in time used were adjusted for"
+local note "`note' the stratification variable, cluster size, lab availability,"
+local note "`note' and booking visit. ‡Confidence intervals and"
+local note "`note' P-values were adjusted for possible cluster effects due to"
+local note "`note' the cluster RCT design and observer. §Total time includes"
+local note "`note' activities not accounted for in health information management"
+local note "`note' and client care."
+
+// Make the table.
 frame time {
   // Determine which level of the arm variable corresponds to the intervention.
   local int_level = "Intervention":arm
@@ -114,14 +125,6 @@ frame time {
   // Make the table manually.
   local ++tbl_num
   local title "Table `tbl_num'. TODO"
-  local note "*Sample means were computed on the log scale and then back-transformed."
-  local note "`note' †Estimates of relative differences in time used were adjusted for"
-  local note "`note' the stratification variable, cluster size, lab availability,"
-  local note "`note' and booking visit. ‡Confidence intervals and"
-  local note "`note' P-values were adjusted for possible cluster effects due to"
-  local note "`note' the cluster RCT design and observer. §Total time includes"
-  local note "`note' activities not accounted for in health information management"
-  local note "`note' and client care."
   local n_rows = 5 + wordcount("$time_outcomes")
   local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
@@ -198,14 +201,6 @@ frame time {
   // Make the table manually.
   local ++tbl_num
   local title "Table `tbl_num'. TODO"
-  local note "*Sample means were computed on the log scale and then back-transformed."
-  local note "`note' †Estimates of relative differences in time used were adjusted for"
-  local note "`note' the stratification variable, cluster size, lab availability,"
-  local note "`note' and booking visit. ‡Confidence intervals and"
-  local note "`note' P-values were adjusted for possible cluster effects due to"
-  local note "`note' the cluster RCT design and observer. §Total time includes"
-  local note "`note' activities not accounted for in health information management"
-  local note "`note' and client care."
   local n_rows = 5 + wordcount("$time_outcomes")
   local r = 1 // A row counter.
   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
@@ -222,7 +217,7 @@ frame time {
   `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
 
   // Primary outcome results.
-  local outcome_groups find_time_outcomes
+  local outcome_groups find_time_outcomes read_time_outcomes
   foreach group in `outcome_groups' {
     // Table section, with borders at top and bottom.
     local r = `r' + 1

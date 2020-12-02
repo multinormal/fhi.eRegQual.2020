@@ -12,9 +12,11 @@ frame time {
   foreach y of global time_outcomes {
     // Compute the sample means (recall that data were logged). As in the model,
     // some sample means must be limited to certain conditions.
-    mean `y' ${`y'_pred}, over(arm)
-    global samp_mean_`y'_con = exp(e(b)["y1", "`y'@`con_level'.arm"])
-    global samp_mean_`y'_int = exp(e(b)["y1", "`y'@`int_level'.arm"])
+    tempvar x
+    generate `x' = exp(`y') // Un-log the time data for this outcome.
+    mean `x' ${`y'_pred}, over(arm)
+    global samp_mean_`y'_con = e(b)["y1", "`x'@`con_level'.arm"]
+    global samp_mean_`y'_int = e(b)["y1", "`x'@`int_level'.arm"]
 
     // Fit the model for each variable of interest, storing the estimates.
     `model'
