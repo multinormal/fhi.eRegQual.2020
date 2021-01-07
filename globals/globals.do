@@ -15,8 +15,8 @@ global care_time_outcomes  care_time  care_booking_time  care_fup_time
 global main_time_outcomes $total_time_outcomes $him_time_outcomes $care_time_outcomes
 
 // Define the minor time outcomes.
-global find_time_outcomes          find_time
-global read_time_outcomes          read_time
+global find_time_outcomes          find_time  find_booking_time  find_fup_time
+global read_time_outcomes          read_time  read_booking_time  read_fup_time
 global write_time_outcomes         write_time write_booking_time write_fup_time
 // TODO: REINSTATE global post_cons_time_outcomes     post_cons_time
 global minor_time_outcomes $find_time_outcomes $read_time_outcomes $write_time_outcomes
@@ -43,12 +43,17 @@ global care_booking_time_pred  `is_booking'
 global care_fup_time_pred      `is_not_booking'
 global total_booking_time_pred `is_booking'
 global total_fup_time_pred     `is_not_booking'
+global find_booking_time_pred  `is_booking'
+global find_fup_time_pred      `is_not_booking'
+global read_booking_time_pred  `is_booking' 
+global read_fup_time_pred      `is_not_booking'
 global write_booking_time_pred `is_booking'
 global write_fup_time_pred     `is_not_booking'
 
 //global time_outcomes $time_outcomes him_time consult_time care_time
 
 // Define the activities that are of interest.
+// TODO: Cherck if this should be commented out.
 //// global activities              paper_f_him paper_r_him paper_w_him
 //// global activities $activities  comp_f_him  comp_r_him  comp_w_him
 //// global activities $activities  after_consult_him
@@ -117,7 +122,7 @@ global datasignature_anemia              "6367:51(74410):3453863737:2485498443"
 global datasignature_fetalgrowth         "6367:37(83879):2470058122:813121498"
 
 // Define data signature for the time data.
-global datasignature_time                "241:26(73043):3342897650:3191572784"
+global datasignature_time                "241:28(45286):3856031949:726516029"
 
 // Define recoding rules for the arm variables of the process outcomes; the 
 // coding of control and intervention vary by outcome. We will adopt the 

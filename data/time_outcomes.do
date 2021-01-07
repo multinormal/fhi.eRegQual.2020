@@ -100,11 +100,31 @@ frame time {
   label variable find_time "Finding (any visit)"
   global find_time_row_lbl "Any visit"
 
+  // Generate a version of find_time that is limited to booking visits.
+  generate find_booking_time = find_time $find_booking_time_pred
+  label variable find_booking_time "Finding (booking visit)"
+  global find_booking_time_row_lbl "Booking"
+
+  // Generate a version of find_time that is limited to followup visits.
+  generate find_fup_time = find_time $find_fup_time_pred
+  label variable find_fup_time "Finding (follow-up visit)"
+  global find_fup_time_row_lbl "Follow-up"
+
   replace paperreadhim = 0 if missing(paperreadhim)       // Zero time was coded missing.
   replace computerreadhim = 0 if missing(computerreadhim) // Zero time was coded missing.
   generate read_time = paperreadhim + computerreadhim
   label variable read_time "Reading (any visit)"
   global read_time_row_lbl "Any visit"
+
+  // Generate a version of read_time that is limited to booking visits.
+  generate read_booking_time = read_time $read_booking_time_pred
+  label variable read_booking_time "Reading (booking visit)"
+  global read_booking_time_row_lbl "Booking"
+
+  // Generate a version of read_time that is limited to followup visits.
+  generate read_fup_time = read_time $read_fup_time_pred
+  label variable read_fup_time "Reading (follow-up visit)"
+  global read_fup_time_row_lbl "Follow-up"
 
   replace paperwritinghim = 0 if missing(paperwritinghim)       // Zero time was coded missing.
   replace computerwritinghim = 0 if missing(computerwritinghim) // Zero time was coded missing.
