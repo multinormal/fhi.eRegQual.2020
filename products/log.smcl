@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 7 Jan 2021, 16:47:26
+ {txt}opened on:  {res} 7 Jan 2021, 17:07:47
 {txt}
 {com}. 
 . // Set up Stata.
@@ -1553,7 +1553,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 . // Define a note for the table.
 . local note "*Sample means were not computed on the log scale."
 {txt}
-{com}. local note "`note' †Estimates of relative differences in time used were adjusted for"
+{com}. local note "`note' †Estimates of relative time use were adjusted for"
 {txt}
 {com}. local note "`note' the stratification variable, cluster size, lab availability,"
 {txt}
@@ -1618,7 +1618,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 {txt} 15{com}.       local z  = `beta' / `se'
 {txt} 16{com}.       local p = 2 * normal(-abs(`z'))
 {txt} 17{com}.       local p = string(`p', "`p_fmt'")
-{txt} 18{com}.       if `p' < 0.01 local p = "<0.001"
+{txt} 18{com}.       if `p' < 0.001 local p = "<0.001"
 {txt} 19{com}.       local lb = `beta' - (1.96 * `se')
 {txt} 20{com}.       local ub = `beta' + (1.96 * `se')
 {txt} 21{com}.       local rel_diff = string(exp(`beta'), "`e_fmt'")
@@ -1631,8 +1631,8 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 {txt} 26{com}.       `table_cell'(`r', 3) = ("`samp_mean_int'"),  halign(center)
 {txt} 27{com}.       `table_cell'(`r', 4) = ("`samp_rel_time'"),  halign(center)
 {txt} 28{com}.       `table_cell'(`r', 5) = ("`rel_diff'"),       halign(center)
-{txt} 29{com}.       `table_cell'(`r', 6) = ("`lb'"),             halign(center)
-{txt} 30{com}.       `table_cell'(`r', 7) = ("`ub'"),             halign(center)
+{txt} 29{com}.       `table_cell'(`r', 6) = ("[`lb'"),            halign(right)
+{txt} 30{com}.       `table_cell'(`r', 7) = ("`ub']"),            halign(left)
 {txt} 31{com}.       `table_cell'(`r', 8) = ("`p'"),              halign(center)
 {txt} 32{com}.     {c )-}
 {txt} 33{com}. 
@@ -1667,7 +1667,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 . // Define a note for the table.
 . local note "*Sample means were not computed on the log scale."
 {txt}
-{com}. local note "`note' †Estimates of relative differences in time used were adjusted for"
+{com}. local note "`note' †Estimates of relative time use were adjusted for"
 {txt}
 {com}. local note "`note' the stratification variable, cluster size, lab availability,"
 {txt}
@@ -1728,7 +1728,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 {txt} 15{com}.       local z  = `beta' / `se'
 {txt} 16{com}.       local p = 2 * normal(-abs(`z'))
 {txt} 17{com}.       local p = string(`p', "`p_fmt'")
-{txt} 18{com}.       if `p' < 0.01 local p = "<0.001"
+{txt} 18{com}.       if `p' < 0.001 local p = "<0.001"
 {txt} 19{com}.       local lb = `beta' - (1.96 * `se')
 {txt} 20{com}.       local ub = `beta' + (1.96 * `se')
 {txt} 21{com}.       local rel_diff = string(exp(`beta'), "`e_fmt'")
@@ -1741,8 +1741,8 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 {txt} 26{com}.       `table_cell'(`r', 3) = ("`samp_mean_int'"), halign(center)
 {txt} 27{com}.       `table_cell'(`r', 4) = ("`samp_rel_time'"), halign(center)
 {txt} 28{com}.       `table_cell'(`r', 5) = ("`rel_diff'"),      halign(center)
-{txt} 29{com}.       `table_cell'(`r', 6) = ("`lb'"),            halign(center)
-{txt} 30{com}.       `table_cell'(`r', 7) = ("`ub'"),            halign(center)
+{txt} 29{com}.       `table_cell'(`r', 6) = ("[`lb'"),           halign(right)
+{txt} 30{com}.       `table_cell'(`r', 7) = ("`ub']"),           halign(left)
 {txt} 31{com}.       `table_cell'(`r', 8) = ("`p'"),             halign(center)
 {txt} 32{com}.     {c )-}
 {txt} 33{com}. 

@@ -115,7 +115,7 @@ putdocx textblock end
 
 // Define a note for the table.
 local note "*Sample means were not computed on the log scale."
-local note "`note' †Estimates of relative differences in time used were adjusted for"
+local note "`note' †Estimates of relative time use were adjusted for"
 local note "`note' the stratification variable, cluster size, lab availability,"
 local note "`note' and booking visit. ‡Confidence intervals and"
 local note "`note' P-values were adjusted for possible cluster effects due to"
@@ -173,7 +173,7 @@ frame time {
       local z  = `beta' / `se'
       local p = 2 * normal(-abs(`z'))
       local p = string(`p', "`p_fmt'")
-      if `p' < 0.01 local p = "<0.001"
+      if `p' < 0.001 local p = "<0.001"
       local lb = `beta' - (1.96 * `se')
       local ub = `beta' + (1.96 * `se')
       local rel_diff = string(exp(`beta'), "`e_fmt'")
@@ -186,8 +186,8 @@ frame time {
       `table_cell'(`r', 3) = ("`samp_mean_int'"),  halign(center)
       `table_cell'(`r', 4) = ("`samp_rel_time'"),  halign(center)
       `table_cell'(`r', 5) = ("`rel_diff'"),       halign(center)
-      `table_cell'(`r', 6) = ("`lb'"),             halign(center)
-      `table_cell'(`r', 7) = ("`ub'"),             halign(center)
+      `table_cell'(`r', 6) = ("[`lb'"),            halign(right)
+      `table_cell'(`r', 7) = ("`ub']"),            halign(left)
       `table_cell'(`r', 8) = ("`p'"),              halign(center)
     }
 
@@ -210,7 +210,7 @@ putdocx textblock end
 
 // Define a note for the table.
 local note "*Sample means were not computed on the log scale."
-local note "`note' †Estimates of relative differences in time used were adjusted for"
+local note "`note' †Estimates of relative time use were adjusted for"
 local note "`note' the stratification variable, cluster size, lab availability,"
 local note "`note' and booking visit. ‡Confidence intervals and"
 local note "`note' P-values were adjusted for possible cluster effects due to"
@@ -266,7 +266,7 @@ frame time {
       local z  = `beta' / `se'
       local p = 2 * normal(-abs(`z'))
       local p = string(`p', "`p_fmt'")
-      if `p' < 0.01 local p = "<0.001"
+      if `p' < 0.001 local p = "<0.001"
       local lb = `beta' - (1.96 * `se')
       local ub = `beta' + (1.96 * `se')
       local rel_diff = string(exp(`beta'), "`e_fmt'")
@@ -279,8 +279,8 @@ frame time {
       `table_cell'(`r', 3) = ("`samp_mean_int'"), halign(center)
       `table_cell'(`r', 4) = ("`samp_rel_time'"), halign(center)
       `table_cell'(`r', 5) = ("`rel_diff'"),      halign(center)
-      `table_cell'(`r', 6) = ("`lb'"),            halign(center)
-      `table_cell'(`r', 7) = ("`ub'"),            halign(center)
+      `table_cell'(`r', 6) = ("[`lb'"),           halign(right)
+      `table_cell'(`r', 7) = ("`ub']"),           halign(left)
       `table_cell'(`r', 8) = ("`p'"),             halign(center)
     }
 
