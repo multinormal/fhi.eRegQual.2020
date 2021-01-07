@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 2 Dec 2020, 14:14:54
+ {txt}opened on:  {res} 7 Jan 2021, 16:47:26
 {txt}
 {com}. 
 . // Set up Stata.
@@ -475,7 +475,7 @@
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000001@arm {c |}
+c.__000000@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    15.56{col 28}{space 2}     0.90{col 39}{space 5}    13.80{col 53}{space 3}    17.33
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    11.99{col 28}{space 2}     0.60{col 39}{space 5}    10.80{col 53}{space 3}    13.17
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -540,7 +540,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.72{col 28}{space 2}     0.07{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000002@arm {c |}
+c.__000001@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    29.36{col 28}{space 2}     2.09{col 39}{space 5}    25.09{col 53}{space 3}    33.63
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    24.80{col 28}{space 2}     1.81{col 39}{space 5}    21.08{col 53}{space 3}    28.51
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -606,7 +606,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000003@arm {c |}
+c.__000002@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    12.91{col 28}{space 2}     0.74{col 39}{space 5}    11.46{col 53}{space 3}    14.37
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    10.68{col 28}{space 2}     0.50{col 39}{space 5}     9.70{col 53}{space 3}    11.66
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -670,7 +670,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.33{col 28}{space 2}     0.01{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000004@arm {c |}
+c.__000003@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     9.84{col 28}{space 2}     0.74{col 39}{space 5}     8.39{col 53}{space 3}    11.30
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     6.64{col 28}{space 2}     0.39{col 39}{space 5}     5.88{col 53}{space 3}     7.41
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -735,7 +735,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.77{col 28}{space 2}     0.12{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000005@arm {c |}
+c.__000004@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    18.91{col 28}{space 2}     2.24{col 39}{space 5}    14.33{col 53}{space 3}    23.50
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    15.26{col 28}{space 2}     2.17{col 39}{space 5}    10.82{col 53}{space 3}    19.69
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -803,7 +803,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000006@arm {c |}
+c.__000005@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     8.10{col 28}{space 2}     0.64{col 39}{space 5}     6.84{col 53}{space 3}     9.37
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     5.72{col 28}{space 2}     0.25{col 39}{space 5}     5.22{col 53}{space 3}     6.22
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -868,7 +868,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.86{col 28}{space 2}     0.01{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000007@arm {c |}
+c.__000006@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     4.91{col 28}{space 2}     0.33{col 39}{space 5}     4.27{col 53}{space 3}     5.56
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     5.01{col 28}{space 2}     0.37{col 39}{space 5}     4.29{col 53}{space 3}     5.74
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -933,7 +933,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     0.52{col 28}{space 2}     0.18{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000008@arm {c |}
+c.__000007@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     8.56{col 28}{space 2}     1.01{col 39}{space 5}     6.50{col 53}{space 3}    10.62
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     8.82{col 28}{space 2}     1.43{col 39}{space 5}     5.90{col 53}{space 3}    11.73
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1000,7 +1000,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000009@arm {c |}
+c.__000008@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     4.22{col 28}{space 2}     0.29{col 39}{space 5}     3.64{col 53}{space 3}     4.79
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     4.66{col 28}{space 2}     0.36{col 39}{space 5}     3.94{col 53}{space 3}     5.37
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1064,7 +1064,7 @@ Booking visit  {c |}{col 16}{res}{space 2}    -0.97{col 28}{space 2}     0.02{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000A@arm {c |}
+c.__000009@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     0.58{col 28}{space 2}     0.07{col 39}{space 5}     0.44{col 53}{space 3}     0.73
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     0.86{col 28}{space 2}     0.08{col 39}{space 5}     0.70{col 53}{space 3}     1.01
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1130,7 +1130,7 @@ Booking visit  {c |}{col 16}{res}{space 2}    -1.94{col 28}{space 2}     2.63{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000B@arm {c |}
+c.__00000A@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     0.74{col 28}{space 2}     0.13{col 39}{space 5}     0.49{col 53}{space 3}     1.00
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     0.25{col 28}{space 2}     0.05{col 39}{space 5}     0.16{col 53}{space 3}     0.34
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1195,7 +1195,7 @@ Booking visit  {c |}{col 16}{res}{space 2}    -0.41{col 28}{space 2}     0.98{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000C@arm {c |}
+c.__00000B@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     6.23{col 28}{space 2}     0.48{col 39}{space 5}     5.28{col 53}{space 3}     7.17
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     5.43{col 28}{space 2}     0.37{col 39}{space 5}     4.70{col 53}{space 3}     6.16
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1262,7 +1262,7 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.27{col 28}{space 2}     0.26{co
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000D@arm {c |}
+c.__00000C@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    13.34{col 28}{space 2}     1.48{col 39}{space 5}    10.32{col 53}{space 3}    16.37
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    13.73{col 28}{space 2}     2.14{col 39}{space 5}     9.35{col 53}{space 3}    18.12
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1330,7 +1330,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000E@arm {c |}
+c.__00000D@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     4.86{col 28}{space 2}     0.36{col 39}{space 5}     4.15{col 53}{space 3}     5.57
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     4.54{col 28}{space 2}     0.23{col 39}{space 5}     4.08{col 53}{space 3}     4.99
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1578,18 +1578,20 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 .   local title "Table `tbl_num'. Analysis of total time use, and time use on health information management and client care."
 .   local n_rows = 5 + wordcount("$main_time_outcomes")
 .   local r = 1 // A row counter.
-.   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
+.   putdocx table tbl_`tbl_num' = (`n_rows', 8), title("`title'") note("`note'") border(all, nil)
 {res}{com}.   
 .   // Column titles.
 .   local r = `r' + 1
 .   `table_cell'(`r', 2) = ("Sample means (mins)*"), halign(center) colspan(2)
+{res}{com}.   `table_cell'(`r', 3) = ("Relative time (intervention / control)"),  halign(center) colspan(5)
 {res}{com}. 
 .   local r = `r' + 1
-.   `table_cell'(`r', 2) = ("Control"),                       halign(center)
-{res}{com}.   `table_cell'(`r', 3) = ("Intervention"),                  halign(center)
-{res}{com}.   `table_cell'(`r', 4) = ("Relative Time†"), halign(center)
-{res}{com}.   `table_cell'(`r', 5) = ("[95% Conf. Interval]‡"),          halign(center) colspan(2)  
-{res}{com}.   `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
+.   `table_cell'(`r', 2) = ("Control"),               halign(center)
+{res}{com}.   `table_cell'(`r', 3) = ("Intervention"),          halign(center)
+{res}{com}.   `table_cell'(`r', 4) = ("Sample"),                halign(center)
+{res}{com}.   `table_cell'(`r', 5) = ("Adjusted†"),             halign(center)
+{res}{com}.   `table_cell'(`r', 6) = ("[95% CI]‡"), halign(center) colspan(2)  
+{res}{com}.   `table_cell'(`r', 7) = ("P-value‡"),              halign(center)
 {res}{com}. 
 .   // Primary outcome results.
 .   local outcome_groups total_time_outcomes him_time_outcomes care_time_outcomes
@@ -1606,35 +1608,38 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 .       // Format the sample means.
 .       local samp_mean_con = string(${c -(}samp_mean_`y'_con{c )-}, "`e_fmt'")
 {txt}  9{com}.       local samp_mean_int = string(${c -(}samp_mean_`y'_int{c )-}, "`e_fmt'")
-{txt} 10{com}. 
+{txt} 10{com}.       local samp_rel_time = ${c -(}samp_mean_`y'_int{c )-} / ${c -(}samp_mean_`y'_con{c )-}
+{txt} 11{com}.       local samp_rel_time = string(`samp_rel_time', "`e_fmt'")
+{txt} 12{com}. 
 .       // Format the estimates.
 .       estimates restore `y'
-{txt} 11{com}.       local beta = _b[`int_level'.arm]
-{txt} 12{com}.       local se = _se[`int_level'.arm]
-{txt} 13{com}.       local z  = `beta' / `se'
-{txt} 14{com}.       local p = 2 * normal(-abs(`z'))
-{txt} 15{com}.       local p = string(`p', "`p_fmt'")
-{txt} 16{com}.       if `p' < 0.01 local p = "<0.001"
-{txt} 17{com}.       local lb = `beta' - (1.96 * `se')
-{txt} 18{com}.       local ub = `beta' + (1.96 * `se')
-{txt} 19{com}.       local rel_diff = string(exp(`beta'), "`e_fmt'")
-{txt} 20{com}.       local lb = string(exp(`lb'), "`e_fmt'")
-{txt} 21{com}.       local ub = string(exp(`ub'), "`e_fmt'")
-{txt} 22{com}. 
+{txt} 13{com}.       local beta = _b[`int_level'.arm]
+{txt} 14{com}.       local se = _se[`int_level'.arm]
+{txt} 15{com}.       local z  = `beta' / `se'
+{txt} 16{com}.       local p = 2 * normal(-abs(`z'))
+{txt} 17{com}.       local p = string(`p', "`p_fmt'")
+{txt} 18{com}.       if `p' < 0.01 local p = "<0.001"
+{txt} 19{com}.       local lb = `beta' - (1.96 * `se')
+{txt} 20{com}.       local ub = `beta' + (1.96 * `se')
+{txt} 21{com}.       local rel_diff = string(exp(`beta'), "`e_fmt'")
+{txt} 22{com}.       local lb = string(exp(`lb'), "`e_fmt'")
+{txt} 23{com}.       local ub = string(exp(`ub'), "`e_fmt'")
+{txt} 24{com}. 
 .       // Make a row for these results.
-.       `table_cell'(`r', 1) = ("${c -(}`y'_row_lbl{c )-}"),           halign(left)
-{txt} 23{com}.       `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
-{txt} 24{com}.       `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
-{txt} 25{com}.       `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
-{txt} 26{com}.       `table_cell'(`r', 5) = ("`lb'"),              halign(center)
-{txt} 27{com}.       `table_cell'(`r', 6) = ("`ub'"),              halign(center)
-{txt} 28{com}.       `table_cell'(`r', 7) = ("`p'"),               halign(center)
-{txt} 29{com}.     {c )-}
-{txt} 30{com}. 
+.       `table_cell'(`r', 1) = ("${c -(}`y'_row_lbl{c )-}"),   halign(left)
+{txt} 25{com}.       `table_cell'(`r', 2) = ("`samp_mean_con'"),  halign(center)
+{txt} 26{com}.       `table_cell'(`r', 3) = ("`samp_mean_int'"),  halign(center)
+{txt} 27{com}.       `table_cell'(`r', 4) = ("`samp_rel_time'"),  halign(center)
+{txt} 28{com}.       `table_cell'(`r', 5) = ("`rel_diff'"),       halign(center)
+{txt} 29{com}.       `table_cell'(`r', 6) = ("`lb'"),             halign(center)
+{txt} 30{com}.       `table_cell'(`r', 7) = ("`ub'"),             halign(center)
+{txt} 31{com}.       `table_cell'(`r', 8) = ("`p'"),              halign(center)
+{txt} 32{com}.     {c )-}
+{txt} 33{com}. 
 .     // Borders.
 .     `table_cell'(2, .),   border(top)    // Across the top of the table.
-{txt} 31{com}.     `table_cell'(`r', .), border(bottom)
-{txt} 32{com}.   {c )-}
+{txt} 34{com}.     `table_cell'(`r', .), border(bottom)
+{txt} 35{com}.   {c )-}
 {res}{txt}(results {stata estimates replay total_time:total_time} are active now)
 {res}{txt}(results {stata estimates replay total_booking_time:total_booking_time} are active now)
 {res}{txt}(results {stata estimates replay total_fup_time:total_fup_time} are active now)
@@ -1682,18 +1687,20 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 .   local title "Table `tbl_num'. Analysis of time used finding, reading, and writing."
 .   local n_rows = 5 + wordcount("$minor_time_outcomes")
 .   local r = 1 // A row counter.
-.   putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
+.   putdocx table tbl_`tbl_num' = (`n_rows', 8), title("`title'") note("`note'") border(all, nil)
 {res}{com}.   
 .   // Column titles.
 .   local r = `r' + 1
 .   `table_cell'(`r', 2) = ("Sample means (mins)*"), halign(center) colspan(2)
+{res}{com}.   `table_cell'(`r', 3) = ("Relative time (intervention / control)"),  halign(center) colspan(5)
 {res}{com}. 
 .   local r = `r' + 1
-.   `table_cell'(`r', 2) = ("Control"),                       halign(center)
-{res}{com}.   `table_cell'(`r', 3) = ("Intervention"),                  halign(center)
-{res}{com}.   `table_cell'(`r', 4) = ("Relative Time†"), halign(center)
-{res}{com}.   `table_cell'(`r', 5) = ("[95% Conf. Interval]‡"),          halign(center) colspan(2)  
-{res}{com}.   `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
+.   `table_cell'(`r', 2) = ("Control"),      halign(center)
+{res}{com}.   `table_cell'(`r', 3) = ("Intervention"), halign(center)
+{res}{com}.   `table_cell'(`r', 4) = ("Sample"),       halign(center)
+{res}{com}.   `table_cell'(`r', 5) = ("Adjusted†"),    halign(center)
+{res}{com}.   `table_cell'(`r', 6) = ("[95% CI]‡"),    halign(center) colspan(2)  
+{res}{com}.   `table_cell'(`r', 7) = ("P-value‡"),     halign(center)
 {res}{com}. 
 .   // Primary outcome results.
 .   local outcome_groups                  find_time_outcomes read_time_outcomes 
@@ -1711,35 +1718,38 @@ Booking visit  {c |}{col 16}{res}{space 2}     1.22{col 28}{space 2}     0.10{co
 .       // Format the sample means.
 .       local samp_mean_con = string(${c -(}samp_mean_`y'_con{c )-}, "`e_fmt'")
 {txt}  9{com}.       local samp_mean_int = string(${c -(}samp_mean_`y'_int{c )-}, "`e_fmt'")
-{txt} 10{com}. 
+{txt} 10{com}.       local samp_rel_time = ${c -(}samp_mean_`y'_int{c )-} / ${c -(}samp_mean_`y'_con{c )-}
+{txt} 11{com}.       local samp_rel_time = string(`samp_rel_time', "`e_fmt'")
+{txt} 12{com}. 
 .       // Format the estimates.
 .       estimates restore `y'
-{txt} 11{com}.       local beta = _b[`int_level'.arm]
-{txt} 12{com}.       local se = _se[`int_level'.arm]
-{txt} 13{com}.       local z  = `beta' / `se'
-{txt} 14{com}.       local p = 2 * normal(-abs(`z'))
-{txt} 15{com}.       local p = string(`p', "`p_fmt'")
-{txt} 16{com}.       if `p' < 0.01 local p = "<0.001"
-{txt} 17{com}.       local lb = `beta' - (1.96 * `se')
-{txt} 18{com}.       local ub = `beta' + (1.96 * `se')
-{txt} 19{com}.       local rel_diff = string(exp(`beta'), "`e_fmt'")
-{txt} 20{com}.       local lb = string(exp(`lb'), "`e_fmt'")
-{txt} 21{com}.       local ub = string(exp(`ub'), "`e_fmt'")
-{txt} 22{com}. 
+{txt} 13{com}.       local beta = _b[`int_level'.arm]
+{txt} 14{com}.       local se = _se[`int_level'.arm]
+{txt} 15{com}.       local z  = `beta' / `se'
+{txt} 16{com}.       local p = 2 * normal(-abs(`z'))
+{txt} 17{com}.       local p = string(`p', "`p_fmt'")
+{txt} 18{com}.       if `p' < 0.01 local p = "<0.001"
+{txt} 19{com}.       local lb = `beta' - (1.96 * `se')
+{txt} 20{com}.       local ub = `beta' + (1.96 * `se')
+{txt} 21{com}.       local rel_diff = string(exp(`beta'), "`e_fmt'")
+{txt} 22{com}.       local lb = string(exp(`lb'), "`e_fmt'")
+{txt} 23{com}.       local ub = string(exp(`ub'), "`e_fmt'")
+{txt} 24{com}. 
 .       // Make a row for these results.
-.       `table_cell'(`r', 1) = ("${c -(}`y'_row_lbl{c )-}"),           halign(left)
-{txt} 23{com}.       `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
-{txt} 24{com}.       `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
-{txt} 25{com}.       `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
-{txt} 26{com}.       `table_cell'(`r', 5) = ("`lb'"),              halign(center)
-{txt} 27{com}.       `table_cell'(`r', 6) = ("`ub'"),              halign(center)
-{txt} 28{com}.       `table_cell'(`r', 7) = ("`p'"),               halign(center)
-{txt} 29{com}.     {c )-}
-{txt} 30{com}. 
+.       `table_cell'(`r', 1) = ("${c -(}`y'_row_lbl{c )-}"),  halign(left)
+{txt} 25{com}.       `table_cell'(`r', 2) = ("`samp_mean_con'"), halign(center)
+{txt} 26{com}.       `table_cell'(`r', 3) = ("`samp_mean_int'"), halign(center)
+{txt} 27{com}.       `table_cell'(`r', 4) = ("`samp_rel_time'"), halign(center)
+{txt} 28{com}.       `table_cell'(`r', 5) = ("`rel_diff'"),      halign(center)
+{txt} 29{com}.       `table_cell'(`r', 6) = ("`lb'"),            halign(center)
+{txt} 30{com}.       `table_cell'(`r', 7) = ("`ub'"),            halign(center)
+{txt} 31{com}.       `table_cell'(`r', 8) = ("`p'"),             halign(center)
+{txt} 32{com}.     {c )-}
+{txt} 33{com}. 
 .     // Borders.
 .     `table_cell'(2, .),   border(top)    // Across the top of the table.
-{txt} 31{com}.     `table_cell'(`r', .), border(bottom)
-{txt} 32{com}.   {c )-}
+{txt} 34{com}.     `table_cell'(`r', .), border(bottom)
+{txt} 35{com}.   {c )-}
 {res}{txt}(results {stata estimates replay find_time:find_time} are active now)
 {res}{txt}(results {stata estimates replay read_time:read_time} are active now)
 {res}{txt}(results {stata estimates replay write_time:write_time} are active now)

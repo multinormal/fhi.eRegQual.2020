@@ -133,18 +133,20 @@ frame time {
   local title "Table `tbl_num'. Analysis of total time use, and time use on health information management and client care."
   local n_rows = 5 + wordcount("$main_time_outcomes")
   local r = 1 // A row counter.
-  putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
+  putdocx table tbl_`tbl_num' = (`n_rows', 8), title("`title'") note("`note'") border(all, nil)
   
   // Column titles.
   local r = `r' + 1
   `table_cell'(`r', 2) = ("Sample means (mins)*"), halign(center) colspan(2)
+  `table_cell'(`r', 3) = ("Relative time (intervention / control)"),  halign(center) colspan(5)
 
   local r = `r' + 1
-  `table_cell'(`r', 2) = ("Control"),                       halign(center)
-  `table_cell'(`r', 3) = ("Intervention"),                  halign(center)
-  `table_cell'(`r', 4) = ("Relative Time†"), halign(center)
-  `table_cell'(`r', 5) = ("[95% Conf. Interval]‡"),          halign(center) colspan(2)  
-  `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
+  `table_cell'(`r', 2) = ("Control"),               halign(center)
+  `table_cell'(`r', 3) = ("Intervention"),          halign(center)
+  `table_cell'(`r', 4) = ("Sample"),                halign(center)
+  `table_cell'(`r', 5) = ("Adjusted†"),             halign(center)
+  `table_cell'(`r', 6) = ("[95% CI]‡"), halign(center) colspan(2)  
+  `table_cell'(`r', 7) = ("P-value‡"),              halign(center)
 
   // Primary outcome results.
   local outcome_groups total_time_outcomes him_time_outcomes care_time_outcomes
@@ -161,6 +163,8 @@ frame time {
       // Format the sample means.
       local samp_mean_con = string(${samp_mean_`y'_con}, "`e_fmt'")
       local samp_mean_int = string(${samp_mean_`y'_int}, "`e_fmt'")
+      local samp_rel_time = ${samp_mean_`y'_int} / ${samp_mean_`y'_con}
+      local samp_rel_time = string(`samp_rel_time', "`e_fmt'")
 
       // Format the estimates.
       estimates restore `y'
@@ -177,13 +181,14 @@ frame time {
       local ub = string(exp(`ub'), "`e_fmt'")
 
       // Make a row for these results.
-      `table_cell'(`r', 1) = ("${`y'_row_lbl}"),           halign(left)
-      `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
-      `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
-      `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
-      `table_cell'(`r', 5) = ("`lb'"),              halign(center)
-      `table_cell'(`r', 6) = ("`ub'"),              halign(center)
-      `table_cell'(`r', 7) = ("`p'"),               halign(center)
+      `table_cell'(`r', 1) = ("${`y'_row_lbl}"),   halign(left)
+      `table_cell'(`r', 2) = ("`samp_mean_con'"),  halign(center)
+      `table_cell'(`r', 3) = ("`samp_mean_int'"),  halign(center)
+      `table_cell'(`r', 4) = ("`samp_rel_time'"),  halign(center)
+      `table_cell'(`r', 5) = ("`rel_diff'"),       halign(center)
+      `table_cell'(`r', 6) = ("`lb'"),             halign(center)
+      `table_cell'(`r', 7) = ("`ub'"),             halign(center)
+      `table_cell'(`r', 8) = ("`p'"),              halign(center)
     }
 
     // Borders.
@@ -220,18 +225,20 @@ frame time {
   local title "Table `tbl_num'. Analysis of time used finding, reading, and writing."
   local n_rows = 5 + wordcount("$minor_time_outcomes")
   local r = 1 // A row counter.
-  putdocx table tbl_`tbl_num' = (`n_rows', 7), title("`title'") note("`note'") border(all, nil)
+  putdocx table tbl_`tbl_num' = (`n_rows', 8), title("`title'") note("`note'") border(all, nil)
   
   // Column titles.
   local r = `r' + 1
   `table_cell'(`r', 2) = ("Sample means (mins)*"), halign(center) colspan(2)
+  `table_cell'(`r', 3) = ("Relative time (intervention / control)"),  halign(center) colspan(5)
 
   local r = `r' + 1
-  `table_cell'(`r', 2) = ("Control"),                       halign(center)
-  `table_cell'(`r', 3) = ("Intervention"),                  halign(center)
-  `table_cell'(`r', 4) = ("Relative Time†"), halign(center)
-  `table_cell'(`r', 5) = ("[95% Conf. Interval]‡"),          halign(center) colspan(2)  
-  `table_cell'(`r', 6) = ("P-value‡"),                       halign(center)
+  `table_cell'(`r', 2) = ("Control"),      halign(center)
+  `table_cell'(`r', 3) = ("Intervention"), halign(center)
+  `table_cell'(`r', 4) = ("Sample"),       halign(center)
+  `table_cell'(`r', 5) = ("Adjusted†"),    halign(center)
+  `table_cell'(`r', 6) = ("[95% CI]‡"),    halign(center) colspan(2)  
+  `table_cell'(`r', 7) = ("P-value‡"),     halign(center)
 
   // Primary outcome results.
   local outcome_groups                  find_time_outcomes read_time_outcomes 
@@ -249,6 +256,8 @@ frame time {
       // Format the sample means.
       local samp_mean_con = string(${samp_mean_`y'_con}, "`e_fmt'")
       local samp_mean_int = string(${samp_mean_`y'_int}, "`e_fmt'")
+      local samp_rel_time = ${samp_mean_`y'_int} / ${samp_mean_`y'_con}
+      local samp_rel_time = string(`samp_rel_time', "`e_fmt'")
 
       // Format the estimates.
       estimates restore `y'
@@ -265,13 +274,14 @@ frame time {
       local ub = string(exp(`ub'), "`e_fmt'")
 
       // Make a row for these results.
-      `table_cell'(`r', 1) = ("${`y'_row_lbl}"),           halign(left)
-      `table_cell'(`r', 2) = ("`samp_mean_con'"),   halign(center)
-      `table_cell'(`r', 3) = ("`samp_mean_int'"),   halign(center)
-      `table_cell'(`r', 4) = ("`rel_diff'"),        halign(center)
-      `table_cell'(`r', 5) = ("`lb'"),              halign(center)
-      `table_cell'(`r', 6) = ("`ub'"),              halign(center)
-      `table_cell'(`r', 7) = ("`p'"),               halign(center)
+      `table_cell'(`r', 1) = ("${`y'_row_lbl}"),  halign(left)
+      `table_cell'(`r', 2) = ("`samp_mean_con'"), halign(center)
+      `table_cell'(`r', 3) = ("`samp_mean_int'"), halign(center)
+      `table_cell'(`r', 4) = ("`samp_rel_time'"), halign(center)
+      `table_cell'(`r', 5) = ("`rel_diff'"),      halign(center)
+      `table_cell'(`r', 6) = ("`lb'"),            halign(center)
+      `table_cell'(`r', 7) = ("`ub'"),            halign(center)
+      `table_cell'(`r', 8) = ("`p'"),             halign(center)
     }
 
     // Borders.
