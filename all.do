@@ -26,10 +26,12 @@ do data/time_outcomes
 // TODO: REINSTATE do estimation/process_outcomes // Analyze process outcome data.
 // TODO: REINSTATE do estimation/margins          // Compute marginal probabilities.
 do estimation/time_outcomes                       // Analyze time and motion data.
+do estimation/time_margins                        // Estimate margines for time and motion data.
 
 // Make figures
 // TODO: REINSTATE do figures/imputation
 // TODO: REINSTATE do figures/margins
+do figures/time_margins
 
 // Obtain the git revision hash, which is used in the reports.
 tempfile git_revision_filename

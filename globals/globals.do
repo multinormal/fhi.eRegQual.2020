@@ -25,6 +25,9 @@ global minor_time_outcomes $find_time_outcomes $read_time_outcomes $write_time_o
 global time_outcomes $main_time_outcomes $minor_time_outcomes
 // TODO: REINSTATE global time_outcomes $time_outcomes $post_cons_time_outcomes
 
+// Define the variables to use in making margins plots of time use.
+global time_margin_outcomes total_time him_time care_time find_time read_time write_time
+
 // Table section titles.
 global him_time_outcomes_section   "Health Information Management"
 global care_time_outcomes_section  "Client Care"
@@ -35,8 +38,8 @@ global write_time_outcomes_section "Writing"
 // TODO: REINSTATE global post_cons_time_outcomes_section "Post-consultation Health Information Management" 
 
 // Define predicates for the outcomes that need them.
-local is_booking     if bookingvisit == "Booking visit":bookingvisit
-local is_not_booking if bookingvisit != "Booking visit":bookingvisit
+local is_booking     if bookingvisit == "$booking_lbl":bookingvisit
+local is_not_booking if bookingvisit != "$booking_lbl":bookingvisit
 global him_booking_time_pred   `is_booking'
 global him_fup_time_pred       `is_not_booking'
 global care_booking_time_pred  `is_booking'
@@ -51,6 +54,7 @@ global write_booking_time_pred `is_booking'
 global write_fup_time_pred     `is_not_booking'
 
 //global time_outcomes $time_outcomes him_time consult_time care_time
+// TODO: Is the above needed?
 
 // Define the activities that are of interest.
 // TODO: Cherck if this should be commented out.
@@ -62,6 +66,10 @@ global write_fup_time_pred     `is_not_booking'
 //// global activities $activities  talk_care
 //// global activities $activities  outside_care
 //// global activities $activities  misc_consult
+
+// Define the names of the booking and non-booking visits.
+global booking_lbl    "Booking"
+global nonbooking_lbl "Follow-up"
 
 // Define value labels for the activities.
 // TODO: Are these still used?

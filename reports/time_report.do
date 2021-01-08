@@ -319,7 +319,18 @@ detail how time used finding, reading, or writing files would be analyzed.
 putdocx textblock end
 
 `heading'
-putdocx text ("Appendix 2 — Full Regression Results")
+putdocx text ("Appendix 2 — Plots of marginal mean times")
+
+`newpara'
+The following plots show marginal mean times for a selection of the outcomes.
+putdocx textblock end
+
+foreach outcome of global time_margin_outcomes {
+  putdocx image "${`outcome'_margins_fname}.png", linebreak
+}
+
+`heading'
+putdocx text ("Appendix 3 — Full Regression Results")
 
 `subhead'
 putdocx text ("Comparisons of time used")

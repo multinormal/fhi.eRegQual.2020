@@ -17,8 +17,8 @@ frame time {
   label variable arm Arm
 
   // Encode/rename booking visit variable.
-  label variable bookingvisit "Booking visit"
-  label define bookingvisit 1 "Booking visit" 0 "Non-booking visit"
+  label variable bookingvisit "Visit"
+  label define bookingvisit 1 "$booking_lbl" 0 "$nonbooking_lbl"
   label values bookingvisit bookingvisit
 
   // Rename observer variable.
@@ -44,50 +44,51 @@ frame time {
   // done before the data set is reshaped to long format, or we will count
   // one enrollment per visit rather than pregnancy.
   by clusterid, sort: generate cluster_size = _N / 100
+  label variable cluster_size  "Cluster size" // 100s of new enrollments
   
   // Rename the HIM time variable.
   rename himperconsultation him_time
-  label variable him_time "HIM time (any visit)"
+  label variable him_time "HIM"
   global him_time_row_lbl "Any visit"
 
   // Generate a version of him_time that is limited to booking visits.
   generate him_booking_time = him_time $him_booking_time_pred
-  label variable him_booking_time "HIM time (booking visit)"
+  label variable him_booking_time "HIM (booking visit)"
   global him_booking_time_row_lbl "Booking"
 
   // Generate a version of him_time that is limited to followup visits.
   generate him_fup_time = him_time $him_fup_time_pred
-  label variable him_fup_time "HIM time (follow-up visit)"
+  label variable him_fup_time "HIM (follow-up visit)"
   global him_fup_time_row_lbl "Follow-up"
 
   // Rename the client care variable.
   rename clientcarewit~n care_time
-  label variable care_time "Client care time (any visit)"
+  label variable care_time "Client care"
   global care_time_row_lbl "Any visit"
 
   // Generate a version of care_time that is limited to booking visits.
   generate care_booking_time = care_time $care_booking_time_pred
-  label variable care_booking_time "Client care time (booking visit)"
+  label variable care_booking_time "Client care (booking visit)"
   global care_booking_time_row_lbl "Booking"
 
   // Generate a version of care_time that is limited to followup visits.
   generate care_fup_time = care_time $care_fup_time_pred
-  label variable care_fup_time "Client care time (follow-up visit)"
+  label variable care_fup_time "Client care (follow-up visit)"
   global care_fup_time_row_lbl "Follow-up"
 
   // Rename the total time variable.
   rename consulttime_withreporting total_time
-  label variable total_time "Total time (any visit)"
+  label variable total_time "Total"
   global total_time_row_lbl "Any visit"
 
   // Generate a version of total_time that is limited to booking visits.
   generate total_booking_time = total_time $total_booking_time_pred
-  label variable total_booking_time "Total time (booking visit)"
+  label variable total_booking_time "Total (booking visit)"
   global total_booking_time_row_lbl "Booking"
 
   // Generate a version of total_time that is limited to followup visits.
   generate total_fup_time = total_time $total_fup_time_pred
-  label variable total_fup_time "Total time (follow-up visit)"
+  label variable total_fup_time "Total (follow-up visit)"
   global total_fup_time_row_lbl "Follow-up"
 
   // Activties related to health information management (HIM). We sum the time
@@ -97,7 +98,7 @@ frame time {
   replace paperfindhim = 0 if missing(paperfindhim)       // Zero time was coded missing.
   replace computerfindhim = 0 if missing(computerfindhim) // Zero time was coded missing.
   generate find_time = paperfindhim + computerfindhim
-  label variable find_time "Finding (any visit)"
+  label variable find_time "Finding"
   global find_time_row_lbl "Any visit"
 
   // Generate a version of find_time that is limited to booking visits.
@@ -113,7 +114,7 @@ frame time {
   replace paperreadhim = 0 if missing(paperreadhim)       // Zero time was coded missing.
   replace computerreadhim = 0 if missing(computerreadhim) // Zero time was coded missing.
   generate read_time = paperreadhim + computerreadhim
-  label variable read_time "Reading (any visit)"
+  label variable read_time "Reading"
   global read_time_row_lbl "Any visit"
 
   // Generate a version of read_time that is limited to booking visits.
@@ -136,7 +137,7 @@ frame time {
   replace paperwritinghim_1 = 0 if missing(paperwritinghim_1)   // Zero time was coded missing.
   replace computerwritinghim = 0 if missing(computerwritinghim) // Zero time was coded missing.
   generate write_time = paperwritinghim_1 + computerwritinghim
-  label variable write_time "Writing (any visit)"
+  label variable write_time "Writing"
   global write_time_row_lbl "Any visit"
 
   // Generate a version of write_time that is limited to booking visits.
@@ -171,5 +172,5 @@ frame time {
   keep consultation arm clusterid observer $time_outcomes $time_adj_var_names
 
   // Fix a single incorrect observation - this has been verified as correct.
-  replace bookingvisit = "Booking visit":bookingvisit if missing(bookingvisit)
+  replace bookingvisit = "$booking_lbl":bookingvisit if missing(bookingvisit)
 }
