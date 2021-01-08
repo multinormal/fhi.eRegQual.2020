@@ -126,9 +126,16 @@ frame time {
   label variable read_fup_time "Reading (follow-up visit)"
   global read_fup_time_row_lbl "Follow-up"
 
-  replace paperwritinghim = 0 if missing(paperwritinghim)       // Zero time was coded missing.
+  // Define the total time spent writing. We sum across both arms because
+  // those in the intervention arm (computer) can also write on paper, while
+  // those in the control arm do not have access to the computer. Note that
+  // the paperwritinghim_1 is actually the sum of writing time and 
+  // "afterconsultationhim". It is not necessary to use the corresponding
+  // version of computerwritinghim, because that would result in twice the
+  // "afterconsultationhim" time being added to the intervention arm.
+  replace paperwritinghim_1 = 0 if missing(paperwritinghim_1)   // Zero time was coded missing.
   replace computerwritinghim = 0 if missing(computerwritinghim) // Zero time was coded missing.
-  generate write_time = paperwritinghim + computerwritinghim
+  generate write_time = paperwritinghim_1 + computerwritinghim
   label variable write_time "Writing (any visit)"
   global write_time_row_lbl "Any visit"
 
