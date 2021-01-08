@@ -150,14 +150,6 @@ frame time {
   label variable write_fup_time "Writing (follow-up visit)"
   global write_fup_time_row_lbl "Follow-up"
 
-  // TODO: Note that we would like to analyze the afterconsultationhim variable
-  // but it is calculated as "total time spent after consultation per
-  // clinic/number of clients in the clinic." So, it is not a "measurement"
-  // that is made at the level of individual, but at the level of clinic. This
-  // leads to problems fitting the model, and also means that the mixed model
-  // that adjusts for cluster and observer effects is incorrect (probably the
-  // cause of the problem!).
-
   // Observation number corresponds to a consultation.
   generate observation_level = strofreal(observationnumber)
   encode observation_level, generate(consultation)
@@ -166,6 +158,9 @@ frame time {
   // Transform times to log scale, preventing missing data due to log(0).
   foreach outcome of global time_outcomes {
     replace `outcome' = log(`outcome' + epsfloat()) if !missing(`outcome')
+
+    // Set time to missing if no time was actually measured.
+    replace `outcome' = . if `outcome' < log(0.0001)
   }
 
   // Drop columns that are not of interest.

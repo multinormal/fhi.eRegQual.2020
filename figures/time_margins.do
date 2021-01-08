@@ -6,12 +6,12 @@ version 16.1
 set graphics off
 
 // Specify the ranges for the y-axes.
-local yscale_total_time yscale(range(0 35))  ylabel(0(5)35)
-local yscale_him_time   yscale(range(0 20))  ylabel(0(5)20)
-local yscale_care_time  yscale(range(0 15))  ylabel(0(5)15)
-local yscale_find_time  yscale(range(-0.3 1)) ylabel(0(0.2)1)
-local yscale_read_time  yscale(range(-0.2 1)) ylabel(0(0.2)1)
-local yscale_write_time yscale(range(0 20))  ylabel(0(5)20)
+local yscale_total_time yscale(range(0 35))   ylabel(0(5)35)
+local yscale_him_time   yscale(range(0 20))   ylabel(0(5)20)
+local yscale_care_time  yscale(range(0 15))   ylabel(0(5)15)
+local yscale_find_time  yscale(range(0 1.5))  ylabel(0(0.5)1.5)
+local yscale_read_time  yscale(range(0 1.5))  ylabel(0(0.5)1.5)
+local yscale_write_time yscale(range(0 20))   ylabel(0(5)20)
 
 // Define the names and number of variables over which to make marginsplots.
 local margin_vars = ustrtrim(usubinstr("$time_adj_var_names", "strat_var", "", .))
