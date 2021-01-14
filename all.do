@@ -12,25 +12,25 @@ do setup/setup
 do globals/globals
 
 // Import the data.
-// TODO: REINSTATE do data/process_outcomes
-// TODO: REINSTATE do data/birth_outcomes
+do data/process_outcomes
+do data/birth_outcomes
 do data/time_outcomes
 
 // Perform imputation.
-// TODO: REINSTATE do data/impute
+do data/impute
 
 // Do estimation.
-// TODO: REINSTATE do estimation/missing          // Calculate percentage of data missing.
-// TODO: REINSTATE do estimation/mcar             // Test the MCAR hypothesis.
-// TODO: REINSTATE do estimation/birth_outcomes   // Analyze the birth outcome data.
-// TODO: REINSTATE do estimation/process_outcomes // Analyze process outcome data.
-// TODO: REINSTATE do estimation/margins          // Compute marginal probabilities.
-do estimation/time_outcomes                       // Analyze time and motion data.
-do estimation/time_margins                        // Estimate margines for time and motion data.
+do estimation/missing          // Calculate percentage of data missing.
+do estimation/mcar             // Test the MCAR hypothesis.
+do estimation/birth_outcomes   // Analyze the birth outcome data.
+do estimation/process_outcomes // Analyze process outcome data.
+do estimation/margins          // Compute marginal probabilities.
+do estimation/time_outcomes    // Analyze time and motion data.
+do estimation/time_margins     // Estimate margines for time and motion data.
 
 // Make figures
-// TODO: REINSTATE do figures/imputation
-// TODO: REINSTATE do figures/margins
+do figures/imputation
+do figures/margins
 do figures/time_margins
 
 // Obtain the git revision hash, which is used in the reports.
@@ -42,5 +42,5 @@ file read `revision_file' line
 global git_revision = "`macval(line)'"
 
 // Make the reports
-// TODO: REINSTATE do reports/report products/report.docx
+do reports/report products/report.docx
 do reports/time_report products/time_report.docx
