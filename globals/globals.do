@@ -55,21 +55,6 @@ global read_fup_time_pred      `is_not_booking'
 global write_booking_time_pred `is_booking'
 global write_fup_time_pred     `is_not_booking'
 
-// Define value labels for the activities.
-// TODO: Are these still used?
-global paper_f_him_lbl       "Finding files (paper)"
-global paper_r_him_lbl       "Reading files (paper)"
-global paper_w_him_lbl       "Writing files (paper)"
-global comp_f_him_lbl        "Finding files (eRegistry)"
-global comp_r_him_lbl        "Reading files (eRegistry)"
-global comp_w_him_lbl        "Writing files (eRegistry)"
-global after_consult_him_lbl "Post-consultation HIM"
-global talk_him_lbl          "Talking (HIM)"
-global proc_care_lbl         "Client care procedures"
-global talk_care_lbl         "Talking (client care)"
-global outside_care_lbl      "Outside client care"
-global misc_consult_lbl      "Miscellaneous"
-
 // The variables to adjust for in the "main" analyses, with their "types". See
 // the generated report for an explanation of why these variables are adjusted
 // for.
