@@ -18,12 +18,10 @@ global main_time_outcomes $total_time_outcomes $him_time_outcomes $care_time_out
 global find_time_outcomes          find_time  find_booking_time  find_fup_time
 global read_time_outcomes          read_time  read_booking_time  read_fup_time
 global write_time_outcomes         write_time write_booking_time write_fup_time
-// TODO: REINSTATE global post_cons_time_outcomes     post_cons_time
 global minor_time_outcomes $find_time_outcomes $read_time_outcomes $write_time_outcomes
 
 // Define all the time outcomes.
 global time_outcomes $main_time_outcomes $minor_time_outcomes
-// TODO: REINSTATE global time_outcomes $time_outcomes $post_cons_time_outcomes
 
 // Define the variables to use in making margins plots of time use.
 global time_margin_outcomes total_time him_time care_time find_time read_time write_time
@@ -56,20 +54,6 @@ global read_booking_time_pred  `is_booking'
 global read_fup_time_pred      `is_not_booking'
 global write_booking_time_pred `is_booking'
 global write_fup_time_pred     `is_not_booking'
-
-//global time_outcomes $time_outcomes him_time consult_time care_time
-// TODO: Is the above needed?
-
-// Define the activities that are of interest.
-// TODO: Cherck if this should be commented out.
-//// global activities              paper_f_him paper_r_him paper_w_him
-//// global activities $activities  comp_f_him  comp_r_him  comp_w_him
-//// global activities $activities  after_consult_him
-//// global activities $activities  talk_him
-//// global activities $activities  proc_care
-//// global activities $activities  talk_care
-//// global activities $activities  outside_care
-//// global activities $activities  misc_consult
 
 // Define value labels for the activities.
 // TODO: Are these still used?
