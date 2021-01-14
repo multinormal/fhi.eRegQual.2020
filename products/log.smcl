@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/Users/cjr/Repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 8 Jan 2021, 16:16:45
+ {txt}opened on:  {res}14 Jan 2021, 09:35:17
 {txt}
 {com}. 
 . // Set up Stata.
@@ -97,6 +97,12 @@
 {txt}
 {com}. // TODO: REINSTATE global post_cons_time_outcomes_section "Post-consultation Health Information Management" 
 . 
+. // Define the names of the booking and non-booking visits.
+. global booking_lbl    "Booking"
+{txt}
+{com}. global nonbooking_lbl "Follow-up"
+{txt}
+{com}. 
 . // Define predicates for the outcomes that need them.
 . local is_booking     if bookingvisit == "$booking_lbl":bookingvisit
 {txt}
@@ -141,12 +147,6 @@
 > //// global activities $activities  outside_care
 > //// global activities $activities  misc_consult
 > 
-. // Define the names of the booking and non-booking visits.
-. global booking_lbl    "Booking"
-{txt}
-{com}. global nonbooking_lbl "Follow-up"
-{txt}
-{com}. 
 . // Define value labels for the activities.
 . // TODO: Are these still used?
 . global paper_f_him_lbl       "Finding files (paper)"
@@ -544,7 +544,7 @@
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000000@arm {c |}
+c.__000003@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    15.56{col 28}{space 2}     0.90{col 39}{space 5}    13.80{col 53}{space 3}    17.33
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    11.99{col 28}{space 2}     0.60{col 39}{space 5}    10.80{col 53}{space 3}    13.17
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -609,7 +609,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000001@arm {c |}
+c.__000004@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    29.36{col 28}{space 2}     2.09{col 39}{space 5}    25.09{col 53}{space 3}    33.63
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    24.80{col 28}{space 2}     1.81{col 39}{space 5}    21.08{col 53}{space 3}    28.51
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -675,7 +675,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000002@arm {c |}
+c.__000005@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    12.91{col 28}{space 2}     0.74{col 39}{space 5}    11.46{col 53}{space 3}    14.37
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    10.68{col 28}{space 2}     0.50{col 39}{space 5}     9.70{col 53}{space 3}    11.66
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -739,7 +739,7 @@ c.__000002@arm {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000003@arm {c |}
+c.__000006@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     9.84{col 28}{space 2}     0.74{col 39}{space 5}     8.39{col 53}{space 3}    11.30
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     6.64{col 28}{space 2}     0.39{col 39}{space 5}     5.88{col 53}{space 3}     7.41
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -804,7 +804,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000004@arm {c |}
+c.__000007@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    18.91{col 28}{space 2}     2.24{col 39}{space 5}    14.33{col 53}{space 3}    23.50
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    15.26{col 28}{space 2}     2.17{col 39}{space 5}    10.82{col 53}{space 3}    19.69
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -872,7 +872,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000005@arm {c |}
+c.__000008@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     8.10{col 28}{space 2}     0.64{col 39}{space 5}     6.84{col 53}{space 3}     9.37
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     5.72{col 28}{space 2}     0.25{col 39}{space 5}     5.22{col 53}{space 3}     6.22
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -937,7 +937,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000006@arm {c |}
+c.__000009@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     4.91{col 28}{space 2}     0.33{col 39}{space 5}     4.27{col 53}{space 3}     5.56
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     5.01{col 28}{space 2}     0.37{col 39}{space 5}     4.29{col 53}{space 3}     5.74
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1002,7 +1002,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000007@arm {c |}
+c.__00000A@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     8.56{col 28}{space 2}     1.01{col 39}{space 5}     6.50{col 53}{space 3}    10.62
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     8.82{col 28}{space 2}     1.43{col 39}{space 5}     5.90{col 53}{space 3}    11.73
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1069,7 +1069,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000008@arm {c |}
+c.__00000B@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     4.22{col 28}{space 2}     0.29{col 39}{space 5}     3.64{col 53}{space 3}     4.79
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     4.66{col 28}{space 2}     0.36{col 39}{space 5}     3.94{col 53}{space 3}     5.37
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1134,7 +1134,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__000009@arm {c |}
+c.__00000C@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     0.68{col 28}{space 2}     0.08{col 39}{space 5}     0.52{col 53}{space 3}     0.84
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     0.92{col 28}{space 2}     0.08{col 39}{space 5}     0.76{col 53}{space 3}     1.07
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1200,7 +1200,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000A@arm {c |}
+c.__00000D@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     1.21{col 28}{space 2}     0.43{col 39}{space 5}     0.31{col 53}{space 3}     2.10
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     1.45{col 28}{space 2}     0.22{col 39}{space 5}     1.00{col 53}{space 3}     1.90
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1268,7 +1268,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000B@arm {c |}
+c.__00000E@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     0.60{col 28}{space 2}     0.07{col 39}{space 5}     0.47{col 53}{space 3}     0.74
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     0.86{col 28}{space 2}     0.08{col 39}{space 5}     0.70{col 53}{space 3}     1.02
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1335,7 +1335,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000C@arm {c |}
+c.__00000F@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     1.20{col 28}{space 2}     0.19{col 39}{space 5}     0.82{col 53}{space 3}     1.58
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     0.72{col 28}{space 2}     0.10{col 39}{space 5}     0.51{col 53}{space 3}     0.92
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1401,7 +1401,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000D@arm {c |}
+c.__00000G@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     2.10{col 28}{space 2}     0.76{col 39}{space 5}     0.47{col 53}{space 3}     3.72
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     0.39{col 28}{space 2}     0.04{col 39}{space 5}     0.30{col 53}{space 3}     0.48
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1468,7 +1468,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000E@arm {c |}
+c.__00000H@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     0.99{col 28}{space 2}     0.15{col 39}{space 5}     0.69{col 53}{space 3}     1.28
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     0.73{col 28}{space 2}     0.11{col 39}{space 5}     0.52{col 53}{space 3}     0.95
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1535,7 +1535,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000F@arm {c |}
+c.__00000I@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     8.48{col 28}{space 2}     0.73{col 39}{space 5}     7.03{col 53}{space 3}     9.92
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     5.50{col 28}{space 2}     0.37{col 39}{space 5}     4.77{col 53}{space 3}     6.23
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1600,7 +1600,7 @@ lab_available {c |}
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000G@arm {c |}
+c.__00000J@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}    16.48{col 28}{space 2}     2.54{col 39}{space 5}    11.30{col 53}{space 3}    21.67
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}    13.73{col 28}{space 2}     2.14{col 39}{space 5}     9.35{col 53}{space 3}    18.12
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}
@@ -1667,7 +1667,7 @@ note: 1.bookingvisit omitted because of collinearity
 {txt}{hline 15}{c TT}{hline 11}{hline 11}{hline 14}{hline 12}
 {col 16}{c |}       Mean{col 28}   Std. Err.{col 40}     [95% Con{col 53}f. Interval]
 {hline 15}{c +}{hline 11}{hline 11}{hline 14}{hline 12}
-c.__00000H@arm {c |}
+c.__00000K@arm {c |}
 {space 6}Control  {c |}{col 16}{res}{space 2}     6.94{col 28}{space 2}     0.63{col 39}{space 5}     5.71{col 53}{space 3}     8.17
 {txt}{space 1}Intervention  {c |}{col 16}{res}{space 2}     4.61{col 28}{space 2}     0.23{col 39}{space 5}     4.16{col 53}{space 3}     5.07
 {txt}{hline 15}{c BT}{hline 11}{hline 11}{hline 14}{hline 12}

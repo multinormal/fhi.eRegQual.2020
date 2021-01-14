@@ -37,6 +37,10 @@ global read_time_outcomes_section  "Reading"
 global write_time_outcomes_section "Writing"
 // TODO: REINSTATE global post_cons_time_outcomes_section "Post-consultation Health Information Management" 
 
+// Define the names of the booking and non-booking visits.
+global booking_lbl    "Booking"
+global nonbooking_lbl "Follow-up"
+
 // Define predicates for the outcomes that need them.
 local is_booking     if bookingvisit == "$booking_lbl":bookingvisit
 local is_not_booking if bookingvisit != "$booking_lbl":bookingvisit
@@ -66,10 +70,6 @@ global write_fup_time_pred     `is_not_booking'
 //// global activities $activities  talk_care
 //// global activities $activities  outside_care
 //// global activities $activities  misc_consult
-
-// Define the names of the booking and non-booking visits.
-global booking_lbl    "Booking"
-global nonbooking_lbl "Follow-up"
 
 // Define value labels for the activities.
 // TODO: Are these still used?
