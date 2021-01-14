@@ -33,7 +33,6 @@ global total_time_outcomes_section "Total Time§"
 global find_time_outcomes_section  "Finding"
 global read_time_outcomes_section  "Reading"
 global write_time_outcomes_section "Writing"
-// TODO: REINSTATE global post_cons_time_outcomes_section "Post-consultation Health Information Management" 
 
 // Define the names of the booking and non-booking visits.
 global booking_lbl    "Booking"
