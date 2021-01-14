@@ -1,8 +1,5 @@
 version 16.1
 
-// TODO: Use different marker shapes and perhaps try to stagger things to avoid
-// overplotting.
-
 set graphics off
 
 // Specify the ranges for the y-axes.
