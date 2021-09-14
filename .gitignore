@@ -1,3 +1,5 @@
 data/raw/*
 .DS_Store
 *.swp
+*CONSORT.aux
+*CONSORT.log
