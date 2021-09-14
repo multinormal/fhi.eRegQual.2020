@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This repository contains analyses for the eRegQual and eRegTime triasl.
+This repository contains analyses for the eRegQual and eRegTime trials.
 See:
 
 * Venkateswaran et al. *eRegQual—An electronic health registry with interactive 
