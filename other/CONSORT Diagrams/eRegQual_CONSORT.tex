@@ -1,8 +1,13 @@
 % CONSORT flow diagram for the eRegQual trial.
 % Based on: https://texample.net/tikz/examples/consort-flowchart/
 %
-% Compile tfrom .tex to .png using:
-% pdflatex eRegQual_CONSORT.tex
+% Create a .pdf using:
+%   > pdflatex eRegQual_CONSORT.tex
+%
+% Create a .eps using:
+%   > latex  eRegQual_CONSORT.tex
+%   > dvips  eRegQual_CONSORT.dvi
+%   > ps2eps eRegQual_CONSORT.ps
 %
 % Convert to a high-res PNG using:
 % sips -s format png --resampleWidth 10000 eRegQual_CONSORT.pdf --out eRegQual_CONSORT.png
@@ -53,16 +58,16 @@
           Randomised (n=120 clusters; 133 clinics)}; \\
       & \\
       % Groups
-        \node [block_noborder] (i) {Intervention group}; 
+        \node [block_noborder] (i) {Intervention group};
       & \node [block_noborder] (c) {Control group}; \\
       % Allocation
         \node [block_assign] (i_T0) {Allocated to intervention (n=60 clusters): \\
           \begin{itemize}[leftmargin=*, nolistsep]
             \item 3219 pregnancies registered
-          \end{itemize}}; 
+          \end{itemize}};
       & \node [block_assign] (c_T0) {Allocated to control (n=59 clusters): \\
           \begin{itemize}[leftmargin=*, nolistsep]
-            \item 3148 pregnancies registered 
+            \item 3148 pregnancies registered
             \item 1 clinic shut down prior to recruitment and did not receive allocated treatment
           \end{itemize}}; \\
       % Loss to follow-up
