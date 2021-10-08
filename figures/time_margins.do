@@ -27,14 +27,14 @@ frame time {
     foreach var of local margin_vars {
       local xscale fxsize(30)
       local ytitle ytitle("")
-      
+
       if "`var'" == "cluster_size" {
-        local xscale          xscale(range(0.04 0.26)) 
+        local xscale          xscale(range(0.04 0.26))
         local xscale `xscale' xlabel(0.05 "5" 0.1 "10" 0.15 "15" 0.2 "20" 0.25 "25")
         local ylabel ylabel(`y_ticks', angle(horizontal))
         local ytitle ytitle("Marginal mean time used `outcome_label' (mins)")
       }
-      
+
       // Restore the estimates for this (outcome, var) pair.
       time_margin_name `outcome' `var'
       local estimates_name = r(estimates_name)
@@ -63,6 +63,7 @@ frame time {
     global `outcome'_margins_fname "products/Margins - `outcome'"
     graph export "${`outcome'_margins_fname}.pdf", replace
     graph export "${`outcome'_margins_fname}.png", replace
+    graph export "${`outcome'_margins_fname}.eps", replace
   }
 }
 

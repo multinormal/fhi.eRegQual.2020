@@ -29,20 +29,20 @@ foreach outcome of global process_outcomes {
       local ylabel ylabel(0 " " 0.2 " " 0.4 " " 0.6 " " 0.8 " " 1.0 " ")
       local xscale fxsize(20)
       local ytitle ytitle("")
-      
+
       if "`var'" == "cluster_size" {
-        local xscale          xscale(range(0 2.25)) 
+        local xscale          xscale(range(0 2.25))
         local xscale `xscale' xlabel(0.1 "10" 1 "100" 2 "200")
         local xscale `xscale' fxsize(30)
         local ylabel ylabel(`y_ticks', angle(horizontal))
         local ytitle ytitle("``outcome'_margins_title'")
       }
       if "`var'" == "age" {
-        local xscale          xscale(range(10 50)) 
+        local xscale          xscale(range(10 50))
         local xscale `xscale' xlabel(15 25 35 45)
         local xscale `xscale' fxsize(30)
       }
-      
+
       // Restore the estimates for this (outcome, var) pair.
       margin_name `outcome' `var'
       local estimates_name = r(estimates_name)
@@ -70,6 +70,7 @@ foreach outcome of global process_outcomes {
     global `outcome'_margins_fname "products/Margins - `outcome'"
     graph export "${`outcome'_margins_fname}.pdf", replace
     graph export "${`outcome'_margins_fname}.png", replace
+    graph export "${`outcome'_margins_fname}.eps", replace
   }
 }
 

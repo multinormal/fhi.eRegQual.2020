@@ -70,6 +70,7 @@ frame `this_frame' {
     global `var'_plot_fname "products/Imputations - `var_label'"
     graph export "${`var'_plot_fname}.pdf", replace
     graph export "${`var'_plot_fname}.png", replace
+    graph export "${`var'_plot_fname}.eps", replace
   }
 }
 
