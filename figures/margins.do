@@ -69,7 +69,7 @@ foreach outcome of global process_outcomes {
                            plotregion(color(white))
     global `outcome'_margins_fname "products/Margins - `outcome'"
     graph export "${`outcome'_margins_fname}.pdf", replace
-    graph export "${`outcome'_margins_fname}.png", replace
+    graph export "${`outcome'_margins_fname}.png", replace width(3226)
     graph export "${`outcome'_margins_fname}.eps", replace
   }
 }
