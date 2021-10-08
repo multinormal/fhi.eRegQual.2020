@@ -3,7 +3,7 @@
       name:  {res}eRegQual Analysis
        {txt}log:  {res}/home/cjr/repos/fhi.eRegQual.2020/products/log.smcl
   {txt}log type:  {res}smcl
- {txt}opened on:  {res} 8 Oct 2021, 12:50:58
+ {txt}opened on:  {res} 8 Oct 2021, 14:11:49
 {txt}
 {com}. 
 . // Set up Stata.
@@ -8432,5 +8432,11 @@ Mixed-effects regression{col 49}Number of obs{col 67}={col 69}{res}       211
 
 {com}. 
 {txt}end of do-file
+
+{com}. exit
+{err}no; dataset in memory has changed since last saved
+{p 4 4 2}
+There are unsaved data in 9 frames. Use {cmd:frames dir} to find out which frames have unsaved data. Save the data or specify option {bf:clear} to exit anyway.{p_end}
+{txt}{search r(4), local:r(4);}
 
 {com}. exit, clear
