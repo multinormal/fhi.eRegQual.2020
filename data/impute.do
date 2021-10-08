@@ -22,7 +22,7 @@ frame imputed {
     (logit, omit(i.y1 i.y2 i.y4 i.y5))  y3                             ///
     (logit, omit(i.y1 i.y2 i.y3 i.y5))  y4                             ///
     (logit, omit(i.y1 i.y2 i.y3 i.y4))  y5                             ///
-    = i.arm c.cluster_size i.us_available i.lab_available, ///
+    = i.arm c.cluster_size i.us_available i.lab_available,             ///
     add($m_imputations)
 
   // The composite outcome is defined as follows. If:
